@@ -28,8 +28,12 @@ import {
   XCircle,
   Clock,
   Tag,
+  Thermometer,
+  Compass,
+  Sparkles,
   Briefcase,
   CircleDollarSign,
+  DoorOpen,
   Laptop
 } from "lucide-react";
 import { type Listing, type City, type PropertyType } from "@shared/schema";

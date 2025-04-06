@@ -84,6 +84,9 @@ export const listings = pgTable("listings", {
   isFurnished: boolean("is_furnished"),
   facingDirection: text("facing_direction"),
   floorNumber: integer("floor_number"),
+  hasPool: boolean("has_pool").default(false),
+  hasGym: boolean("has_gym").default(false),
+  agentId: integer("agent_id"),
 });
 
 export const insertListingSchema = createInsertSchema(listings).pick({
@@ -114,6 +117,9 @@ export const insertListingSchema = createInsertSchema(listings).pick({
   isFurnished: true,
   facingDirection: true,
   floorNumber: true,
+  hasPool: true,
+  hasGym: true,
+  agentId: true,
 });
 
 // Contact messages table

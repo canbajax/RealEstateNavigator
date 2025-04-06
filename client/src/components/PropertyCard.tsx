@@ -33,8 +33,16 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
   const { data: cities } = useQuery<any[]>({
     queryKey: ["/api/cities"],
   });
+  
+  const { data: agentResponse } = useQuery<{success: boolean, agents: any[]}>({
+    queryKey: ["/api/agents"],
+  });
 
   const cityName = cities?.find(city => city.id === listing.cityId)?.name || '';
+  
+  // Find agent information if present
+  const agents = agentResponse?.agents || [];
+  const agent = agents.find(a => a.id === listing.agentId);
 
   const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -222,11 +230,20 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
             <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
               <div className="flex items-center">
                 <img 
-                  src={`https://randomuser.me/api/portraits/men/${(listing.id % 50) + 1}.jpg`} 
-                  alt="Emlak Danışmanı" 
+                  src={agent?.avatarUrl || `https://randomuser.me/api/portraits/men/${(listing.id % 50) + 1}.jpg`} 
+                  alt={agent?.fullName || "Emlak Danışmanı"} 
                   className="w-7 h-7 rounded-full mr-2 border border-gray-200"
                 />
-                <span className="text-xs text-gray-600 truncate">Emlak Danışmanı</span>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-800 font-medium truncate">
+                    {agent?.fullName || "Emlak Danışmanı"}
+                  </span>
+                  {transactionStatusBadge && (
+                    <span className="text-[10px] text-gray-500">
+                      {transactionStatusBadge.text} • {formatDate(listing.postedAt)}
+                    </span>
+                  )}
+                </div>
               </div>
               <span className="text-xs flex items-center text-gray-500">
                 <Calendar className="mr-1" size={12} />
