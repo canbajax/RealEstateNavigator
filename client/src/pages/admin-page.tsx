@@ -750,9 +750,14 @@ export default function AdminPage() {
                             </td>
                             <td className="py-3 px-2">
                               <span className={`px-2 py-1 rounded-full text-xs ${
-                                listing.listingType === "sale" ? "bg-orange-100 text-orange-700" : "bg-violet-100 text-violet-700"
+                                listing.listingType === "sale" ? "bg-orange-100 text-orange-700" : 
+                                listing.listingType === "rent" ? "bg-violet-100 text-violet-700" : 
+                                "bg-blue-100 text-blue-700"
                               }`}>
-                                {listing.listingType === "sale" ? "Satılık" : "Kiralık"}
+                                {listing.listingType === "sale" ? "Satılık" : 
+                                 listing.listingType === "rent" ? "Kiralık" :
+                                 listing.listingType === "daily" ? "Günlük Kiralık" :
+                                 listing.listingType}
                               </span>
                             </td>
                             <td className="py-3 px-2 truncate max-w-[150px]">
@@ -1074,6 +1079,7 @@ export default function AdminPage() {
                 >
                   <option value="sale">Satılık</option>
                   <option value="rent">Kiralık</option>
+                  <option value="daily">Günlük Kiralık</option>
                 </select>
               </div>
             </div>
