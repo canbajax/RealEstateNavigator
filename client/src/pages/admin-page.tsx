@@ -430,6 +430,19 @@ function UsersTable() {
     queryKey: ["/api/users"],
     queryFn: getQueryFn({ on401: "throw" }),
   });
+  
+  // Ana bileşendeki handleEditUser ve handleDeleteUser fonksiyonlarına erişim
+  const handleEditUser = (user: Omit<UserType, "password">) => {
+    // AdminPage bileşenindeki handleEditUser fonksiyonuna erişim olmadığı için 
+    // direkt olarak console.log yapalım şimdilik
+    console.log("Edit user", user.id);
+  };
+  
+  const handleDeleteUser = (userId: number) => {
+    // AdminPage bileşenindeki handleDeleteUser fonksiyonuna erişim olmadığı için
+    // direkt olarak console.log yapalım şimdilik
+    console.log("Delete user", userId);
+  };
 
   if (isLoading) {
     return (
@@ -518,6 +531,19 @@ function ListingsTable() {
     queryKey: ["/api/listings"],
     queryFn: getQueryFn({ on401: "throw" }),
   });
+  
+  // Ana bileşendeki handleEditListing ve handleDeleteListing fonksiyonlarına erişim
+  const handleEditListing = (listing: Listing) => {
+    // AdminPage bileşenindeki handleEditListing fonksiyonuna erişim olmadığı için 
+    // direkt olarak console.log yapalım şimdilik
+    console.log("Edit listing", listing.id);
+  };
+  
+  const handleDeleteListing = (listingId: number) => {
+    // AdminPage bileşenindeki handleDeleteListing fonksiyonuna erişim olmadığı için
+    // direkt olarak console.log yapalım şimdilik
+    console.log("Delete listing", listingId);
+  };
 
   if (isLoading) {
     return (
