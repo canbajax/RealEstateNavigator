@@ -20,9 +20,10 @@ const Listings = () => {
     const searchParams = new URLSearchParams(location.split('?')[1]);
     const currentFilters: Record<string, string> = {};
     
-    for (const [key, value] of searchParams.entries()) {
+    // URLSearchParams.entries() uyumluluğu için alternatif yaklaşım
+    searchParams.forEach((value, key) => {
       currentFilters[key] = value;
-    }
+    });
     
     setFilters(currentFilters);
   }, [location]);

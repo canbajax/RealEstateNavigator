@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Compass, LogOut, User, UserPlus } from "lucide-react";
+import { Compass, LogOut, User, UserPlus, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../hooks/use-auth";
 import { 
@@ -11,10 +11,26 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 
 const Header = () => {
   const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mortgageAmount, setMortgageAmount] = useState(1000000);
+  const [mortgageYears, setMortgageYears] = useState(10);
+  const [interestRate, setInterestRate] = useState(1.29);
+  const [showCalculator, setShowCalculator] = useState(false);
   const { user, logoutMutation } = useAuth();
 
   const toggleMobileMenu = () => {
@@ -23,6 +39,34 @@ const Header = () => {
 
   const isActive = (path: string) => {
     return location === path;
+  };
+  
+  // Kredi ödeme hesaplayıcı
+  const calculateMonthlyPayment = () => {
+    // Aylık faiz oranı (yıllık faiz / 12 / 100)
+    const monthlyInterestRate = interestRate / 12 / 100;
+    // Toplam ödeme sayısı (yıl * 12 ay)
+    const numberOfPayments = mortgageYears * 12;
+    
+    // Aylık ödeme formülü: P = L[c(1 + c)^n]/[(1 + c)^n - 1]
+    // P: aylık ödeme, L: kredi tutarı, c: aylık faiz oranı, n: ödeme sayısı
+    const monthlyPayment = 
+      (mortgageAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) /
+      (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+      
+    return isNaN(monthlyPayment) ? 0 : Math.round(monthlyPayment);
+  };
+  
+  const totalPayment = calculateMonthlyPayment() * mortgageYears * 12;
+  const totalInterest = totalPayment - mortgageAmount;
+  
+  // Para birimi formatter
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('tr-TR', { 
+      style: 'currency', 
+      currency: 'TRY',
+      maximumFractionDigits: 0
+    }).format(amount);
   };
 
   return (
@@ -58,6 +102,107 @@ const Header = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
+            {/* Kredi Hesaplayıcı */}
+            <Dialog open={showCalculator} onOpenChange={setShowCalculator}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white">
+                  <Calculator className="h-4 w-4 mr-2" />
+                  Kredi Hesaplayıcı
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Konut Kredisi Hesaplayıcı</DialogTitle>
+                  <DialogDescription>
+                    Konut kredisi ödemelerinizi hesaplamak için bilgileri girin.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="amount">Kredi Tutarı: {formatCurrency(mortgageAmount)}</Label>
+                    <Slider
+                      id="amount"
+                      min={100000}
+                      max={10000000}
+                      step={50000}
+                      value={[mortgageAmount]}
+                      onValueChange={(value) => setMortgageAmount(value[0])}
+                      className="py-4"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>100.000 ₺</span>
+                      <span>10.000.000 ₺</span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="years">Vade (Yıl): {mortgageYears} yıl</Label>
+                    <Slider
+                      id="years"
+                      min={1}
+                      max={30}
+                      step={1}
+                      value={[mortgageYears]}
+                      onValueChange={(value) => setMortgageYears(value[0])}
+                      className="py-4"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>1 yıl</span>
+                      <span>30 yıl</span>
+                    </div>
+                  </div>
+                  
+                  <div className="grid gap-2">
+                    <Label htmlFor="interest">Faiz Oranı: %{interestRate}</Label>
+                    <Slider
+                      id="interest"
+                      min={0.1}
+                      max={5}
+                      step={0.01}
+                      value={[interestRate]}
+                      onValueChange={(value) => setInterestRate(value[0])}
+                      className="py-4"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>%0.10</span>
+                      <span>%5.00</span>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-muted p-4 rounded-lg">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Aylık Ödeme</p>
+                        <p className="text-lg font-bold">{formatCurrency(calculateMonthlyPayment())}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Toplam Ödeme</p>
+                        <p className="text-lg font-bold">{formatCurrency(totalPayment)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Toplam Faiz</p>
+                        <p className="text-lg font-bold">{formatCurrency(totalInterest)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-muted-foreground">Faiz Oranı</p>
+                        <p className="text-lg font-bold">%{interestRate}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <DialogFooter>
+                  <Button 
+                    onClick={() => setShowCalculator(false)}
+                    className="bg-[#3498DB] hover:bg-[#5DADE2]"
+                  >
+                    Kapat
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            
             {!user ? (
               // Kullanıcı giriş yapmamış
               <Link href="/auth">
@@ -141,6 +286,14 @@ const Header = () => {
                 İletişim
               </a>
             </Link>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowCalculator(true)}
+              className="w-full mt-2 border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white"
+            >
+              <Calculator className="h-4 w-4 mr-2" />
+              Kredi Hesaplayıcı
+            </Button>
             <div className="flex flex-col space-y-2 mt-4">
               {!user ? (
                 <Link href="/auth">
