@@ -68,6 +68,9 @@ export interface ListingFilters {
   roomCount?: number;
   limit?: number;
   search?: string;
+  status?: "active" | "passive";
+  transactionStatus?: "available" | "sold" | "rented";
+  includePassive?: boolean;
 }
 
 export class MemStorage implements IStorage {
@@ -212,6 +215,11 @@ export class MemStorage implements IStorage {
   async getListings(filters?: ListingFilters): Promise<Listing[]> {
     let listings = Array.from(this.listings.values());
     
+    // By default, only show active listings
+    if (!filters?.includePassive) {
+      listings = listings.filter(listing => listing.status === "active");
+    }
+    
     if (filters) {
       if (filters.cityId !== undefined) {
         listings = listings.filter(listing => listing.cityId === filters.cityId);
@@ -223,6 +231,14 @@ export class MemStorage implements IStorage {
       
       if (filters.listingType !== undefined) {
         listings = listings.filter(listing => listing.listingType === filters.listingType);
+      }
+      
+      if (filters.status !== undefined) {
+        listings = listings.filter(listing => listing.status === filters.status);
+      }
+      
+      if (filters.transactionStatus !== undefined) {
+        listings = listings.filter(listing => listing.transactionStatus === filters.transactionStatus);
       }
       
       if (filters.minPrice !== undefined) {
@@ -272,7 +288,7 @@ export class MemStorage implements IStorage {
   
   async getFeaturedListings(limit: number = 4): Promise<Listing[]> {
     const featuredListings = Array.from(this.listings.values())
-      .filter(listing => listing.isFeatured)
+      .filter(listing => listing.isFeatured && listing.status === "active")
       .sort((a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime());
     
     return featuredListings.slice(0, limit);
@@ -290,6 +306,8 @@ export class MemStorage implements IStorage {
       parkingCount: insertListing.parkingCount ?? null,
       rentPeriod: insertListing.rentPeriod ?? null,
       isFeatured: insertListing.isFeatured ?? false,
+      status: insertListing.status ?? "active",
+      transactionStatus: insertListing.transactionStatus ?? "available",
       latitude: insertListing.latitude ?? null,
       longitude: insertListing.longitude ?? null
     };
@@ -320,6 +338,8 @@ export class MemStorage implements IStorage {
       parkingCount: updateData.parkingCount !== undefined ? updateData.parkingCount : listing.parkingCount,
       rentPeriod: updateData.rentPeriod !== undefined ? updateData.rentPeriod : listing.rentPeriod,
       isFeatured: updateData.isFeatured !== undefined ? updateData.isFeatured : listing.isFeatured,
+      status: updateData.status !== undefined ? updateData.status : listing.status,
+      transactionStatus: updateData.transactionStatus !== undefined ? updateData.transactionStatus : listing.transactionStatus,
       latitude: updateData.latitude !== undefined ? updateData.latitude : listing.latitude,
       longitude: updateData.longitude !== undefined ? updateData.longitude : listing.longitude
     };

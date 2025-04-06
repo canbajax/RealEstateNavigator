@@ -699,6 +699,8 @@ export default function AdminPage() {
                     imageUrls: [""],
                     userId: user?.id || 1,
                     isFeatured: false,
+                    status: "active",
+                    transactionStatus: "available",
                     postedAt: new Date(),
                     latitude: null,
                     longitude: null
@@ -719,6 +721,7 @@ export default function AdminPage() {
                       <th className="text-left py-3 px-2">İlan Başlığı</th>
                       <th className="text-left py-3 px-2">Fiyat</th>
                       <th className="text-left py-3 px-2">Tür</th>
+                      <th className="text-left py-3 px-2">Durum</th>
                       <th className="text-left py-3 px-2">Konum</th>
                       <th className="text-left py-3 px-2">Tarih</th>
                       <th className="text-right py-3 px-2">İşlemler</th>
@@ -727,7 +730,7 @@ export default function AdminPage() {
                   <tbody>
                     {isListingsLoading ? (
                       <tr className="border-b hover:bg-muted/50">
-                        <td className="py-3 px-2" colSpan={6}>
+                        <td className="py-3 px-2" colSpan={7}>
                           <div className="flex justify-center py-8">
                             <Loader2 className="h-8 w-8 animate-spin text-border" />
                           </div>
@@ -760,6 +763,27 @@ export default function AdminPage() {
                                  listing.listingType}
                               </span>
                             </td>
+                            <td className="py-3 px-2">
+                              <div className="flex flex-col gap-1">
+                                <span className={`px-2 py-1 rounded-full text-xs inline-flex items-center w-fit ${
+                                  listing.status === "active" ? "bg-green-100 text-green-700" : 
+                                  "bg-gray-100 text-gray-700"
+                                }`}>
+                                  {listing.status === "active" ? "Aktif" : "Pasif"}
+                                </span>
+                                
+                                <span className={`px-2 py-1 rounded-full text-xs inline-flex items-center w-fit ${
+                                  listing.transactionStatus === "available" ? "bg-blue-100 text-blue-700" : 
+                                  listing.transactionStatus === "sold" ? "bg-red-100 text-red-700" : 
+                                  "bg-purple-100 text-purple-700"
+                                }`}>
+                                  {listing.transactionStatus === "available" ? "Müsait" : 
+                                   listing.transactionStatus === "sold" ? "Satıldı" :
+                                   listing.transactionStatus === "rented" ? "Kiralandı" :
+                                   listing.transactionStatus}
+                                </span>
+                              </div>
+                            </td>
                             <td className="py-3 px-2 truncate max-w-[150px]">
                               {city?.name || "Belirtilmemiş"}
                             </td>
@@ -781,7 +805,7 @@ export default function AdminPage() {
                       })
                     ) : (
                       <tr className="border-b hover:bg-muted/50">
-                        <td className="py-8 px-2 text-center text-muted-foreground" colSpan={6}>
+                        <td className="py-8 px-2 text-center text-muted-foreground" colSpan={7}>
                           Henüz ilan bulunmamaktadır
                         </td>
                       </tr>
@@ -1342,19 +1366,50 @@ export default function AdminPage() {
               </div>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <Switch 
-                id="isFeatured"
-                checked={selectedListing?.isFeatured || false}
-                onCheckedChange={(checked) => {
-                  setSelectedListing(prev => prev ? {...prev, isFeatured: checked} : null);
-                  // İlan öne çıkan olarak işaretlendiğinde anasayfadaki featured-listings sorgusu da yenilensin
-                  if (checked) {
-                    queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
-                  }
-                }}
-              />
-              <Label htmlFor="isFeatured">Öne Çıkan İlan</Label>
+            <div className="grid gap-4">
+              <div className="flex items-center space-x-2">
+                <Switch 
+                  id="isFeatured"
+                  checked={selectedListing?.isFeatured || false}
+                  onCheckedChange={(checked) => {
+                    setSelectedListing(prev => prev ? {...prev, isFeatured: checked} : null);
+                    // İlan öne çıkan olarak işaretlendiğinde anasayfadaki featured-listings sorgusu da yenilensin
+                    if (checked) {
+                      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+                    }
+                  }}
+                />
+                <Label htmlFor="isFeatured">Öne Çıkan İlan</Label>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="status">İlan Durumu</Label>
+                  <select
+                    id="status"
+                    value={selectedListing?.status || "active"}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, status: e.target.value as "active" | "passive"} : null)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="active">Aktif</option>
+                    <option value="passive">Pasif</option>
+                  </select>
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="transactionStatus">İşlem Durumu</Label>
+                  <select
+                    id="transactionStatus"
+                    value={selectedListing?.transactionStatus || "available"}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, transactionStatus: e.target.value as "available" | "sold" | "rented"} : null)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="available">Müsait</option>
+                    <option value="sold">Satıldı</option>
+                    <option value="rented">Kiralandı</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
           
