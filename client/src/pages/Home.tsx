@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { ContactInfo } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 const Home = () => {
   // İletişim bilgilerini çekme
@@ -37,22 +38,42 @@ const Home = () => {
           {/* Sayılarla Co Worker */}
           <div className="bg-white rounded-xl shadow-xl p-8 mb-20">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div className="p-4">
-                <div className="text-4xl md:text-5xl font-bold text-[#3498DB] mb-2">700+</div>
-                <div className="text-sm md:text-base text-[#7F8C8D]">Kurumsal İş Ortağı</div>
-              </div>
-              <div className="p-4">
-                <div className="text-4xl md:text-5xl font-bold text-[#3498DB] mb-2">15K+</div>
-                <div className="text-sm md:text-base text-[#7F8C8D]">Sektör Profesyoneli</div>
-              </div>
-              <div className="p-4">
-                <div className="text-4xl md:text-5xl font-bold text-[#3498DB] mb-2">120B+</div>
-                <div className="text-sm md:text-base text-[#7F8C8D]">Tamamlanan İşlem</div>
-              </div>
-              <div className="p-4">
-                <div className="text-4xl md:text-5xl font-bold text-[#3498DB] mb-2">%98</div>
+              <motion.div 
+                className="p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2] mb-2">Güçlü</div>
+                <div className="text-sm md:text-base text-[#7F8C8D]">Kurumsal İş Ortaklığı</div>
+              </motion.div>
+              <motion.div 
+                className="p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2] mb-2">Uzman</div>
+                <div className="text-sm md:text-base text-[#7F8C8D]">Sektör Profesyonelleri</div>
+              </motion.div>
+              <motion.div 
+                className="p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2] mb-2">Yüksek</div>
+                <div className="text-sm md:text-base text-[#7F8C8D]">İşlem Hacmi</div>
+              </motion.div>
+              <motion.div 
+                className="p-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <div className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2] mb-2">Tam</div>
                 <div className="text-sm md:text-base text-[#7F8C8D]">Müşteri Memnuniyeti</div>
-              </div>
+              </motion.div>
             </div>
           </div>
           
