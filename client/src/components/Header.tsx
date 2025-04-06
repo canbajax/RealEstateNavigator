@@ -1,11 +1,21 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Compass } from "lucide-react";
+import { Compass, LogOut, User, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../hooks/use-auth";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, logoutMutation } = useAuth();
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -58,12 +68,52 @@ const Header = () => {
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white">
-              Giriş Yap
-            </Button>
-            <Button className="bg-[#3498DB] text-white hover:bg-[#5DADE2]">
-              İlan Ver
-            </Button>
+            {!user ? (
+              // Kullanıcı giriş yapmamış
+              <Link href="/auth">
+                <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Giriş Yap
+                </Button>
+              </Link>
+            ) : (
+              // Kullanıcı giriş yapmış
+              <div className="flex items-center space-x-4">
+                {user.role === "admin" && (
+                  <Link href="/admin">
+                    <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white">
+                      Yönetim Paneli
+                    </Button>
+                  </Link>
+                )}
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.avatarUrl || ""} alt={user.fullName} />
+                        <AvatarFallback className="bg-[#3498DB] text-white">
+                          {user.fullName.split(" ").map(n => n[0]).join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium">{user.fullName}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => logoutMutation.mutate()}>
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Çıkış Yap
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
           
           {/* Mobile Menu Button */}
@@ -112,12 +162,44 @@ const Header = () => {
               </a>
             </Link>
             <div className="flex flex-col space-y-2 mt-4">
-              <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white w-full">
-                Giriş Yap
-              </Button>
-              <Button className="bg-[#3498DB] text-white hover:bg-[#5DADE2] w-full">
-                İlan Ver
-              </Button>
+              {!user ? (
+                <Link href="/auth">
+                  <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white w-full">
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Giriş Yap
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  {user.role === "admin" && (
+                    <Link href="/admin">
+                      <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white w-full">
+                        Yönetim Paneli
+                      </Button>
+                    </Link>
+                  )}
+                  <div className="flex items-center gap-2 px-3 py-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatarUrl || ""} alt={user.fullName} />
+                      <AvatarFallback className="bg-[#3498DB] text-white">
+                        {user.fullName.split(" ").map(n => n[0]).join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{user.fullName}</span>
+                      <span className="text-xs text-muted-foreground">{user.email}</span>
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white w-full"
+                    onClick={() => logoutMutation.mutate()}
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Çıkış Yap
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

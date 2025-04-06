@@ -11,6 +11,8 @@ export const users = pgTable("users", {
   email: text("email").notNull(),
   phone: text("phone"),
   avatarUrl: text("avatar_url"),
+  role: text("role").notNull().default("agent"), // "admin" or "agent"
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -20,6 +22,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   email: true,
   phone: true,
   avatarUrl: true,
+  role: true,
 });
 
 // Cities table

@@ -1,11 +1,13 @@
-import express, { type Express, Request, Response } from "express";
+import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { MemStorage, type ListingFilters } from "./storage";
 import { z } from "zod";
 import { 
   insertContactMessageSchema,
-  insertListingSchema
+  insertListingSchema,
+  insertUserSchema
 } from "@shared/schema";
+import { setupAuth } from "./auth";
 
 // Create storage instance
 const storage = new MemStorage();
@@ -13,6 +15,9 @@ const storage = new MemStorage();
 const router = express.Router();
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup auth
+  setupAuth(app, storage);
+  
   // API routes
   app.use("/api", router);
   
@@ -178,6 +183,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(500).json({ message: "Failed to send message" });
     }
+  });
+  
+  // Get users (protected, admin only)
+  router.get("/users", (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    // Get all users without sending password
+    storage.getUsers().then(users => {
+      const safeUsers = users.map(({ password, ...user }) => user);
+      res.json({ success: true, users: safeUsers });
+    });
+  });
+  
+  // Get statistics (counts) for admin dashboard
+  router.get("/admin/stats", (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    Promise.all([
+      storage.getUsers(),
+      storage.getListings(),
+      storage.getListings({ listingType: "sell" }),
+      storage.getListings({ listingType: "rent" })
+    ]).then(([users, allListings, sellListings, rentListings]) => {
+      res.json({
+        success: true,
+        stats: {
+          totalUsers: users.length,
+          totalListings: allListings.length,
+          sellListings: sellListings.length,
+          rentListings: rentListings.length
+        }
+      });
+    }).catch(err => {
+      res.status(500).json({ message: "Failed to fetch statistics" });
+    });
   });
 
   const httpServer = createServer(app);

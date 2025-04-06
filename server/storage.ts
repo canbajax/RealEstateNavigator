@@ -9,8 +9,11 @@ import {
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
+  getUsers(): Promise<User[]>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
   
   // City operations
   getCities(): Promise<City[]>;
@@ -86,17 +89,47 @@ export class MemStorage implements IStorage {
     );
   }
 
+  async getUsers(): Promise<User[]> {
+    return Array.from(this.users.values());
+  }
+  
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
+    const now = new Date();
     // Ensure phone and avatarUrl are not undefined
     const userWithDefaults = {
       ...insertUser,
       phone: insertUser.phone || null,
-      avatarUrl: insertUser.avatarUrl || null
+      avatarUrl: insertUser.avatarUrl || null,
+      role: insertUser.role || "agent",
+      createdAt: now
     };
     const user: User = { ...userWithDefaults, id };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser: User = {
+      ...user,
+      ...userData,
+      phone: userData.phone !== undefined ? userData.phone : user.phone,
+      avatarUrl: userData.avatarUrl !== undefined ? userData.avatarUrl : user.avatarUrl,
+      role: userData.role || user.role
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    if (!this.users.has(id)) {
+      return false;
+    }
+    return this.users.delete(id);
   }
   
   // City operations
@@ -353,8 +386,19 @@ export class MemStorage implements IStorage {
       "https://randomuser.me/api/portraits/women/10.jpg"
     ];
 
-    // Generate 20 real estate agents
+    // Generate 20 real estate agents and 1 admin
     const usersData: InsertUser[] = [];
+    
+    // Add admin user
+    usersData.push({
+      username: "admin",
+      password: "admin123", // Demo password, would be hashed in production
+      fullName: "Admin User",
+      email: "admin@emlakcompass.com",
+      phone: "+905551234567",
+      avatarUrl: "https://randomuser.me/api/portraits/men/0.jpg",
+      role: "admin"
+    });
     
     // Add 12 male agents
     for (let i = 0; i < 12; i++) {
@@ -372,7 +416,8 @@ export class MemStorage implements IStorage {
         fullName,
         email,
         phone,
-        avatarUrl
+        avatarUrl,
+        role: "agent"
       });
     }
     
@@ -392,7 +437,8 @@ export class MemStorage implements IStorage {
         fullName,
         email,
         phone,
-        avatarUrl
+        avatarUrl,
+        role: "agent"
       });
     }
     
