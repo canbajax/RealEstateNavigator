@@ -23,6 +23,18 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/listings" component={Listings} />
           <Route path="/listings/:id" component={ListingDetail} />
+          <Route path="/about">
+            {() => {
+              const AboutPage = require("./pages/AboutPage").AboutPage;
+              return <AboutPage />;
+            }}
+          </Route>
+          <Route path="/agents">
+            {() => {
+              const AgentsPage = require("./pages/AgentsPage").AgentsPage;
+              return <AgentsPage />;
+            }}
+          </Route>
           <Route path="/contact" component={Contact} />
           <Route path="/auth" component={AuthPage} />
           <ProtectedRoute path="/admin" component={AdminPage} />

@@ -119,6 +119,16 @@ const Header = () => {
                 İlanlar
               </a>
             </Link>
+            <Link href="/about">
+              <a className={`font-medium ${isActive('/about') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
+                Hakkımızda
+              </a>
+            </Link>
+            <Link href="/agents">
+              <a className={`font-medium ${isActive('/agents') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
+                Danışmanlarımız
+              </a>
+            </Link>
             <Link href="/contact">
               <a className={`font-medium ${isActive('/contact') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
                 İletişim
