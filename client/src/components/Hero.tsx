@@ -56,11 +56,7 @@ const Hero = () => {
     }
     
     // Listeleme türünü ekle (satılık/kiralık/günlük)
-    // Arama tipini her zaman eklemeliyiz!
     params.append("listingType", listingType);
-    
-    // Debug bilgisi
-    console.log("Ana sayfa arama parametreleri:", params.toString());
     
     // Arama sayfasına yönlendir - wouter yerine window.location kullan
     window.location.href = `/listings?${params.toString()}`;
@@ -79,40 +75,16 @@ const Hero = () => {
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
-          className="text-center mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
-          <motion.h1 
-            className="font-bold text-3xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
+        <div className="text-center mb-12">
+          <h1 className="font-bold text-3xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
             Co Worker ile <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Kazançlı</span> Yatırımlar
-          </motion.h1>
-          <motion.p 
-            className="text-xl text-white opacity-90 max-w-3xl mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            Türkiye'nin en güvenilir emlak ağında <strong>15.000+</strong> sektör profesyoneli ve <strong>700+</strong> kurumsal iş ortağı ile 
+          </h1>
+          <p className="text-xl text-white opacity-90 max-w-3xl mx-auto">
+            Türkiye'nin en güvenilir emlak ağında sektör profesyonelleri ve kurumsal iş ortaklarımız ile 
             emlak yatırımlarınızı değerlendirelim. Kazançlı yatırımlar, doğru iş ortaklıkları ve profesyonel güvence Co Worker'da.
-          </motion.p>
-          <motion.div 
-            className="flex justify-center items-center gap-6 mt-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
-          >
-            <motion.div 
-              className="flex items-center text-white"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
+          </p>
+          <div className="flex flex-wrap justify-center items-center gap-6 mt-4">
+            <div className="flex items-center text-white">
               <span className="bg-white/20 p-2 rounded-full mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -120,24 +92,16 @@ const Hero = () => {
                 </svg>
               </span>
               <span className="text-sm">Güvenilir İş Ortakları</span>
-            </motion.div>
-            <motion.div 
-              className="flex items-center text-white"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
+            </div>
+            <div className="flex items-center text-white">
               <span className="bg-white/20 p-2 rounded-full mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
                 </svg>
               </span>
               <span className="text-sm">Yüksek Kazanç Potansiyeli</span>
-            </motion.div>
-            <motion.div 
-              className="flex items-center text-white"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
+            </div>
+            <div className="flex items-center text-white">
               <span className="bg-white/20 p-2 rounded-full mr-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -145,17 +109,12 @@ const Hero = () => {
                 </svg>
               </span>
               <span className="text-sm">%100 Güvenli İşlemler</span>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </div>
+          </div>
+        </div>
         
         {/* Search Box */}
-        <motion.div 
-          className="bg-white rounded-xl p-4 sm:p-6 max-w-5xl mx-auto shadow-xl border border-gray-200"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.7, type: "spring" }}
-        >
+        <div className="bg-white rounded-xl p-4 sm:p-6 max-w-5xl mx-auto shadow-xl border border-gray-200">
           {/* İlan Türü Seçimi */}
           <Tabs defaultValue="sell" className="mb-6" onValueChange={(value) => setListingType(value)}>
             <TabsList className="grid w-full grid-cols-3">
@@ -361,7 +320,7 @@ const Hero = () => {
                 
                 {/* Fiyat Aralığı */}
                 <div>
-                  <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Günlük Kira</label>
+                  <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Günlük Fiyat</label>
                   <div className="flex h-12">
                     <Input 
                       type="text" 
@@ -407,7 +366,7 @@ const Hero = () => {
               <ChevronDown className="ml-1 h-4 w-4" />
             </Button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
