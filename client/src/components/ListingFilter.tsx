@@ -140,81 +140,60 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
       </div>
       
       <div className="p-0 divide-y divide-[#E5E5E5]">
-        {/* Emlak Tipi - Satılık */}
+        {/* Ana Kategoriler: Satılık, Kiralık, Günlük Kiralık */}
         <div className="px-4 py-3">
-          <h4 className="font-medium text-sm mb-2">Satılık</h4>
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            {propertyTypesLoading ? (
-              <div className="col-span-2 space-y-2">
-                <Skeleton className="h-6 w-full" />
-              </div>
-            ) : propertyTypes?.slice(0, 6).map(type => (
-              <div 
-                key={`sell-${type.id}`} 
-                className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() && filters.listingType === 'sell' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
-                onClick={() => {
-                  handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() && filters.listingType === 'sell' ? '' : type.id.toString())
-                  handleInputChange('listingType', 'sell')
-                }}
-              >
-                <span>{type.name}</span>
-                <span className="text-xs text-gray-500">({Math.floor(type.listingCount * 0.6)})</span>
-              </div>
-            ))}
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <Button
+              variant={filters.listingType === 'sell' ? "default" : "outline"}
+              className={`w-full ${filters.listingType === 'sell' ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'sell' ? '' : 'sell')}
+            >
+              Satılık
+            </Button>
+            <Button
+              variant={filters.listingType === 'rent' ? "default" : "outline"}
+              className={`w-full ${filters.listingType === 'rent' ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'rent' ? '' : 'rent')}
+            >
+              Kiralık
+            </Button>
+            <Button
+              variant={filters.listingType === 'daily' ? "default" : "outline"}
+              className={`w-full ${filters.listingType === 'daily' ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'daily' ? '' : 'daily')}
+            >
+              Günlük
+            </Button>
           </div>
         </div>
         
-        {/* Emlak Tipi - Kiralık */}
-        <div className="px-4 py-3 border-t border-[#E5E5E5]">
-          <h4 className="font-medium text-sm mb-2">Kiralık</h4>
-          <div className="grid grid-cols-2 gap-2 mb-2">
-            {propertyTypesLoading ? (
-              <div className="col-span-2 space-y-2">
-                <Skeleton className="h-6 w-full" />
-              </div>
-            ) : propertyTypes?.slice(0, 6).map(type => (
-              <div 
-                key={`rent-${type.id}`} 
-                className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() && filters.listingType === 'rent' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
-                onClick={() => {
-                  handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() && filters.listingType === 'rent' ? '' : type.id.toString())
-                  handleInputChange('listingType', 'rent')
-                }}
-              >
-                <span>{type.name}</span>
-                <span className="text-xs text-gray-500">({Math.floor(type.listingCount * 0.3)})</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Emlak Tipi - Günlük Kiralık */}
-        <div className="px-4 py-3 border-t border-[#E5E5E5]">
-          <h4 className="font-medium text-sm mb-2">Günlük Kiralık</h4>
+        {/* Emlak Tipi - Dinamik olarak listingType'a göre gösterilir */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Emlak Tipi</h4>
           <div className="grid grid-cols-2 gap-2">
             {propertyTypesLoading ? (
               <div className="col-span-2 space-y-2">
                 <Skeleton className="h-6 w-full" />
+                <Skeleton className="h-6 w-full" />
               </div>
-            ) : propertyTypes?.slice(0, 4).map(type => (
-              <div 
-                key={`daily-${type.id}`} 
-                className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() && filters.listingType === 'daily' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
-                onClick={() => {
-                  handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() && filters.listingType === 'daily' ? '' : type.id.toString())
-                  handleInputChange('listingType', 'daily')
-                }}
-              >
-                <span>{type.name}</span>
-                <span className="text-xs text-gray-500">({Math.floor(type.listingCount * 0.1)})</span>
-              </div>
-            ))}
+            ) : (
+              propertyTypes?.slice(0, 8).map(type => (
+                <div 
+                  key={type.id} 
+                  className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+                  onClick={() => handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() ? '' : type.id.toString())}
+                >
+                  <span>{type.name}</span>
+                  <span className="text-xs text-gray-500">({type.listingCount})</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
         
-        {/* Adres */}
+        {/* Konum / Adres */}
         <div className="px-4 py-3">
-          <h4 className="font-medium text-sm mb-2">Adres</h4>
+          <h4 className="font-medium text-sm mb-2">Konum</h4>
           <div className="space-y-2">
             <Select onValueChange={(value) => handleInputChange('cityId', value)}>
               <SelectTrigger className="w-full border-[#E5E5E5]">
@@ -250,7 +229,7 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
         {/* Fiyat */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Fiyat</h4>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 mb-2">
             <Input
               type="text"
               placeholder="min TL"
@@ -267,15 +246,28 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
               className="border-[#E5E5E5]"
             />
           </div>
+          <div>
+            <p className="text-xs text-[#7F8C8D] mb-2">
+              ₺{formatPrice(priceRange[0])} - ₺{formatPrice(priceRange[1])}
+            </p>
+            <Slider
+              value={priceRange}
+              onValueChange={handlePriceRangeChange}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
         </div>
         
-        {/* m2 (Brüt) */}
+        {/* m² (Alanlar) */}
         <div className="px-4 py-3">
-          <h4 className="font-medium text-sm mb-2">m² (Brüt)</h4>
-          <div className="grid grid-cols-2 gap-2">
+          <h4 className="font-medium text-sm mb-2">m² (Alan)</h4>
+          <div className="grid grid-cols-2 gap-2 mb-2">
             <Input
               type="text"
-              placeholder="min"
+              placeholder="min m²"
               value={filters.minSquareMeters || ''}
               onChange={(e) => handleInputChange('minSquareMeters', e.target.value)}
               className="border-[#E5E5E5]"
@@ -283,28 +275,23 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
             
             <Input
               type="text"
-              placeholder="max"
+              placeholder="max m²"
               value={filters.maxSquareMeters || ''}
               onChange={(e) => handleInputChange('maxSquareMeters', e.target.value)}
               className="border-[#E5E5E5]"
             />
           </div>
-        </div>
-        
-        {/* m2 (Net) */}
-        <div className="px-4 py-3">
-          <h4 className="font-medium text-sm mb-2">m² (Net)</h4>
-          <div className="grid grid-cols-2 gap-2">
-            <Input
-              type="text"
-              placeholder="min"
-              className="border-[#E5E5E5]"
-            />
-            
-            <Input
-              type="text"
-              placeholder="max"
-              className="border-[#E5E5E5]"
+          <div>
+            <p className="text-xs text-[#7F8C8D] mb-2">
+              {formatArea(areaRange[0])}m² - {formatArea(areaRange[1])}m²
+            </p>
+            <Slider
+              value={areaRange}
+              onValueChange={handleAreaRangeChange}
+              min={0}
+              max={100}
+              step={1}
+              className="w-full"
             />
           </div>
         </div>
@@ -326,170 +313,6 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
           </div>
         </div>
         
-
-        
-        {/* Location */}
-        <Accordion type="single" collapsible defaultValue="location">
-          <AccordionItem value="location" className="border-none">
-            <AccordionTrigger className="py-3 px-0">
-              <span className="font-medium flex items-center">
-                <MapPin className="mr-2 h-4 w-4 text-[#3498DB]" />
-                Konum
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-2">
-              {citiesLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                </div>
-              ) : (
-                cities?.map(city => (
-                  <div key={city.id} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`city-${city.id}`} 
-                      checked={filters.cityId === city.id.toString()}
-                      onCheckedChange={(checked) => {
-                        handleInputChange('cityId', checked ? city.id.toString() : '');
-                      }}
-                    />
-                    <Label 
-                      htmlFor={`city-${city.id}`}
-                      className="cursor-pointer"
-                    >
-                      {city.name} ({city.listingCount})
-                    </Label>
-                  </div>
-                ))
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        
-        {/* Price Range */}
-        <Accordion type="single" collapsible defaultValue="price">
-          <AccordionItem value="price" className="border-none">
-            <AccordionTrigger className="py-3 px-0">
-              <span className="font-medium">Fiyat Aralığı</span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-[#7F8C8D] mb-5">
-                    ₺{formatPrice(priceRange[0])} - ₺{formatPrice(priceRange[1])}
-                  </p>
-                  <Slider
-                    value={priceRange}
-                    onValueChange={handlePriceRangeChange}
-                    min={0}
-                    max={100}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="minPrice" className="text-xs">Min Fiyat</Label>
-                    <Input
-                      id="minPrice"
-                      type="number"
-                      placeholder="Min ₺"
-                      value={filters.minPrice || ''}
-                      onChange={(e) => handleInputChange('minPrice', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="maxPrice" className="text-xs">Max Fiyat</Label>
-                    <Input
-                      id="maxPrice"
-                      type="number"
-                      placeholder="Max ₺"
-                      value={filters.maxPrice || ''}
-                      onChange={(e) => handleInputChange('maxPrice', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        
-        {/* Area Range */}
-        <Accordion type="single" collapsible>
-          <AccordionItem value="area" className="border-none">
-            <AccordionTrigger className="py-3 px-0">
-              <span className="font-medium">Alan (m²)</span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm text-[#7F8C8D] mb-5">
-                    {formatArea(areaRange[0])}m² - {formatArea(areaRange[1])}m²
-                  </p>
-                  <Slider
-                    value={areaRange}
-                    onValueChange={handleAreaRangeChange}
-                    min={0}
-                    max={100}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="minArea" className="text-xs">Min Alan</Label>
-                    <Input
-                      id="minArea"
-                      type="number"
-                      placeholder="Min m²"
-                      value={filters.minSquareMeters || ''}
-                      onChange={(e) => handleInputChange('minSquareMeters', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="maxArea" className="text-xs">Max Alan</Label>
-                    <Input
-                      id="maxArea"
-                      type="number"
-                      placeholder="Max m²"
-                      value={filters.maxSquareMeters || ''}
-                      onChange={(e) => handleInputChange('maxSquareMeters', e.target.value)}
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        
-        {/* Bedrooms */}
-        <Accordion type="single" collapsible>
-          <AccordionItem value="bedrooms" className="border-none">
-            <AccordionTrigger className="py-3 px-0">
-              <span className="font-medium">Oda Sayısı</span>
-            </AccordionTrigger>
-            <AccordionContent>
-              <div className="grid grid-cols-3 gap-2">
-                {[1, 2, 3, 4, 5, "5+"].map((value) => (
-                  <Button
-                    key={value}
-                    variant={filters.roomCount === value.toString() ? "default" : "outline"}
-                    className={`w-full ${filters.roomCount === value.toString() ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : ''}`}
-                    onClick={() => handleInputChange('roomCount', value.toString())}
-                  >
-                    {value}
-                  </Button>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        
         {/* Bina Yaşı */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Bina Yaşı</h4>
@@ -507,7 +330,7 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
           </div>
         </div>
         
-        {/* Kat Sayısı */}
+        {/* Bulunduğu Kat */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Bulunduğu Kat</h4>
           <div className="grid grid-cols-3 gap-2">
@@ -541,15 +364,45 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
           </div>
         </div>
         
-        {/* Eşyalı */}
+        {/* Özellikler */}
         <div className="px-4 py-3">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="isFurnished"
-              checked={filters.isFurnished === "true"}
-              onCheckedChange={(checked) => handleInputChange('isFurnished', checked ? "true" : "")}
-            />
-            <Label htmlFor="isFurnished" className="cursor-pointer">Eşyalı</Label>
+          <h4 className="font-medium text-sm mb-2">Özellikler</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="isFurnished"
+                checked={filters.isFurnished === "true"}
+                onCheckedChange={(checked) => handleInputChange('isFurnished', checked ? "true" : "")}
+              />
+              <Label htmlFor="isFurnished" className="cursor-pointer text-sm">Eşyalı</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasBalcony"
+                checked={filters.hasBalcony === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasBalcony', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasBalcony" className="cursor-pointer text-sm">Balkonlu</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasElevator"
+                checked={filters.hasElevator === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasElevator', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasElevator" className="cursor-pointer text-sm">Asansörlü</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasParking"
+                checked={filters.hasParking === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasParking', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasParking" className="cursor-pointer text-sm">Otopark</Label>
+            </div>
           </div>
         </div>
         
