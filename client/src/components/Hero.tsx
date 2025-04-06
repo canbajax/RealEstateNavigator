@@ -80,11 +80,40 @@ const Hero = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
           <h1 className="font-bold text-3xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
-            Hayalinizdeki <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Emlağı</span> Bulun
+            Co Worker ile <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Kazançlı</span> Yatırımlar
           </h1>
-          <p className="text-xl text-white opacity-90 max-w-2xl mx-auto">
-            Türkiye'nin en kapsamlı ve güvenilir emlak portalında aradığınız mükemmel mülkü keşfedin.
+          <p className="text-xl text-white opacity-90 max-w-3xl mx-auto">
+            Türkiye'nin en güvenilir emlak ağında <strong>15.000+</strong> sektör profesyoneli ve <strong>700+</strong> kurumsal iş ortağı ile 
+            emlak yatırımlarınızı değerlendirelim. Kazançlı yatırımlar, doğru iş ortaklıkları ve profesyonel güvence Co Worker'da.
           </p>
+          <div className="flex justify-center items-center gap-6 mt-4">
+            <div className="flex items-center text-white">
+              <span className="bg-white/20 p-2 rounded-full mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </span>
+              <span className="text-sm">Güvenilir İş Ortakları</span>
+            </div>
+            <div className="flex items-center text-white">
+              <span className="bg-white/20 p-2 rounded-full mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
+                </svg>
+              </span>
+              <span className="text-sm">Yüksek Kazanç Potansiyeli</span>
+            </div>
+            <div className="flex items-center text-white">
+              <span className="bg-white/20 p-2 rounded-full mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </span>
+              <span className="text-sm">%100 Güvenli İşlemler</span>
+            </div>
+          </div>
         </div>
         
         {/* Search Box */}
