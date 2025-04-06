@@ -84,7 +84,11 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
       params.append("listingType", searchParams.listingType);
     }
     
-    setLocation(`/listings?${params.toString()}`);
+    // Diğer parametreleri de ekle
+    const queryString = params.toString();
+    console.log("Arama parametreleri:", queryString);
+    
+    setLocation(`/listings?${queryString}`);
   };
 
   return (
