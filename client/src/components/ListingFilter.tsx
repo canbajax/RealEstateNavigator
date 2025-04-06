@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Building, MapPin, SquareStack, Home } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Building, MapPin, SquareStack, Home, DollarSign, Bath, Car, Thermometer, Compass, Sparkles, Search, Square } from "lucide-react";
 import { type PropertyType, type City } from "@shared/schema";
 
 interface ListingFilterProps {
@@ -130,38 +131,127 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
   };
 
   return (
-    <Card className="sticky top-24">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-xl flex items-center">
-          <SquareStack className="mr-2 h-5 w-5 text-[#3498DB]" />
-          Filtreleme
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        {/* Listing Type */}
-        <div>
-          <h3 className="font-medium mb-3 flex items-center">
-            <Home className="mr-2 h-4 w-4 text-[#3498DB]" />
-            İlan Türü
-          </h3>
-          <RadioGroup 
-            value={filters.listingType || ''} 
-            onValueChange={(value) => handleInputChange('listingType', value)}
-            className="flex flex-col space-y-2"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="sell" id="sell" />
-              <Label htmlFor="sell" className="cursor-pointer">Satılık</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="rent" id="rent" />
-              <Label htmlFor="rent" className="cursor-pointer">Kiralık</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="daily" id="daily" />
-              <Label htmlFor="daily" className="cursor-pointer">Günlük Kiralık</Label>
-            </div>
-          </RadioGroup>
+    <div className="bg-white rounded-md shadow-sm border border-[#E5E5E5]">
+      <div className="px-4 py-3 border-b border-[#E5E5E5]">
+        <h3 className="text-base font-medium flex items-center">
+          <Search className="mr-2 h-4 w-4 text-[#3498DB]" />
+          Filtreler
+        </h3>
+      </div>
+      
+      <div className="p-0 divide-y divide-[#E5E5E5]">
+        {/* Adres */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Adres</h4>
+          <div className="space-y-2">
+            <Select onValueChange={(value) => handleInputChange('cityId', value)}>
+              <SelectTrigger className="w-full border-[#E5E5E5]">
+                <SelectValue placeholder="İl" />
+              </SelectTrigger>
+              <SelectContent>
+                {cities?.map(city => (
+                  <SelectItem key={city.id} value={city.id.toString()}>{city.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Select>
+              <SelectTrigger className="w-full border-[#E5E5E5]">
+                <SelectValue placeholder="İlçe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="placeholder">İlçe seçimi için önce il seçin</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <Select>
+              <SelectTrigger className="w-full border-[#E5E5E5]">
+                <SelectValue placeholder="Mahalle" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="placeholder">Mahalle seçimi için önce ilçe seçin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        {/* Fiyat */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Fiyat</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              type="text"
+              placeholder="min TL"
+              value={filters.minPrice || ''}
+              onChange={(e) => handleInputChange('minPrice', e.target.value)}
+              className="border-[#E5E5E5]"
+            />
+            
+            <Input
+              type="text"
+              placeholder="max TL"
+              value={filters.maxPrice || ''}
+              onChange={(e) => handleInputChange('maxPrice', e.target.value)}
+              className="border-[#E5E5E5]"
+            />
+          </div>
+        </div>
+        
+        {/* m2 (Brüt) */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">m² (Brüt)</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              type="text"
+              placeholder="min"
+              value={filters.minSquareMeters || ''}
+              onChange={(e) => handleInputChange('minSquareMeters', e.target.value)}
+              className="border-[#E5E5E5]"
+            />
+            
+            <Input
+              type="text"
+              placeholder="max"
+              value={filters.maxSquareMeters || ''}
+              onChange={(e) => handleInputChange('maxSquareMeters', e.target.value)}
+              className="border-[#E5E5E5]"
+            />
+          </div>
+        </div>
+        
+        {/* m2 (Net) */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">m² (Net)</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <Input
+              type="text"
+              placeholder="min"
+              className="border-[#E5E5E5]"
+            />
+            
+            <Input
+              type="text"
+              placeholder="max"
+              className="border-[#E5E5E5]"
+            />
+          </div>
+        </div>
+        
+        {/* Oda Sayısı */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Oda Sayısı</h4>
+          <div className="grid grid-cols-3 gap-2">
+            {["1+0", "1+1", "2+1", "3+1", "4+1", "5+"].map((value) => (
+              <Button
+                key={value}
+                variant={filters.roomCount === value.toString() ? "default" : "outline"}
+                className={`w-full text-xs py-1 px-2 h-auto ${filters.roomCount === value.toString() ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('roomCount', value.toString())}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
         </div>
         
         {/* Property Type */}
@@ -365,24 +455,109 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
           </AccordionItem>
         </Accordion>
         
-        {/* Action Buttons */}
-        <div className="flex gap-2 pt-4">
-          <Button 
-            variant="outline" 
-            className="flex-1"
-            onClick={resetFilters}
-          >
-            Temizle
-          </Button>
-          <Button 
-            className="flex-1 bg-[#3498DB] hover:bg-[#5DADE2]"
-            onClick={applyFilters}
-          >
-            Filtrele
-          </Button>
+        {/* Bina Yaşı */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Bina Yaşı</h4>
+          <div className="grid grid-cols-3 gap-2">
+            {["0", "1-5", "6-10", "11-15", "16-20", "21+"].map((value) => (
+              <Button
+                key={value}
+                variant={filters.buildingAge === value ? "default" : "outline"}
+                className={`w-full text-xs py-1 px-2 h-auto ${filters.buildingAge === value ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('buildingAge', value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
         </div>
-      </CardContent>
-    </Card>
+        
+        {/* Kat Sayısı */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Bulunduğu Kat</h4>
+          <div className="grid grid-cols-3 gap-2">
+            {["1-3", "4-6", "7-10", "11+", "Bahçe", "Çatı"].map((value) => (
+              <Button
+                key={value}
+                variant={filters.floorNumber === value ? "default" : "outline"}
+                className={`w-full text-xs py-1 px-2 h-auto ${filters.floorNumber === value ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('floorNumber', value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Isıtma */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Isıtma</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {["Doğalgaz", "Merkezi", "Kombi", "Klima", "Soba", "Yerden Isıtma"].map((value) => (
+              <Button
+                key={value}
+                variant={filters.heatingType === value ? "default" : "outline"}
+                className={`w-full text-xs py-1 px-2 h-auto ${filters.heatingType === value ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('heatingType', value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Eşyalı */}
+        <div className="px-4 py-3">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="isFurnished"
+              checked={filters.isFurnished === "true"}
+              onCheckedChange={(checked) => handleInputChange('isFurnished', checked ? "true" : "")}
+            />
+            <Label htmlFor="isFurnished" className="cursor-pointer">Eşyalı</Label>
+          </div>
+        </div>
+        
+        {/* İlan Tarihi */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">İlan Tarihi</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {["Son 24 Saat", "Son 3 Gün", "Son 1 Hafta", "Son 1 Ay"].map((value) => (
+              <Button
+                key={value}
+                variant={filters.createdAfter === value ? "default" : "outline"}
+                className={`w-full text-xs py-1 px-2 h-auto ${filters.createdAfter === value ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('createdAfter', value)}
+              >
+                {value}
+              </Button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Filtreleme Butonları */}
+        <div className="px-4 py-3">
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              className="flex-1 border-[#E5E5E5] text-[#3498DB]"
+              onClick={resetFilters}
+            >
+              Temizle
+            </Button>
+            <Button 
+              className="flex-1 bg-[#3498DB] hover:bg-[#5DADE2]"
+              onClick={applyFilters}
+            >
+              Filtrele
+            </Button>
+          </div>
+          <p className="text-xs text-center mt-2 text-gray-500">
+            <a href="#" className="text-[#3498DB] hover:underline">Detaylı arama için tıklayın</a>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
