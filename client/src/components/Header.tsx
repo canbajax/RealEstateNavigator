@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Header = () => {
   const [location, setLocation] = useLocation();
@@ -31,6 +32,11 @@ const Header = () => {
   const [mortgageYears, setMortgageYears] = useState(10);
   const [interestRate, setInterestRate] = useState(1.29);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [calculatorTab, setCalculatorTab] = useState<'kredi' | 'komisyon'>('kredi');
+  
+  // Komisyon hesaplama değişkenleri
+  const [propertyValue, setPropertyValue] = useState(2000000);
+  const [commissionRate, setCommissionRate] = useState(2);
   const { user, logoutMutation } = useAuth();
 
   const toggleMobileMenu = () => {
@@ -59,6 +65,11 @@ const Header = () => {
   
   const totalPayment = calculateMonthlyPayment() * mortgageYears * 12;
   const totalInterest = totalPayment - mortgageAmount;
+  
+  // Komisyon hesaplama
+  const calculateCommission = () => {
+    return propertyValue * (commissionRate / 100);
+  };
   
   // Para birimi formatter
   const formatCurrency = (amount: number) => {
@@ -99,98 +110,169 @@ const Header = () => {
                 İletişim
               </a>
             </Link>
+            <a 
+              className={`font-medium ${showCalculator ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition cursor-pointer`}
+              onClick={() => setShowCalculator(true)}
+            >
+              Hesaplama
+            </a>
           </nav>
           
           <div className="hidden md:flex items-center space-x-4">
-            {/* Kredi Hesaplayıcı */}
+            {/* Hesaplama Araçları Dialog */}
             <Dialog open={showCalculator} onOpenChange={setShowCalculator}>
               <DialogTrigger asChild>
-                <Button variant="outline" className="border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white">
-                  <Calculator className="h-4 w-4 mr-2" />
-                  Kredi Hesaplayıcı
-                </Button>
+                <span></span>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                  <DialogTitle>Konut Kredisi Hesaplayıcı</DialogTitle>
+                  <DialogTitle>Hesaplama Araçları</DialogTitle>
                   <DialogDescription>
-                    Konut kredisi ödemelerinizi hesaplamak için bilgileri girin.
+                    Emlak işlemleriniz için hesaplama araçları
                   </DialogDescription>
                 </DialogHeader>
                 
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="amount">Kredi Tutarı: {formatCurrency(mortgageAmount)}</Label>
-                    <Slider
-                      id="amount"
-                      min={100000}
-                      max={10000000}
-                      step={50000}
-                      value={[mortgageAmount]}
-                      onValueChange={(value) => setMortgageAmount(value[0])}
-                      className="py-4"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>100.000 ₺</span>
-                      <span>10.000.000 ₺</span>
-                    </div>
-                  </div>
+                <Tabs defaultValue="kredi" className="w-full" onValueChange={(value) => setCalculatorTab(value as 'kredi' | 'komisyon')}>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="kredi">Kredi Hesaplama</TabsTrigger>
+                    <TabsTrigger value="komisyon">Komisyon Hesaplama</TabsTrigger>
+                  </TabsList>
                   
-                  <div className="grid gap-2">
-                    <Label htmlFor="years">Vade (Yıl): {mortgageYears} yıl</Label>
-                    <Slider
-                      id="years"
-                      min={1}
-                      max={30}
-                      step={1}
-                      value={[mortgageYears]}
-                      onValueChange={(value) => setMortgageYears(value[0])}
-                      className="py-4"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>1 yıl</span>
-                      <span>30 yıl</span>
+                  <TabsContent value="kredi" className="mt-4">
+                    <div className="grid gap-4 py-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="amount">Kredi Tutarı: {formatCurrency(mortgageAmount)}</Label>
+                        <Slider
+                          id="amount"
+                          min={100000}
+                          max={10000000}
+                          step={50000}
+                          value={[mortgageAmount]}
+                          onValueChange={(value) => setMortgageAmount(value[0])}
+                          className="py-4"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>100.000 ₺</span>
+                          <span>10.000.000 ₺</span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="years">Vade (Yıl): {mortgageYears} yıl</Label>
+                        <Slider
+                          id="years"
+                          min={1}
+                          max={30}
+                          step={1}
+                          value={[mortgageYears]}
+                          onValueChange={(value) => setMortgageYears(value[0])}
+                          className="py-4"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>1 yıl</span>
+                          <span>30 yıl</span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="interest">Faiz Oranı: %{interestRate}</Label>
+                        <Slider
+                          id="interest"
+                          min={0.1}
+                          max={5}
+                          step={0.01}
+                          value={[interestRate]}
+                          onValueChange={(value) => setInterestRate(value[0])}
+                          className="py-4"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>%0.10</span>
+                          <span>%5.00</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted p-4 rounded-lg">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Aylık Ödeme</p>
+                            <p className="text-lg font-bold">{formatCurrency(calculateMonthlyPayment())}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Toplam Ödeme</p>
+                            <p className="text-lg font-bold">{formatCurrency(totalPayment)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Toplam Faiz</p>
+                            <p className="text-lg font-bold">{formatCurrency(totalInterest)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Faiz Oranı</p>
+                            <p className="text-lg font-bold">%{interestRate}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  </TabsContent>
                   
-                  <div className="grid gap-2">
-                    <Label htmlFor="interest">Faiz Oranı: %{interestRate}</Label>
-                    <Slider
-                      id="interest"
-                      min={0.1}
-                      max={5}
-                      step={0.01}
-                      value={[interestRate]}
-                      onValueChange={(value) => setInterestRate(value[0])}
-                      className="py-4"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>%0.10</span>
-                      <span>%5.00</span>
+                  <TabsContent value="komisyon" className="mt-4">
+                    <div className="grid gap-4 py-2">
+                      <div className="grid gap-2">
+                        <Label htmlFor="propertyValue">Gayrimenkul Değeri: {formatCurrency(propertyValue)}</Label>
+                        <Slider
+                          id="propertyValue"
+                          min={100000}
+                          max={20000000}
+                          step={100000}
+                          value={[propertyValue]}
+                          onValueChange={(value) => setPropertyValue(value[0])}
+                          className="py-4"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>100.000 ₺</span>
+                          <span>20.000.000 ₺</span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="commissionRate">Komisyon Oranı: %{commissionRate}</Label>
+                        <Slider
+                          id="commissionRate"
+                          min={0.5}
+                          max={5}
+                          step={0.1}
+                          value={[commissionRate]}
+                          onValueChange={(value) => setCommissionRate(value[0])}
+                          className="py-4"
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>%0.5</span>
+                          <span>%5.0</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-muted p-4 rounded-lg">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Komisyon Tutarı</p>
+                            <p className="text-lg font-bold">{formatCurrency(calculateCommission())}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">KDV Dahil (%18)</p>
+                            <p className="text-lg font-bold">{formatCurrency(calculateCommission() * 1.18)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Gayrimenkul Değeri</p>
+                            <p className="text-lg font-bold">{formatCurrency(propertyValue)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-muted-foreground">Komisyon Oranı</p>
+                            <p className="text-lg font-bold">%{commissionRate}</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="bg-muted p-4 rounded-lg">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Aylık Ödeme</p>
-                        <p className="text-lg font-bold">{formatCurrency(calculateMonthlyPayment())}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Toplam Ödeme</p>
-                        <p className="text-lg font-bold">{formatCurrency(totalPayment)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Toplam Faiz</p>
-                        <p className="text-lg font-bold">{formatCurrency(totalInterest)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-muted-foreground">Faiz Oranı</p>
-                        <p className="text-lg font-bold">%{interestRate}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  </TabsContent>
+                </Tabs>
                 
                 <DialogFooter>
                   <Button 
@@ -286,14 +368,12 @@ const Header = () => {
                 İletişim
               </a>
             </Link>
-            <Button 
-              variant="outline" 
+            <a 
+              className={`block px-3 py-2 rounded-md font-medium ${showCalculator ? 'text-[#3498DB]' : 'text-[#2C3E50]'} hover:bg-[#ECF0F1] cursor-pointer`}
               onClick={() => setShowCalculator(true)}
-              className="w-full mt-2 border-[#3498DB] text-[#3498DB] hover:bg-[#3498DB] hover:text-white"
             >
-              <Calculator className="h-4 w-4 mr-2" />
-              Kredi Hesaplayıcı
-            </Button>
+              Hesaplama
+            </a>
             <div className="flex flex-col space-y-2 mt-4">
               {!user ? (
                 <Link href="/auth">

@@ -10,6 +10,8 @@ const OurAgents = () => {
   const { data, isLoading, error } = useQuery<{ success: boolean, agents: Agent[] }>({
     queryKey: ["/api/agents"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    refetchOnMount: true,
+    staleTime: 0, // Her zaman yeni veriyi getir
   });
 
   if (isLoading) {
@@ -37,8 +39,12 @@ const OurAgents = () => {
   }
 
   if (error || !data || !data.agents || data.agents.length === 0) {
+    console.log("OurAgents: Veri alınamadı veya boş", { error, data });
     return null;
   }
+  
+  // Doğrulama amaçlı tüm ajanları loglama
+  console.log("Danışmanlar yüklendi:", data.agents);
 
   return (
     <div className="container mx-auto py-16 px-4">
