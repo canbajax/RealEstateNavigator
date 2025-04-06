@@ -45,19 +45,9 @@ const Header = () => {
                 Anasayfa
               </a>
             </Link>
-            <Link href="/listings?type=sell">
-              <a className={`font-medium ${isActive('/listings?type=sell') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Satılık
-              </a>
-            </Link>
-            <Link href="/listings?type=rent">
-              <a className={`font-medium ${isActive('/listings?type=rent') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Kiralık
-              </a>
-            </Link>
             <Link href="/listings">
-              <a className={`font-medium ${isActive('/listings') && !location.includes('?') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Projeler
+              <a className={`font-medium ${location.includes('/listings') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
+                İlanlar
               </a>
             </Link>
             <Link href="/contact">
@@ -141,19 +131,9 @@ const Header = () => {
                 Anasayfa
               </a>
             </Link>
-            <Link href="/listings?type=sell">
-              <a className="block px-3 py-2 rounded-md font-medium text-[#2C3E50] hover:bg-[#ECF0F1]">
-                Satılık
-              </a>
-            </Link>
-            <Link href="/listings?type=rent">
-              <a className="block px-3 py-2 rounded-md font-medium text-[#2C3E50] hover:bg-[#ECF0F1]">
-                Kiralık
-              </a>
-            </Link>
             <Link href="/listings">
               <a className="block px-3 py-2 rounded-md font-medium text-[#2C3E50] hover:bg-[#ECF0F1]">
-                Projeler
+                İlanlar
               </a>
             </Link>
             <Link href="/contact">
