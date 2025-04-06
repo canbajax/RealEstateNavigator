@@ -177,7 +177,7 @@ const ListingDetail = () => {
                   <h2 className="text-2xl font-bold text-[#2C3E50]">{listing.title}</h2>
                   <p className="text-[#7F8C8D] flex items-center mt-2">
                     <MapPin className="h-4 w-4 mr-2 text-[#3498DB]" />
-                    {listing.address}, {listing.district}, {city?.name}
+                    {listing.address}, {listing.neighborhood && `${listing.neighborhood}, `}{listing.district}, {city?.name}
                   </p>
                 </div>
                 <div>
@@ -316,7 +316,7 @@ const ListingDetail = () => {
                   )}
                   <div className="mt-4">
                     <p className="font-medium">Adres:</p>
-                    <p className="text-[#7F8C8D]">{listing.address}, {listing.district}, {city?.name}</p>
+                    <p className="text-[#7F8C8D]">{listing.address}, {listing.neighborhood && `${listing.neighborhood}, `}{listing.district}, {city?.name}</p>
                   </div>
                 </TabsContent>
               </Tabs>
@@ -354,7 +354,7 @@ const ListingDetail = () => {
                             </p>
                             <p className="text-[#7F8C8D] text-sm flex items-center mt-2">
                               <MapPin className="h-3 w-3 mr-1" />
-                              {similar.district}, {city?.name}
+                              {similar.neighborhood && `${similar.neighborhood}, `}{similar.district}, {city?.name}
                             </p>
                           </CardContent>
                         </a>

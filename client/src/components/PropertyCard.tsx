@@ -91,7 +91,7 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
             </div>
             <p className="text-[#7F8C8D] text-sm mt-2 flex items-center">
               <MapPin className="text-[#3498DB] mr-2" size={16} />
-              <span>{listing.district}, {listing.cityId}</span>
+              <span>{listing.neighborhood && `${listing.neighborhood}, `}{listing.district}, {listing.cityId}</span>
             </p>
             
             <div className="flex justify-between mt-4 text-sm text-[#7F8C8D]">
