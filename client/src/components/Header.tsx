@@ -71,9 +71,13 @@ const Header = () => {
   
   // Komisyon hesaplama
   const calculateCommission = () => {
-    // Satılık için tüm değer üzerinden, kiralık için yıllık değer üzerinden
-    const baseValue = commissionType === 'satilik' ? propertyValue : propertyValue * 12;
-    return baseValue * (commissionRate / 100);
+    // Satılık için oran üzerinden, kiralık için doğrudan 1 aylık kira bedeli
+    if (commissionType === 'satilik') {
+      return propertyValue * (commissionRate / 100);
+    } else {
+      // Kiralık için direkt 1 kira bedeli
+      return propertyValue;
+    }
   };
   
   // KDV dahil komisyon hesaplama
@@ -297,31 +301,33 @@ const Header = () => {
                         </div>
                       </div>
                       
-                      <div className="grid gap-2">
-                        <Label htmlFor="commissionRate">Komisyon Oranı: %{commissionRate}</Label>
-                        <div className="flex gap-2 items-center">
-                          <Slider
-                            id="commissionRate"
-                            min={0.5}
-                            max={5}
-                            step={0.1}
-                            value={[commissionRate]}
-                            onValueChange={(value) => setCommissionRate(value[0])}
-                            className="py-4 flex-1"
-                          />
-                          <Input
-                            type="number"
-                            value={commissionRate}
-                            onChange={(e) => setCommissionRate(Number(e.target.value))}
-                            className="w-24"
-                            step="0.1"
-                          />
+                      {commissionType === 'satilik' && (
+                        <div className="grid gap-2">
+                          <Label htmlFor="commissionRate">Komisyon Oranı: %{commissionRate}</Label>
+                          <div className="flex gap-2 items-center">
+                            <Slider
+                              id="commissionRate"
+                              min={0.5}
+                              max={5}
+                              step={0.1}
+                              value={[commissionRate]}
+                              onValueChange={(value) => setCommissionRate(value[0])}
+                              className="py-4 flex-1"
+                            />
+                            <Input
+                              type="number"
+                              value={commissionRate}
+                              onChange={(e) => setCommissionRate(Number(e.target.value))}
+                              className="w-24"
+                              step="0.1"
+                            />
+                          </div>
+                          <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>%0.5</span>
+                            <span>%5.0</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>%0.5</span>
-                          <span>%5.0</span>
-                        </div>
-                      </div>
+                      )}
                       
                       <div className="grid gap-2">
                         <Label htmlFor="vatRate">KDV Oranı: %{vatRate}</Label>
@@ -364,10 +370,17 @@ const Header = () => {
                             </p>
                             <p className="text-lg font-bold">{formatCurrency(propertyValue)}</p>
                           </div>
-                          <div>
-                            <p className="text-sm font-medium text-muted-foreground">Komisyon Oranı</p>
-                            <p className="text-lg font-bold">%{commissionRate}</p>
-                          </div>
+                          {commissionType === 'satilik' ? (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Komisyon Oranı</p>
+                              <p className="text-lg font-bold">%{commissionRate}</p>
+                            </div>
+                          ) : (
+                            <div>
+                              <p className="text-sm font-medium text-muted-foreground">Komisyon Tutarı</p>
+                              <p className="text-lg font-bold">1 Aylık Kira</p>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
