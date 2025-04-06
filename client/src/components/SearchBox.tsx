@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { MapPin, Search } from "lucide-react";
 import { type PropertyType, type City } from "@shared/schema";
+import LocationSearchBox from "./LocationSearchBox";
 
 interface SearchBoxProps {
   vertical?: boolean;
@@ -107,19 +108,22 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
         {/* Location */}
         <div>
           <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Konum</label>
-          <div className="relative">
-            <Select onValueChange={(value) => handleSelectChange("cityId", value)}>
-              <SelectTrigger className="w-full px-4 py-3 border border-[#BDC3C7] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
-                <SelectValue placeholder="İl seçiniz" />
-              </SelectTrigger>
-              <SelectContent>
-                {cities?.map(city => (
-                  <SelectItem key={city.id} value={city.id.toString()}>{city.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <MapPin className="absolute right-3 top-3 text-[#7F8C8D]" size={16} />
-          </div>
+          <LocationSearchBox 
+            onSelect={(location) => {
+              if (location.type === 'city' && location.id) {
+                handleSelectChange("cityId", location.id.toString());
+              } else if (location.cityId) {
+                handleSelectChange("cityId", location.cityId.toString());
+                // İlçe veya mahalle seçildiğinde search parametresine de ekleyelim
+                setSearchParams(prev => ({ 
+                  ...prev, 
+                  search: location.type === 'district' 
+                    ? `${location.name} ${location.cityName}` 
+                    : `${location.name} ${location.cityName}`
+                }));
+              }
+            }}
+          />
         </div>
         
         {/* Property Type */}

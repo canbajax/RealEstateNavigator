@@ -26,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
+import LocationSearchBox from "../components/LocationSearchBox";
 import {
   Dialog,
   DialogContent,
@@ -705,7 +706,13 @@ export default function AdminPage() {
                     transactionStatus: "available",
                     postedAt: new Date(),
                     latitude: null,
-                    longitude: null
+                    longitude: null,
+                    referenceNo: "",
+                    buildingAge: null,
+                    heatingType: "",
+                    isFurnished: false,
+                    facingDirection: "",
+                    floorNumber: null
                   });
                   setShowListingDialog(true);
                 }}
@@ -1063,6 +1070,16 @@ export default function AdminPage() {
           
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
+              <Label htmlFor="referenceNo">Referans No</Label>
+              <Input
+                id="referenceNo"
+                value={selectedListing?.referenceNo || ""}
+                onChange={(e) => setSelectedListing(prev => prev ? {...prev, referenceNo: e.target.value} : null)}
+                placeholder="Emlak referans numarası"
+              />
+            </div>
+            
+            <div className="grid gap-2">
               <Label htmlFor="title">İlan Başlığı</Label>
               <Input
                 id="title"
@@ -1173,6 +1190,52 @@ export default function AdminPage() {
                   </select>
                 </div>
               ) : null}
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="location">Konum Seçimi</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="cityId">İl</Label>
+                  <select
+                    id="cityId"
+                    value={selectedListing?.cityId || ""}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, cityId: Number(e.target.value)} : null)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="">İl Seçin</option>
+                    {citiesData?.cities?.map((city) => (
+                      <option key={city.id} value={city.id}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="locationDetail">İlçe/Mahalle Ara</Label>
+                  <LocationSearchBox 
+                    onSelect={(location) => {
+                      if (location.type === 'city' && location.id) {
+                        setSelectedListing(prev => prev ? {...prev, cityId: location.id} : null);
+                      } else if (location.type === 'district') {
+                        setSelectedListing(prev => prev ? {
+                          ...prev, 
+                          cityId: location.cityId || prev.cityId,
+                          district: location.name
+                        } : null);
+                      } else if (location.type === 'neighborhood') {
+                        setSelectedListing(prev => prev ? {
+                          ...prev,
+                          cityId: location.cityId || prev.cityId,
+                          neighborhood: location.name
+                        } : null);
+                      }
+                    }}
+                    placeholder="İlçe veya mahalle ara"
+                  />
+                </div>
+              </div>
             </div>
             
             <div className="grid grid-cols-3 gap-4">
