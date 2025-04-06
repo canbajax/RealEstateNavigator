@@ -66,58 +66,99 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] h-[500px] md:h-[600px] flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
+    <section className="relative bg-gradient-to-br from-[#0F172A] to-[#1E293B] h-[550px] md:h-[700px] flex items-center justify-center overflow-hidden">
+      {/* Animated Tech Background */}
       <div className="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80" 
-          alt="Modern apartments" 
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E3A8A]/80 to-[#1E40AF]/80"></div>
+        {/* Digital Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute w-full h-full grid grid-cols-12 grid-rows-12">
+            {Array.from({ length: 144 }).map((_, i) => (
+              <div key={i} className="border border-blue-500/10"></div>
+            ))}
+          </div>
+          
+          {/* Animated Circles */}
+          <div className="absolute top-1/4 left-1/4 w-2 h-2 rounded-full bg-[#3498DB] animate-pulse"></div>
+          <div className="absolute top-3/4 left-1/3 w-3 h-3 rounded-full bg-[#5DADE2] animate-pulse"></div>
+          <div className="absolute top-2/4 left-3/4 w-2 h-2 rounded-full bg-[#3498DB] animate-pulse"></div>
+          <div className="absolute top-1/3 left-2/3 w-4 h-4 rounded-full bg-[#5DADE2] animate-pulse"></div>
+          
+          {/* Digital Rings */}
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full border-2 border-dashed border-blue-500/20 animate-spin" style={{ animationDuration: '30s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full border border-blue-400/10 animate-spin" style={{ animationDuration: '40s', animationDirection: 'reverse' }}></div>
+        </div>
+        
+        {/* Semi-transparent building pattern overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/60 to-[#1E293B]/60 z-10"></div>
+        
+        {/* 3D City Grid Lines */}
+        <div className="absolute bottom-0 left-0 w-full h-[30%] opacity-20" style={{ 
+          background: 'linear-gradient(transparent 0%, #3498DB 100%)',
+          backgroundSize: '20px 20px',
+          backgroundImage: 'repeating-linear-gradient(0deg, #3498DB, #3498DB 1px, transparent 1px, transparent 20px),repeating-linear-gradient(90deg, #3498DB, #3498DB 1px, transparent 1px, transparent 20px)'
+        }}></div>
       </div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-12">
-          <h1 className="font-bold text-3xl md:text-5xl lg:text-6xl text-white mb-6 leading-tight">
-            Co Worker ile <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Kazançlı</span> Yatırımlar
+          <div className="inline-block mb-4">
+            <div className="px-4 py-1 rounded-full bg-gradient-to-r from-[#3498DB]/20 to-[#5DADE2]/20 border border-[#3498DB]/30 text-[#3498DB] text-sm font-medium">
+              AI Destekli Emlak Teknolojileri
+            </div>
+          </div>
+          <h1 className="font-bold text-4xl md:text-5xl lg:text-7xl text-white mb-6 leading-tight">
+            Emlak Sektöründe <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Dijital Dönüşümün</span> Öncüsü
           </h1>
           <p className="text-xl text-white opacity-90 max-w-3xl mx-auto">
-            Türkiye'nin en güvenilir emlak ağında <strong>15.000+</strong> sektör profesyoneli ve <strong>700+</strong> kurumsal iş ortağı ile 
-            emlak yatırımlarınızı değerlendirelim. Kazançlı yatırımlar, doğru iş ortaklıkları ve profesyonel güvence Co Worker'da.
+            <strong className="text-[#3498DB]">15.000+</strong> sektör profesyoneli ve <strong className="text-[#3498DB]">700+</strong> kurumsal iş ortağımız ile
+            emlak sektöründe yapay zeka destekli teknolojilerimizi keşfedin. Gayrimenkul işlemlerinizde yeni nesil çözümler Co Worker'da.
           </p>
-          <div className="flex justify-center items-center gap-6 mt-4">
-            <div className="flex items-center text-white">
-              <span className="bg-white/20 p-2 rounded-full mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          
+          <div className="flex flex-wrap justify-center items-center gap-4 mt-8">
+            <div className="flex items-center text-white backdrop-blur-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-[#3498DB]/20 flex items-center justify-center mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]">
+                  <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
                 </svg>
-              </span>
-              <span className="text-sm">Güvenilir İş Ortakları</span>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-[#3498DB] font-medium">YAPAY ZEKA</div>
+                <div className="text-sm font-medium">AI Değerleme Teknolojisi</div>
+              </div>
             </div>
-            <div className="flex items-center text-white">
-              <span className="bg-white/20 p-2 rounded-full mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"></path>
+            
+            <div className="flex items-center text-white backdrop-blur-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-[#3498DB]/20 flex items-center justify-center mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
-              </span>
-              <span className="text-sm">Yüksek Kazanç Potansiyeli</span>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-[#3498DB] font-medium">BLOCKCHAIN</div>
+                <div className="text-sm font-medium">Güvenli Tapu İşlemleri</div>
+              </div>
             </div>
-            <div className="flex items-center text-white">
-              <span className="bg-white/20 p-2 rounded-full mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            
+            <div className="flex items-center text-white backdrop-blur-sm bg-white/5 rounded-xl px-4 py-3 border border-white/10">
+              <div className="w-10 h-10 rounded-full bg-[#3498DB]/20 flex items-center justify-center mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M16.2 7.8l-2 6.3-6.4 2.1 2-6.3z"></path>
                 </svg>
-              </span>
-              <span className="text-sm">%100 Güvenli İşlemler</span>
+              </div>
+              <div className="text-left">
+                <div className="text-xs text-[#3498DB] font-medium">3D SANAL TUR</div>
+                <div className="text-sm font-medium">360° Emlak Keşfi</div>
+              </div>
             </div>
           </div>
         </div>
         
         {/* Search Box */}
-        <div className="bg-white rounded-xl p-4 sm:p-6 max-w-5xl mx-auto shadow-xl border border-gray-200">
+        <div className="backdrop-blur-lg bg-white/90 rounded-xl p-4 sm:p-6 max-w-5xl mx-auto shadow-xl border border-[#3498DB]/10">
           {/* İlan Türü Seçimi */}
           <Tabs defaultValue="sell" className="mb-6" onValueChange={(value) => setListingType(value)}>
             <TabsList className="grid w-full grid-cols-3">
