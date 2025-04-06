@@ -21,11 +21,11 @@ const Footer = () => {
             <div className="flex items-center mb-6">
               <Compass className="text-[#3498DB] h-8 w-8 mr-2" />
               <span className="font-bold text-2xl text-white">
-                Emlak<span className="text-[#3498DB]">Compass</span>
+                Co <span className="text-[#3498DB]">Worker</span>
               </span>
             </div>
             <p className="text-[#ECF0F1] mb-6">
-              Emlak Compass olarak, Türkiye'nin en kapsamlı ve güvenilir emlak portalıyız. 
+              Co Worker olarak, Türkiye'nin en kapsamlı ve güvenilir emlak portalıyız. 
               Hayalinizdeki evi bulmak için profesyonel danışmanlarımız ve geniş ilan ağımızla 
               hizmetinizdeyiz.
             </p>
@@ -177,7 +177,7 @@ const Footer = () => {
         <hr className="border-[#2C3E50] mt-12 mb-8" />
         
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <p className="text-[#ECF0F1] text-sm">© 2023 EmlakCompass. Tüm hakları saklıdır.</p>
+          <p className="text-[#ECF0F1] text-sm">© 2023 Co Worker. Tüm hakları saklıdır. <a href="https://coworker.com.tr" className="text-[#3498DB] hover:underline">coworker.com.tr</a></p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-[#ECF0F1] hover:text-[#3498DB] transition text-sm">Gizlilik Politikası</a>
             <a href="#" className="text-[#ECF0F1] hover:text-[#3498DB] transition text-sm">Kullanım Şartları</a>

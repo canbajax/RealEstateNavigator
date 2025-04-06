@@ -33,7 +33,7 @@ const Header = () => {
             <Link href="/" className="flex items-center">
               <Compass className="text-[#3498DB] h-8 w-8 mr-2" />
               <span className="font-bold text-xl sm:text-2xl text-[#2C3E50]">
-                Emlak<span className="text-[#3498DB]">Compass</span>
+                Co <span className="text-[#3498DB]">Worker</span>
               </span>
             </Link>
           </div>
