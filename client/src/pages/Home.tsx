@@ -112,11 +112,6 @@ const Home = () => {
                   <span className="text-[#7F8C8D]">SPK Lisanslı Değerleme</span>
                 </li>
               </ul>
-              <div className="text-center">
-                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Bilgi</span>
-                </a>
-              </div>
             </div>
             
             {/* Satış ve Kiralama Süreç Desteği */}
@@ -152,11 +147,6 @@ const Home = () => {
                   <span className="text-[#7F8C8D]">7/24 Müşteri Hizmetleri</span>
                 </li>
               </ul>
-              <div className="text-center">
-                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Bilgi</span>
-                </a>
-              </div>
             </div>
             
             {/* Danışmanlık Hizmetleri */}
@@ -192,11 +182,6 @@ const Home = () => {
                   <span className="text-[#7F8C8D]">Piyasa Trend Raporları</span>
                 </li>
               </ul>
-              <div className="text-center">
-                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Bilgi</span>
-                </a>
-              </div>
             </div>
           </div>
           
