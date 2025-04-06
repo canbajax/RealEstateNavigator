@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Phone, Mail, User } from "lucide-react";
+import { Phone, Mail, User, MessageCircle } from "lucide-react";
 import { getQueryFn } from "@/lib/queryClient";
 import { type User as UserType } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
 
 type Agent = Omit<UserType, "password">;
 
@@ -70,20 +72,13 @@ const OurAgents = () => {
                 <h3 className="text-xl font-bold mb-2">{agent.fullName}</h3>
                 <p className="text-gray-500 mb-4">Emlak Danışmanı</p>
                 
-                <div className="space-y-2">
-                  {agent.phone && (
-                    <div className="flex items-center text-sm">
-                      <Phone className="h-4 w-4 mr-2 text-[#3498DB]" />
-                      <span>{agent.phone}</span>
-                    </div>
-                  )}
-                  
-                  {agent.email && (
-                    <div className="flex items-center text-sm">
-                      <Mail className="h-4 w-4 mr-2 text-[#3498DB]" />
-                      <span>{agent.email}</span>
-                    </div>
-                  )}
+                <div className="mt-4">
+                  <Link href="/contact">
+                    <Button variant="default" className="w-full bg-[#3498DB] hover:bg-[#2980B9] text-white">
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      İletişime Geç
+                    </Button>
+                  </Link>
                 </div>
               </div>
             </CardContent>

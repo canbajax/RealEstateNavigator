@@ -50,7 +50,6 @@ const PropertyTypeCard = ({ propertyType }: PropertyTypeCardProps) => {
             {getIcon()}
           </div>
           <h3 className="font-medium">{propertyType.name}</h3>
-          <p className="text-xs mt-1 text-[#7F8C8D] group-hover:text-white">{propertyType.listingCount} ilan</p>
         </div>
       </a>
     </Link>

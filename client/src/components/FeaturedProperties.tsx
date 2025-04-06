@@ -3,13 +3,18 @@ import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import PropertyCard from "@/components/PropertyCard";
-import { ArrowRight, Building, Home, Star } from "lucide-react";
+import { ArrowRight, Building, Home, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { type Listing } from "@shared/schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import useEmblaCarousel from 'embla-carousel-react';
 
 const FeaturedProperties = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'sell' | 'rent'>('all');
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' });
+  const [prevBtnEnabled, setPrevBtnEnabled] = useState(false);
+  const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
+  const [autoplayInterval, setAutoplayInterval] = useState<NodeJS.Timeout | null>(null);
   
   const { data: featuredListings, isLoading, error } = useQuery<Listing[]>({
     queryKey: ["/api/featured-listings"],
@@ -24,6 +29,46 @@ const FeaturedProperties = () => {
             : (listing.listingType === 'rent' || listing.listingType === 'daily')
         )
     ) : [];
+    
+  const scrollPrev = useCallback(() => 
+    emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  
+  const scrollNext = useCallback(() => 
+    emblaApi && emblaApi.scrollNext(), [emblaApi]);
+    
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setPrevBtnEnabled(emblaApi.canScrollPrev());
+    setNextBtnEnabled(emblaApi.canScrollNext());
+  }, [emblaApi]);
+  
+  // Autoplay setup
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    onSelect();
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+    
+    // Start autoplay
+    const interval = setInterval(() => {
+      if (emblaApi.canScrollNext()) {
+        emblaApi.scrollNext();
+      } else {
+        emblaApi.scrollTo(0);
+      }
+    }, 4000); // Change slide every 4 seconds
+    
+    setAutoplayInterval(interval);
+    
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+      if (autoplayInterval) {
+        clearInterval(autoplayInterval);
+      }
+    };
+  }, [emblaApi, onSelect]);
   
   if (error) {
     return (
@@ -86,10 +131,10 @@ const FeaturedProperties = () => {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {isLoading ? (
-            // Loading skeletons
-            Array(4).fill(0).map((_, index) => (
+        {isLoading ? (
+          // Loading skeletons
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array(4).fill(0).map((_, index) => (
               <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <Skeleton className="w-full h-56" />
                 <div className="p-4">
@@ -109,19 +154,51 @@ const FeaturedProperties = () => {
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            filteredListings.length > 0 ? (
-              filteredListings.map(listing => (
-                <PropertyCard key={listing.id} listing={listing} />
-              ))
-            ) : (
-              <div className="col-span-full text-center py-10">
-                <p className="text-gray-500">Bu kategoride öne çıkan ilan bulunamadı.</p>
+            ))}
+          </div>
+        ) : filteredListings.length === 0 ? (
+          <div className="text-center py-10">
+            <p className="text-gray-500">Bu kategoride öne çıkan ilan bulunamadı.</p>
+          </div>
+        ) : (
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex">
+                {filteredListings.map(listing => (
+                  <div className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] lg:flex-[0_0_33.33%] xl:flex-[0_0_25%] px-3" key={listing.id}>
+                    <PropertyCard listing={listing} />
+                  </div>
+                ))}
               </div>
-            )
-          )}
-        </div>
+            </div>
+            
+            <button 
+              className="absolute top-1/2 -left-4 transform -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 hover:bg-gray-50"
+              onClick={scrollPrev}
+              disabled={!prevBtnEnabled}
+            >
+              <ChevronLeft className={`h-6 w-6 ${prevBtnEnabled ? 'text-[#3498DB]' : 'text-gray-300'}`} />
+            </button>
+            
+            <button 
+              className="absolute top-1/2 -right-4 transform -translate-y-1/2 z-10 bg-white rounded-full shadow-md p-2 hover:bg-gray-50"
+              onClick={scrollNext}
+              disabled={!nextBtnEnabled}
+            >
+              <ChevronRight className={`h-6 w-6 ${nextBtnEnabled ? 'text-[#3498DB]' : 'text-gray-300'}`} />
+            </button>
+            
+            <div className="flex justify-center mt-6 space-x-2">
+              {filteredListings.map((_, index) => (
+                <button 
+                  key={index}
+                  className={`h-2 w-2 rounded-full ${index === (emblaApi?.selectedScrollSnap() || 0) ? 'bg-[#3498DB]' : 'bg-gray-300'}`}
+                  onClick={() => emblaApi?.scrollTo(index)}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         
         {!isLoading && filteredListings.length > 0 && (
           <div className="text-center mt-10">
