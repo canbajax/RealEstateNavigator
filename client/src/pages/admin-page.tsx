@@ -5,7 +5,7 @@ import {
   Loader2, Settings, User, Home, ListFilter, Plus, 
   Phone, Mail, MapPin, Clock, Facebook, Twitter, 
   Instagram, Linkedin, Check, AlertCircle, Save, RefreshCw,
-  Trash, Edit
+  Trash, Edit, Upload, X, Image as ImageIcon
 } from "lucide-react";
 import { 
   Tabs, 
@@ -158,7 +158,7 @@ export default function AdminPage() {
     // Kullanıcıyı kaydet
     createOrUpdateUserMutation.mutate(selectedUser as any);
   };
-  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [selectedListing, setSelectedListing] = useState<(Listing & { imageFiles?: File[] }) | null>(null);
   
   // İlan ekleme/güncelleme mutasyonu
   const createOrUpdateListingMutation = useMutation({
@@ -1108,6 +1108,100 @@ export default function AdminPage() {
               </div>
             </div>
             
+            <div className="grid grid-cols-3 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="bathroomCount">Banyo Sayısı</Label>
+                <Input
+                  id="bathroomCount"
+                  type="number"
+                  value={selectedListing?.bathroomCount || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, bathroomCount: Number(e.target.value)} : null)}
+                  placeholder="Banyo sayısı"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="parkingCount">Otopark Yeri</Label>
+                <Input
+                  id="parkingCount"
+                  type="number"
+                  value={selectedListing?.parkingCount || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, parkingCount: Number(e.target.value)} : null)}
+                  placeholder="Otopark yeri sayısı"
+                />
+              </div>
+              
+              {selectedListing?.listingType === "rent" || selectedListing?.listingType === "daily" ? (
+                <div className="grid gap-2">
+                  <Label htmlFor="rentPeriod">Kiralama Periyodu</Label>
+                  <select
+                    id="rentPeriod"
+                    value={selectedListing?.rentPeriod || "monthly"}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, rentPeriod: e.target.value} : null)}
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    <option value="daily">Günlük</option>
+                    <option value="weekly">Haftalık</option>
+                    <option value="monthly">Aylık</option>
+                    <option value="yearly">Yıllık</option>
+                  </select>
+                </div>
+              ) : null}
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="district">İlçe/Semt</Label>
+                <Input
+                  id="district"
+                  value={selectedListing?.district || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, district: e.target.value} : null)}
+                  placeholder="İlçe veya semt adı"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="userId">Emlakçı</Label>
+                <select
+                  id="userId"
+                  value={selectedListing?.userId || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, userId: Number(e.target.value)} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Emlakçı Seçin</option>
+                  {usersData?.users?.filter(user => user.username !== "admin").map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.fullName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="latitude">Enlem (Opsiyonel)</Label>
+                <Input
+                  id="latitude"
+                  type="text"
+                  value={selectedListing?.latitude || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, latitude: Number(e.target.value) || null} : null)}
+                  placeholder="Harita konumu için enlem"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="longitude">Boylam (Opsiyonel)</Label>
+                <Input
+                  id="longitude"
+                  type="text"
+                  value={selectedListing?.longitude || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, longitude: Number(e.target.value) || null} : null)}
+                  placeholder="Harita konumu için boylam"
+                />
+              </div>
+            </div>
+            
             <div className="grid gap-2">
               <Label htmlFor="address">Adres</Label>
               <Textarea
@@ -1120,52 +1214,96 @@ export default function AdminPage() {
             </div>
             
             <div className="grid gap-2">
-              <Label htmlFor="imageUrls">İlan Görseli</Label>
+              <Label htmlFor="imageUrls">İlan Görselleri</Label>
               <div className="grid gap-2">
-                <div className="flex items-center gap-4">
-                  <Input
-                    id="imageUrls"
-                    value={selectedListing?.imageUrls?.[0] || ""}
-                    onChange={(e) => setSelectedListing(prev => 
-                      prev ? {...prev, imageUrls: [e.target.value]} : null
-                    )}
-                    placeholder="İlan resim URL'si"
-                  />
-                  <span className="text-xs text-muted-foreground">veya</span>
+                <div className="flex flex-col gap-2">
                   <div>
-                    <Label htmlFor="imageFile" className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
-                      Görsel Seç
+                    <Label htmlFor="imageFiles" className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                      <Upload className="mr-2 h-4 w-4" /> Görselleri Seç
                     </Label>
                     <input 
                       type="file" 
-                      id="imageFile" 
+                      id="imageFiles" 
                       className="hidden" 
                       accept="image/*"
+                      multiple
                       onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          // Dosya URL'si oluştur
-                          const fileUrl = URL.createObjectURL(file);
-                          setSelectedListing(prev => prev ? {...prev, imageUrls: [fileUrl], imageFile: file} : null);
+                        const files = e.target.files;
+                        if (files && files.length > 0) {
+                          // Dosya URL'leri oluştur
+                          const fileUrls = Array.from(files).map(file => URL.createObjectURL(file));
+                          setSelectedListing(prev => prev ? {
+                            ...prev, 
+                            imageUrls: [...(prev.imageUrls || []), ...fileUrls],
+                            imageFiles: [...(prev.imageFiles || []), ...Array.from(files)]
+                          } : null);
                         }
                       }}
                     />
                   </div>
+                  
+                  <p className="text-xs text-muted-foreground mt-1">Birden fazla görsel seçebilirsiniz. Her seferinde yeni görseller ekleyebilirsiniz.</p>
+                  
+                  {selectedListing?.imageUrls && selectedListing.imageUrls.length > 0 ? (
+                    <div className="mt-2 p-2 border rounded-md">
+                      <div className="flex justify-between items-center mb-2">
+                        <div className="text-sm font-medium">Yüklenen Görseller ({selectedListing.imageUrls.length})</div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 text-destructive hover:text-destructive/90"
+                          onClick={() => setSelectedListing(prev => prev ? {...prev, imageUrls: [], imageFiles: []} : null)}
+                        >
+                          <Trash className="h-4 w-4 mr-1" /> Tümünü Temizle
+                        </Button>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {selectedListing.imageUrls.map((url, index) => (
+                          <div key={index} className="relative group">
+                            <img 
+                              src={url} 
+                              alt={`Görsel ${index + 1}`} 
+                              className="h-24 w-full object-cover rounded-md"
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100">
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8 text-white"
+                                onClick={() => {
+                                  const newUrls = [...selectedListing.imageUrls];
+                                  newUrls.splice(index, 1);
+                                  
+                                  const newFiles = [...(selectedListing.imageFiles || [])];
+                                  if (newFiles.length > index) {
+                                    newFiles.splice(index, 1);
+                                  }
+                                  
+                                  setSelectedListing(prev => prev ? {
+                                    ...prev, 
+                                    imageUrls: newUrls,
+                                    imageFiles: newFiles
+                                  } : null);
+                                }}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center p-4 border border-dashed rounded-md">
+                      <div className="text-center text-muted-foreground">
+                        <ImageIcon className="mx-auto h-8 w-8 mb-2" />
+                        <p>Henüz görsel eklenmemiş</p>
+                        <p className="text-xs">En az bir görsel eklemeniz önerilir</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
-              {selectedListing?.imageUrls?.[0] && (
-                <div className="mt-2 p-2 border rounded-md">
-                  <div className="text-xs text-muted-foreground mb-2">İlan görseli:</div>
-                  <div className="flex justify-center">
-                    <img 
-                      src={selectedListing.imageUrls[0]} 
-                      alt={selectedListing.title || "İlan görseli"} 
-                      className="h-40 object-cover rounded-md"
-                    />
-                  </div>
-                </div>
-              )}
-              <p className="text-xs text-muted-foreground">Ana görsel (diğer görseller ileride eklenebilecek)</p>
             </div>
             
             <div className="grid grid-cols-2 gap-4">

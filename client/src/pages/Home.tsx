@@ -1,7 +1,7 @@
 import Hero from "@/components/Hero";
 import FeaturedProperties from "@/components/FeaturedProperties";
-import LocationSearch from "@/components/LocationSearch";
 import PropertyTypes from "@/components/PropertyTypes";
+import OurAgents from "@/components/OurAgents";
 import ContactForm from "@/components/ContactForm";
 import { MapPin, PhoneCall, Mail, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -24,9 +24,10 @@ const Home = () => {
       
       <FeaturedProperties />
       
-      <LocationSearch />
-      
       <PropertyTypes />
+      
+      {/* Agents Section */}
+      <OurAgents />
       
       {/* Contact Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#2C3E50] text-white">

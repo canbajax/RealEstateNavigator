@@ -49,8 +49,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Get all property types
   router.get("/property-types", async (req: Request, res: Response) => {
+    // Get property types and listings
     const propertyTypes = await storage.getPropertyTypes();
-    res.json(propertyTypes);
+    const listings = await storage.getListings();
+    
+    // Calculate actual listing counts for each property type
+    const updatedPropertyTypes = propertyTypes.map(propertyType => {
+      // Count listings for this property type
+      const count = listings.filter(listing => listing.propertyTypeId === propertyType.id).length;
+      
+      // Return updated property type with correct listing count
+      return {
+        ...propertyType,
+        listingCount: count
+      };
+    });
+    
+    res.json(updatedPropertyTypes);
   });
   
   // Get a specific property type
@@ -67,7 +82,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(404).json({ message: "Property type not found" });
     }
     
-    res.json(propertyType);
+    // Count listings for this property type
+    const listings = await storage.getListings({ propertyTypeId: id });
+    
+    // Return property type with accurate listing count
+    res.json({
+      ...propertyType,
+      listingCount: listings.length
+    });
   });
   
   // Get listings with optional filters
@@ -203,6 +225,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     storage.getUsers().then(users => {
       const safeUsers = users.map(({ password, ...user }) => user);
       res.json({ success: true, users: safeUsers });
+    });
+  });
+  
+  // Get all agents/consultants (public endpoint)
+  router.get("/agents", (req: Request, res: Response) => {
+    storage.getUsers().then(users => {
+      // Filter only agents and exclude admin
+      const agents = users
+        .filter(user => user.role === "agent")
+        .map(({ password, ...agent }) => agent);
+      
+      res.json({ success: true, agents });
+    }).catch(err => {
+      res.status(500).json({ message: "Failed to fetch agents" });
     });
   });
   
