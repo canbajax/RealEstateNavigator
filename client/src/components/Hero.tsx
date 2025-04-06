@@ -55,6 +55,7 @@ const Hero = () => {
     }
     
     // Listeleme türünü ekle (satılık/kiralık/günlük)
+    // Arama tipini her zaman eklemeliyiz!
     params.append("listingType", listingType);
     
     // Debug bilgisi

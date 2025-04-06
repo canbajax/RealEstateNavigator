@@ -25,7 +25,12 @@ const Listings = () => {
     
     // URLSearchParams.entries() uyumluluğu için alternatif yaklaşım
     searchParams.forEach((value, key) => {
-      currentFilters[key] = value;
+      // Özel işleme - 'type' parametresi için 'listingType' kullan
+      if (key === 'type') {
+        currentFilters['listingType'] = value;
+      } else {
+        currentFilters[key] = value;
+      }
     });
     
     console.log("URL parametreleri:", queryString);
