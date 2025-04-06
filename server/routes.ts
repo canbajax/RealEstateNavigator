@@ -5,7 +5,9 @@ import { z } from "zod";
 import { 
   insertContactMessageSchema,
   insertListingSchema,
-  insertUserSchema
+  insertUserSchema,
+  contactInfoSchema,
+  workingHoursSchema
 } from "@shared/schema";
 import { setupAuth } from "./auth";
 
@@ -232,6 +234,90 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }).catch(err => {
       res.status(500).json({ message: "Failed to fetch statistics" });
     });
+  });
+  
+  // Site settings API endpoints
+  
+  // Get contact info
+  router.get("/site-settings/contact-info", async (req: Request, res: Response) => {
+    try {
+      const contactInfo = await storage.getContactInfo();
+      res.json({ success: true, contactInfo });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get contact information" });
+    }
+  });
+  
+  // Update contact info (admin only)
+  router.post("/site-settings/contact-info", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    try {
+      const contactInfoData = contactInfoSchema.parse(req.body);
+      const updated = await storage.updateContactInfo(contactInfoData);
+      res.json({ 
+        success: true, 
+        message: "Contact information updated successfully",
+        contactInfo: updated.value
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid contact information", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to update contact information" });
+    }
+  });
+  
+  // Get working hours
+  router.get("/site-settings/working-hours", async (req: Request, res: Response) => {
+    try {
+      const workingHours = await storage.getWorkingHours();
+      res.json({ success: true, workingHours });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get working hours" });
+    }
+  });
+  
+  // Update working hours (admin only)
+  router.post("/site-settings/working-hours", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    try {
+      const workingHoursData = workingHoursSchema.parse(req.body);
+      const updated = await storage.updateWorkingHours(workingHoursData);
+      res.json({ 
+        success: true, 
+        message: "Working hours updated successfully",
+        workingHours: updated.value
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid working hours data", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to update working hours" });
+    }
   });
 
   const httpServer = createServer(app);

@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, doublePrecision, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -117,6 +117,42 @@ export const insertContactMessageSchema = createInsertSchema(contactMessages).pi
   message: true,
 });
 
+// Site settings table - İletişim bilgileri, çalışma saatleri vs.
+export const siteSettings = pgTable("site_settings", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(), // Ayar adı (ör: contact_info, working_hours)
+  value: json("value").notNull(),        // JSON formatında ayar değeri
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertSiteSettingsSchema = createInsertSchema(siteSettings).pick({
+  name: true,
+  value: true,
+});
+
+// Contact info schema for site settings
+export const contactInfoSchema = z.object({
+  address: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  whatsapp: z.string().optional(),
+  facebook: z.string().url().optional(),
+  twitter: z.string().url().optional(),
+  instagram: z.string().url().optional(),
+  linkedin: z.string().url().optional(),
+});
+
+// Working hours schema for site settings
+export const workingHoursSchema = z.object({
+  monday: z.object({ open: z.string(), close: z.string() }),
+  tuesday: z.object({ open: z.string(), close: z.string() }),
+  wednesday: z.object({ open: z.string(), close: z.string() }),
+  thursday: z.object({ open: z.string(), close: z.string() }),
+  friday: z.object({ open: z.string(), close: z.string() }),
+  saturday: z.object({ open: z.string(), close: z.string(), isOpen: z.boolean() }),
+  sunday: z.object({ open: z.string(), close: z.string(), isOpen: z.boolean() }),
+});
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -132,3 +168,9 @@ export type InsertListing = z.infer<typeof insertListingSchema>;
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = z.infer<typeof insertContactMessageSchema>;
+
+export type SiteSetting = typeof siteSettings.$inferSelect;
+export type InsertSiteSetting = z.infer<typeof insertSiteSettingsSchema>;
+
+export type ContactInfo = z.infer<typeof contactInfoSchema>;
+export type WorkingHours = z.infer<typeof workingHoursSchema>;

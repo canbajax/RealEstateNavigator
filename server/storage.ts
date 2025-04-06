@@ -3,7 +3,9 @@ import {
   cities, type City, type InsertCity,
   propertyTypes, type PropertyType, type InsertPropertyType,
   listings, type Listing, type InsertListing,
-  contactMessages, type ContactMessage, type InsertContactMessage
+  contactMessages, type ContactMessage, type InsertContactMessage,
+  siteSettings, type SiteSetting, type InsertSiteSetting,
+  type ContactInfo, type WorkingHours
 } from "@shared/schema";
 
 export interface IStorage {
@@ -33,6 +35,15 @@ export interface IStorage {
   
   // Contact Message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
+  
+  // Site Settings operations
+  getSiteSetting(name: string): Promise<SiteSetting | undefined>;
+  getAllSiteSettings(): Promise<SiteSetting[]>;
+  upsertSiteSetting<T>(name: string, value: T): Promise<SiteSetting>;
+  getContactInfo(): Promise<ContactInfo | undefined>;
+  updateContactInfo(contactInfo: ContactInfo): Promise<SiteSetting>;
+  getWorkingHours(): Promise<WorkingHours | undefined>;
+  updateWorkingHours(workingHours: WorkingHours): Promise<SiteSetting>;
 }
 
 export interface ListingFilters {
@@ -54,12 +65,14 @@ export class MemStorage implements IStorage {
   private propertyTypes: Map<number, PropertyType>;
   private listings: Map<number, Listing>;
   private contactMessages: Map<number, ContactMessage>;
+  private siteSettings: Map<string, SiteSetting>;
   
   private userCurrentId: number;
   private cityCurrentId: number;
   private propertyTypeCurrentId: number;
   private listingCurrentId: number;
   private contactMessageCurrentId: number;
+  private siteSettingCurrentId: number;
 
   constructor() {
     this.users = new Map();
@@ -67,12 +80,14 @@ export class MemStorage implements IStorage {
     this.propertyTypes = new Map();
     this.listings = new Map();
     this.contactMessages = new Map();
+    this.siteSettings = new Map();
     
     this.userCurrentId = 1;
     this.cityCurrentId = 1;
     this.propertyTypeCurrentId = 1;
     this.listingCurrentId = 1;
     this.contactMessageCurrentId = 1;
+    this.siteSettingCurrentId = 1;
     
     // Initialize with sample data
     this.initializeData();
@@ -283,8 +298,75 @@ export class MemStorage implements IStorage {
     return message;
   }
   
+  // Site Settings operations
+  async getSiteSetting(name: string): Promise<SiteSetting | undefined> {
+    return this.siteSettings.get(name);
+  }
+  
+  async getAllSiteSettings(): Promise<SiteSetting[]> {
+    return Array.from(this.siteSettings.values());
+  }
+  
+  async upsertSiteSetting<T>(name: string, value: T): Promise<SiteSetting> {
+    const now = new Date();
+    const setting: SiteSetting = {
+      id: this.siteSettingCurrentId++,
+      name,
+      value: value as any,
+      updatedAt: now
+    };
+    
+    this.siteSettings.set(name, setting);
+    return setting;
+  }
+  
+  async getContactInfo(): Promise<ContactInfo | undefined> {
+    const setting = this.siteSettings.get('contact_info');
+    return setting ? setting.value as ContactInfo : undefined;
+  }
+  
+  async updateContactInfo(contactInfo: ContactInfo): Promise<SiteSetting> {
+    return this.upsertSiteSetting('contact_info', contactInfo);
+  }
+  
+  async getWorkingHours(): Promise<WorkingHours | undefined> {
+    const setting = this.siteSettings.get('working_hours');
+    return setting ? setting.value as WorkingHours : undefined;
+  }
+  
+  async updateWorkingHours(workingHours: WorkingHours): Promise<SiteSetting> {
+    return this.upsertSiteSetting('working_hours', workingHours);
+  }
+  
   // Initialize with sample data
   private initializeData() {
+    // Initialize site settings with default values
+    // Default contact info
+    const defaultContactInfo: ContactInfo = {
+      address: "Bağdat Caddesi No:123, Kadıköy, İstanbul",
+      email: "info@emlakcompass.com",
+      phone: "+90 (216) 555 1234",
+      whatsapp: "+90 (532) 555 1234",
+      facebook: "https://facebook.com/emlakcompass",
+      twitter: "https://twitter.com/emlakcompass", 
+      instagram: "https://instagram.com/emlakcompass",
+      linkedin: "https://linkedin.com/company/emlakcompass"
+    };
+    
+    // Default working hours
+    const defaultWorkingHours: WorkingHours = {
+      monday: { open: "09:00", close: "18:00" },
+      tuesday: { open: "09:00", close: "18:00" },
+      wednesday: { open: "09:00", close: "18:00" },
+      thursday: { open: "09:00", close: "18:00" },
+      friday: { open: "09:00", close: "18:00" },
+      saturday: { open: "10:00", close: "14:00", isOpen: true },
+      sunday: { open: "10:00", close: "14:00", isOpen: false }
+    };
+    
+    // Save initial site settings
+    this.upsertSiteSetting('contact_info', defaultContactInfo);
+    this.upsertSiteSetting('working_hours', defaultWorkingHours);
     // Create sample cities
     const citiesData: InsertCity[] = [
       { 
