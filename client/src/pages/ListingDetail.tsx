@@ -422,73 +422,132 @@ const ListingDetail = () => {
                 </TabsContent>
                 
                 <TabsContent value="features" className="pt-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                      <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {/* Temel Bilgiler */}
+                    <div className="col-span-2 mb-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">Temel Bilgiler</h3>
+                    </div>
+                    
+                    <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                      <Building className="h-4 w-4 mr-2 text-blue-600" />
                       <span>Emlak Tipi: {propertyType?.name}</span>
                     </div>
-                    <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                      <Ruler className="h-4 w-4 mr-2 text-[#3498DB]" />
+                    
+                    <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                      <Ruler className="h-4 w-4 mr-2 text-blue-600" />
                       <span>Alan: {listing.squareMeters} m²</span>
                     </div>
-                    {listing.referenceNo && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <MapPin className="h-4 w-4 mr-2 text-[#3498DB]" />
-                        <span>İlan No: {listing.referenceNo}</span>
-                      </div>
-                    )}
+                    
                     {listing.roomCount && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Bed className="h-4 w-4 mr-2 text-[#3498DB]" />
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Bed className="h-4 w-4 mr-2 text-blue-600" />
                         <span>Oda Sayısı: {listing.roomCount}</span>
                       </div>
                     )}
+                    
                     {listing.bathroomCount && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Bath className="h-4 w-4 mr-2 text-[#3498DB]" />
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Bath className="h-4 w-4 mr-2 text-blue-600" />
                         <span>Banyo Sayısı: {listing.bathroomCount}</span>
                       </div>
                     )}
-                    {listing.parkingCount && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Car className="h-4 w-4 mr-2 text-[#3498DB]" />
-                        <span>Otopark: {listing.parkingCount} Araçlık</span>
-                      </div>
-                    )}
+                    
                     {listing.buildingAge !== null && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Calendar className="h-4 w-4 mr-2 text-[#3498DB]" />
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Calendar className="h-4 w-4 mr-2 text-blue-600" />
                         <span>Bina Yaşı: {listing.buildingAge}</span>
                       </div>
                     )}
-                    {listing.heatingType && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
-                        <span>Isıtma: {listing.heatingType}</span>
-                      </div>
-                    )}
-                    {listing.isFurnished !== null && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
-                        <span>Eşyalı: {listing.isFurnished ? 'Evet' : 'Hayır'}</span>
-                      </div>
-                    )}
-                    {listing.facingDirection && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <MapPin className="h-4 w-4 mr-2 text-[#3498DB]" />
-                        <span>Cephe: {listing.facingDirection}</span>
-                      </div>
-                    )}
+                    
                     {listing.floorNumber !== null && (
-                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Building className="h-4 w-4 mr-2 text-blue-600" />
                         <span>Kat: {listing.floorNumber}</span>
                       </div>
                     )}
-                    <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
-                      <Calendar className="h-4 w-4 mr-2 text-[#3498DB]" />
+                    
+                    {/* Diğer Özellikler */}
+                    <div className="col-span-2 mt-4 mb-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">Diğer Özellikler</h3>
+                    </div>
+                    
+                    {listing.heatingType && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Thermometer className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Isıtma: {listing.heatingType}</span>
+                      </div>
+                    )}
+                    
+                    {listing.isFurnished !== null && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Home className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Eşyalı: {listing.isFurnished ? 'Evet' : 'Hayır'}</span>
+                      </div>
+                    )}
+                    
+                    {listing.facingDirection && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Compass className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Cephe: {listing.facingDirection}</span>
+                      </div>
+                    )}
+                    
+                    {listing.parkingCount && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Car className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Otopark: {listing.parkingCount} Araçlık</span>
+                      </div>
+                    )}
+                    
+                    {/* Havuz özelliği */}
+                    {listing.hasPool && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Sparkles className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Havuz: Var</span>
+                      </div>
+                    )}
+                    
+                    {/* Spor salonu özelliği */}
+                    {listing.hasGym && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Briefcase className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Spor Salonu: Var</span>
+                      </div>
+                    )}
+                    
+                    {/* İlan Bilgileri */}
+                    <div className="col-span-2 mt-4 mb-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">İlan Bilgileri</h3>
+                    </div>
+                    
+                    {listing.referenceNo && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Tag className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>İlan No: {listing.referenceNo}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                      <Clock className="h-4 w-4 mr-2 text-blue-600" />
                       <span>İlan Tarihi: {formatDate(listing.postedAt)}</span>
                     </div>
+                    
+                    {listing.status && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <Info className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>Durumu: {listing.status === 'active' ? 'Aktif' : 'Pasif'}</span>
+                      </div>
+                    )}
+                    
+                    {listing.transactionStatus && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <CircleDollarSign className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>İşlem Durumu: {
+                          listing.transactionStatus === 'available' ? 'Satılık/Kiralık' : 
+                          listing.transactionStatus === 'sold' ? 'Satıldı' : 'Kiralandı'
+                        }</span>
+                      </div>
+                    )}
                   </div>
                 </TabsContent>
                 

@@ -183,8 +183,10 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
                   className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
                   onClick={() => handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() ? '' : type.id.toString())}
                 >
-                  <span>{type.name}</span>
-                  <span className="text-xs text-gray-500">({type.listingCount})</span>
+                  <span className="flex items-center">
+                    {type.icon && <span className="mr-1"><Home className="h-3 w-3" /></span>}
+                    {type.name}
+                  </span>
                 </div>
               ))
             )}
@@ -299,18 +301,44 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
         {/* Oda Sayısı */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Oda Sayısı</h4>
-          <div className="grid grid-cols-3 gap-2">
-            {["1+0", "1+1", "2+1", "3+1", "4+1", "5+"].map((value) => (
-              <Button
-                key={value}
-                variant={filters.roomCount === value.toString() ? "default" : "outline"}
-                className={`w-full text-xs py-1 px-2 h-auto ${filters.roomCount === value.toString() ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
-                onClick={() => handleInputChange('roomCount', value.toString())}
-              >
-                {value}
-              </Button>
-            ))}
+          
+          <div className="mb-3">
+            <h5 className="text-xs text-gray-500 mb-1">Oda Sayısı</h5>
+            <div className="flex items-center gap-2">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((value) => (
+                <Button
+                  key={`room-${value}`}
+                  variant={filters.roomNumber === value.toString() ? "default" : "outline"}
+                  className={`min-w-8 h-8 p-0 text-xs ${filters.roomNumber === value.toString() ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                  onClick={() => handleInputChange('roomNumber', value.toString())}
+                >
+                  {value}
+                </Button>
+              ))}
+            </div>
           </div>
+          
+          <div className="mb-3">
+            <h5 className="text-xs text-gray-500 mb-1">Salon Sayısı</h5>
+            <div className="flex items-center gap-2">
+              {[0, 1, 2, 3, 4, 5].map((value) => (
+                <Button
+                  key={`livingRoom-${value}`}
+                  variant={filters.livingRoomNumber === value.toString() ? "default" : "outline"}
+                  className={`min-w-8 h-8 p-0 text-xs ${filters.livingRoomNumber === value.toString() ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
+                  onClick={() => handleInputChange('livingRoomNumber', value.toString())}
+                >
+                  {value}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          {filters.roomNumber && filters.livingRoomNumber && (
+            <div className="bg-blue-50 p-2 rounded-md text-center text-sm border border-blue-100 mt-2">
+              Seçilen: <span className="font-medium">{filters.roomNumber}+{filters.livingRoomNumber}</span>
+            </div>
+          )}
         </div>
         
         {/* Bina Yaşı */}
@@ -333,18 +361,24 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
         {/* Bulunduğu Kat */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Bulunduğu Kat</h4>
-          <div className="grid grid-cols-3 gap-2">
-            {["1-3", "4-6", "7-10", "11+", "Bahçe", "Çatı"].map((value) => (
-              <Button
-                key={value}
-                variant={filters.floorNumber === value ? "default" : "outline"}
-                className={`w-full text-xs py-1 px-2 h-auto ${filters.floorNumber === value ? 'bg-[#3498DB] hover:bg-[#5DADE2]' : 'border-[#E5E5E5]'}`}
-                onClick={() => handleInputChange('floorNumber', value)}
-              >
-                {value}
-              </Button>
-            ))}
-          </div>
+          <Select onValueChange={(value) => handleInputChange('floorNumber', value)}>
+            <SelectTrigger className="w-full border-[#E5E5E5]">
+              <SelectValue placeholder="Kat Seçiniz" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0">Bodrum</SelectItem>
+              <SelectItem value="G">Giriş / Zemin</SelectItem>
+              {[...Array(50)].map((_, i) => (
+                <SelectItem key={`floor-${i+1}`} value={(i+1).toString()}>{i+1}. Kat</SelectItem>
+              ))}
+              <SelectItem value="B">Bahçe Katı</SelectItem>
+              <SelectItem value="Y">Yüksek Giriş</SelectItem>
+              <SelectItem value="C">Çatı Katı</SelectItem>
+              <SelectItem value="D">Dubleks</SelectItem>
+              <SelectItem value="T">Tripleks</SelectItem>
+              <SelectItem value="V">Villa</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         
         {/* Isıtma */}
@@ -367,7 +401,7 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
         {/* Özellikler */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Özellikler</h4>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center space-x-2">
               <Checkbox 
                 id="isFurnished"
@@ -402,6 +436,42 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
                 onCheckedChange={(checked) => handleInputChange('hasParking', checked ? "true" : "")}
               />
               <Label htmlFor="hasParking" className="cursor-pointer text-sm">Otopark</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasPool"
+                checked={filters.hasPool === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasPool', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasPool" className="cursor-pointer text-sm">Havuz</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasGym"
+                checked={filters.hasGym === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasGym', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasGym" className="cursor-pointer text-sm">Spor Salonu</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasGarden"
+                checked={filters.hasGarden === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasGarden', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasGarden" className="cursor-pointer text-sm">Bahçe</Label>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox 
+                id="hasAirConditioner"
+                checked={filters.hasAirConditioner === "true"}
+                onCheckedChange={(checked) => handleInputChange('hasAirConditioner', checked ? "true" : "")}
+              />
+              <Label htmlFor="hasAirConditioner" className="cursor-pointer text-sm">Klima</Label>
             </div>
           </div>
         </div>
