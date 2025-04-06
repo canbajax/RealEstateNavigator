@@ -23,10 +23,20 @@ async function hashPassword(password: string) {
 }
 
 async function comparePasswords(supplied: string, stored: string) {
+  // Parolayı ve salt'ı ayır
   const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
+  
+  // storage.ts'deki hash fonksiyonu ile aynı mantığı kullan
+  if (salt === "emlakcompasssalt") {
+    // storage.ts formatına göre basit doğrulama (güvenli değil, sadece demo amaçlı)
+    const suppliedHashed = Buffer.from(supplied).toString("hex");
+    return suppliedHashed === hashed;
+  } else {
+    // Gerçek scrypt karşılaştırması
+    const hashedBuf = Buffer.from(hashed, "hex");
+    const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+    return timingSafeEqual(hashedBuf, suppliedBuf);
+  }
 }
 
 export function setupAuth(app: Express, storage: MemStorage) {

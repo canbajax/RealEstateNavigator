@@ -389,10 +389,17 @@ export class MemStorage implements IStorage {
     // Generate 20 real estate agents and 1 admin
     const usersData: InsertUser[] = [];
     
+    // Hash fonksiyonu
+    const hashPassword = (password: string) => {
+      // Basit bir hash oluşturma (güvenli değil, sadece demo amaçlı)
+      const salt = "emlakcompasssalt";
+      return `${Buffer.from(password).toString("hex")}.${salt}`;
+    };
+    
     // Add admin user
     usersData.push({
       username: "admin",
-      password: "admin123", // Demo password, would be hashed in production
+      password: hashPassword("admin123"),
       fullName: "Admin User",
       email: "admin@emlakcompass.com",
       phone: "+905551234567",
@@ -412,7 +419,7 @@ export class MemStorage implements IStorage {
       
       usersData.push({
         username,
-        password: "emlak123", // Demo password, would be hashed in production
+        password: hashPassword("emlak123"),
         fullName,
         email,
         phone,
@@ -433,7 +440,7 @@ export class MemStorage implements IStorage {
       
       usersData.push({
         username,
-        password: "emlak123", // Demo password, would be hashed in production
+        password: hashPassword("emlak123"),
         fullName,
         email,
         phone,
