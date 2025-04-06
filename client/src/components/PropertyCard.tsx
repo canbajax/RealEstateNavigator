@@ -230,12 +230,12 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
             <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
               <div className="flex items-center">
                 <img 
-                  src={agent?.avatarUrl || `https://randomuser.me/api/portraits/men/${(listing.id % 50) + 1}.jpg`} 
+                  src={agent?.avatarUrl || `https://ui-avatars.com/api/?name=Co+Worker&background=3498DB&color=fff&size=128`} 
                   alt={agent?.fullName || "Emlak Danışmanı"} 
                   className="w-7 h-7 rounded-full mr-2 border border-gray-200"
                 />
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-800 font-medium truncate">
+                  <span className="text-xs text-gray-800 font-medium truncate w-24">
                     {agent?.fullName || "Emlak Danışmanı"}
                   </span>
                   {listing.transactionStatus !== 'available' && agent ? (
