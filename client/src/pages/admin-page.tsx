@@ -1221,13 +1221,13 @@ export default function AdminPage() {
                       } else if (location.type === 'district') {
                         setSelectedListing(prev => prev ? {
                           ...prev, 
-                          cityId: location.cityId || prev.cityId,
+                          cityId: location.cityId ? location.cityId : prev.cityId,
                           district: location.name
                         } : null);
                       } else if (location.type === 'neighborhood') {
                         setSelectedListing(prev => prev ? {
                           ...prev,
-                          cityId: location.cityId || prev.cityId,
+                          cityId: location.cityId ? location.cityId : prev.cityId,
                           neighborhood: location.name
                         } : null);
                       }

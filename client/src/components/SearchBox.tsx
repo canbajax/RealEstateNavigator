@@ -89,64 +89,12 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
 
   return (
     <div className={`bg-white rounded-lg shadow-lg p-4 sm:p-6 ${className} ${vertical ? "w-full" : "w-full max-w-5xl mx-auto"}`}>
-      <div className={`grid ${vertical ? "grid-cols-1 gap-4" : "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4"}`}>
-        {/* Search input */}
-        <div className="md:col-span-3 lg:col-span-4">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Arama yapın..."
-              name="search"
-              value={searchParams.search}
-              onChange={handleInputChange}
-              className="w-full pl-10 pr-4 py-3 border border-[#BDC3C7] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]"
-            />
-            <Search className="absolute left-3 top-3 text-[#7F8C8D]" size={20} />
-          </div>
-        </div>
-        
-        {/* Location */}
-        <div>
-          <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Konum</label>
-          <LocationSearchBox 
-            onSelect={(location) => {
-              if (location.type === 'city' && location.id) {
-                handleSelectChange("cityId", location.id.toString());
-              } else if (location.cityId) {
-                handleSelectChange("cityId", location.cityId.toString());
-                // İlçe veya mahalle seçildiğinde search parametresine de ekleyelim
-                setSearchParams(prev => ({ 
-                  ...prev, 
-                  search: location.type === 'district' 
-                    ? `${location.name} ${location.cityName}` 
-                    : `${location.name} ${location.cityName}`
-                }));
-              }
-            }}
-          />
-        </div>
-        
-        {/* Property Type */}
-        <div>
-          <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Kategori</label>
-          <Select onValueChange={(value) => handleSelectChange("propertyTypeId", value)}>
-            <SelectTrigger className="w-full px-4 py-3 border border-[#BDC3C7] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
-              <SelectValue placeholder="Tüm Kategoriler" />
-            </SelectTrigger>
-            <SelectContent>
-              {propertyTypes?.map(type => (
-                <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        {/* Listing Type */}
-        <div>
-          <label className="block text-sm font-medium text-[#7F8C8D] mb-1">Durum</label>
+      <div className="flex flex-wrap gap-3">
+        {/* Listing Type - İlan Türü */}
+        <div className="w-full sm:w-auto">
           <Select onValueChange={(value) => handleSelectChange("listingType", value)}>
-            <SelectTrigger className="w-full px-4 py-3 border border-[#BDC3C7] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
-              <SelectValue placeholder="Durum Seçiniz" />
+            <SelectTrigger className="w-full sm:w-44 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+              <SelectValue placeholder="Satılık" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tümü</SelectItem>
@@ -157,33 +105,137 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
           </Select>
         </div>
         
-        {/* Price Range */}
-        <div className={vertical ? "" : "md:col-span-3 lg:col-span-4"}>
-          <label className="block text-sm font-medium text-[#7F8C8D] mb-1">
-            Fiyat Aralığı: {searchParams.minPrice ? `₺${Number(searchParams.minPrice).toLocaleString()}` : '₺0'} - 
-            {searchParams.maxPrice ? `₺${Number(searchParams.maxPrice).toLocaleString()}` : '₺50.000.000+'}
-          </label>
-          <div className="px-2 py-4">
-            <Slider
-              value={searchParams.priceRange}
-              onValueChange={handlePriceRangeChange}
-              min={0}
-              max={100}
-              step={1}
-              className="w-full"
+        {/* Property Type - Emlak Türü */}
+        <div className="w-full sm:w-auto">
+          <Select onValueChange={(value) => handleSelectChange("propertyTypeId", value)}>
+            <SelectTrigger className="w-full sm:w-44 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+              <SelectValue placeholder="Konut" />
+            </SelectTrigger>
+            <SelectContent>
+              {propertyTypes?.map(type => (
+                <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* City - İl */}
+        <div className="w-full sm:w-auto">
+          <Select onValueChange={(value) => handleSelectChange("cityId", value)}>
+            <SelectTrigger className="w-full sm:w-36 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+              <SelectValue placeholder="İl" />
+            </SelectTrigger>
+            <SelectContent>
+              {cities?.map(city => (
+                <SelectItem key={city.id} value={city.id.toString()}>{city.name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* District - İlçe */}
+        <div className="w-full sm:w-auto">
+          <Select>
+            <SelectTrigger className="w-full sm:w-36 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+              <SelectValue placeholder="İlçe" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="placeholder">İlçe seçimi için önce il seçiniz</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        {/* Neighborhood - Mahalle */}
+        <div className="w-full sm:w-auto">
+          <Select>
+            <SelectTrigger className="w-full sm:w-44 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+              <SelectValue placeholder="Mahalle" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="placeholder">Mahalle seçimi için önce ilçe seçiniz</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="w-full sm:w-auto flex flex-wrap gap-3 mt-4">
+          {/* Min Price */}
+          <div className="w-full sm:w-36">
+            <Input
+              type="text"
+              placeholder="Min TL"
+              value={searchParams.minPrice}
+              onChange={(e) => handleSelectChange("minPrice", e.target.value)}
+              className="w-full px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]"
             />
+          </div>
+          
+          {/* Max Price */}
+          <div className="w-full sm:w-36">
+            <Input
+              type="text"
+              placeholder="Max TL"
+              value={searchParams.maxPrice}
+              onChange={(e) => handleSelectChange("maxPrice", e.target.value)}
+              className="w-full px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]"
+            />
+          </div>
+          
+          {/* TL Selection */}
+          <div className="w-full sm:w-auto">
+            <Select>
+              <SelectTrigger className="w-full sm:w-24 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+                <SelectValue placeholder="TL" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="tl">TL</SelectItem>
+                <SelectItem value="usd">USD</SelectItem>
+                <SelectItem value="eur">EUR</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* Room Count */}
+          <div className="w-full sm:w-auto">
+            <Select onValueChange={(value) => handleSelectChange("roomCount", value)}>
+              <SelectTrigger className="w-full sm:w-36 px-4 py-3 border border-[#E5E5E5] rounded-md focus:ring-2 focus:ring-[#3498DB] focus:border-[#3498DB]">
+                <SelectValue placeholder="Oda Sayısı" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Tümü</SelectItem>
+                <SelectItem value="1">1+0</SelectItem>
+                <SelectItem value="2">1+1</SelectItem>
+                <SelectItem value="3">2+1</SelectItem>
+                <SelectItem value="4">3+1</SelectItem>
+                <SelectItem value="5">4+1</SelectItem>
+                <SelectItem value="6">5+</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         
-        {/* Search Button */}
-        <div className={vertical ? "" : "md:col-span-3 lg:col-span-4"}>
+        {/* Search Buttons */}
+        <div className="w-full flex flex-wrap gap-3 mt-4">
           <Button 
-            className="w-full bg-[#3498DB] hover:bg-[#5DADE2] text-white font-medium py-3 rounded-md transition"
+            className="flex-grow sm:flex-grow-0 sm:min-w-[200px] bg-[#3498DB] hover:bg-[#5DADE2] text-white font-medium py-3 rounded-md transition"
             onClick={handleSearch}
           >
             <Search className="mr-2 h-4 w-4" />
             Ara
           </Button>
+          
+          <Button 
+            variant="outline"
+            className="flex-grow sm:flex-grow-0 border-[#3498DB] text-[#3498DB] hover:bg-[#EBF5FB] font-medium py-3 rounded-md transition"
+            onClick={handleSearch}
+          >
+            Haritada Ara
+          </Button>
+        </div>
+        
+        {/* Show More Link */}
+        <div className="w-full mt-2">
+          <button className="text-[#3498DB] text-sm font-medium hover:underline">
+            Daha fazla seçenek göster
+          </button>
         </div>
       </div>
     </div>
