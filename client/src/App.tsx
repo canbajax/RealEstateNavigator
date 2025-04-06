@@ -25,13 +25,17 @@ function Router() {
           <Route path="/listings/:id" component={ListingDetail} />
           <Route path="/about">
             {() => {
-              const AboutPage = require("./pages/AboutPage").AboutPage;
+              // Dinamik import kullanarak
+              const AboutPageModule = import.meta.glob("./pages/AboutPage.tsx", { eager: true });
+              const AboutPage = AboutPageModule["./pages/AboutPage.tsx"].AboutPage;
               return <AboutPage />;
             }}
           </Route>
           <Route path="/agents">
             {() => {
-              const AgentsPage = require("./pages/AgentsPage").AgentsPage;
+              // Dinamik import kullanarak
+              const AgentsPageModule = import.meta.glob("./pages/AgentsPage.tsx", { eager: true });
+              const AgentsPage = AgentsPageModule["./pages/AgentsPage.tsx"].AgentsPage;
               return <AgentsPage />;
             }}
           </Route>
