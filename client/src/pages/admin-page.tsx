@@ -282,7 +282,7 @@ export default function AdminPage() {
   });
   
   // İlanları getir
-  const { data: listingsData, isLoading: isListingsLoading } = useQuery<{ success: boolean; listings: Listing[] }>({
+  const { data: listingsData, isLoading: isListingsLoading } = useQuery<Listing[]>({
     queryKey: ["/api/listings"],
     queryFn: getQueryFn({ on401: "throw" }),
   });
@@ -733,8 +733,8 @@ export default function AdminPage() {
                           </div>
                         </td>
                       </tr>
-                    ) : listingsData?.listings && listingsData.listings.length > 0 ? (
-                      listingsData.listings.map((listing) => {
+                    ) : listingsData && listingsData.length > 0 ? (
+                      listingsData.map((listing) => {
                         // Şehir adını bul
                         const city = citiesData?.cities?.find(c => c.id === listing.cityId);
                         
