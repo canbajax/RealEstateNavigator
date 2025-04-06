@@ -140,6 +140,42 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
       </div>
       
       <div className="p-0 divide-y divide-[#E5E5E5]">
+        {/* Emlak Tipi */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">Emlak Tipi</h4>
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            {propertyTypesLoading ? (
+              <div className="col-span-2 space-y-2">
+                <Skeleton className="h-6 w-full" />
+              </div>
+            ) : propertyTypes?.slice(0, 6).map(type => (
+              <div 
+                key={type.id} 
+                className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+                onClick={() => handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() ? '' : type.id.toString())}
+              >
+                <span>{type.name}</span>
+                <span className="text-xs text-gray-500">({type.listingCount})</span>
+              </div>
+            ))}
+          </div>
+          
+          {propertyTypes && propertyTypes.length > 6 && (
+            <div className="grid grid-cols-2 gap-2">
+              {propertyTypes.slice(6, 12).map(type => (
+                <div 
+                  key={type.id} 
+                  className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.propertyTypeId === type.id.toString() ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+                  onClick={() => handleInputChange('propertyTypeId', filters.propertyTypeId === type.id.toString() ? '' : type.id.toString())}
+                >
+                  <span>{type.name}</span>
+                  <span className="text-xs text-gray-500">({type.listingCount})</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        
         {/* Adres */}
         <div className="px-4 py-3">
           <h4 className="font-medium text-sm mb-2">Adres</h4>
@@ -254,44 +290,35 @@ const ListingFilter = ({ currentFilters, onFilterChange }: ListingFilterProps) =
           </div>
         </div>
         
-        {/* Property Type */}
-        <Accordion type="single" collapsible defaultValue="propertyType">
-          <AccordionItem value="propertyType" className="border-none">
-            <AccordionTrigger className="py-3 px-0">
-              <span className="font-medium flex items-center">
-                <Building className="mr-2 h-4 w-4 text-[#3498DB]" />
-                Emlak Tipi
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="space-y-2">
-              {propertyTypesLoading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                </div>
-              ) : (
-                propertyTypes?.map(type => (
-                  <div key={type.id} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`propertyType-${type.id}`} 
-                      checked={filters.propertyTypeId === type.id.toString()}
-                      onCheckedChange={(checked) => {
-                        handleInputChange('propertyTypeId', checked ? type.id.toString() : '');
-                      }}
-                    />
-                    <Label 
-                      htmlFor={`propertyType-${type.id}`}
-                      className="cursor-pointer"
-                    >
-                      {type.name} ({type.listingCount})
-                    </Label>
-                  </div>
-                ))
-              )}
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+        {/* İlan Türü */}
+        <div className="px-4 py-3">
+          <h4 className="font-medium text-sm mb-2">İlan Türü</h4>
+          <div className="grid grid-cols-1 gap-2">
+            <div 
+              className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.listingType === 'sell' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'sell' ? '' : 'sell')}
+            >
+              <span>Satılık</span>
+              <span className="text-xs text-gray-500">(246)</span>
+            </div>
+            
+            <div 
+              className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.listingType === 'rent' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'rent' ? '' : 'rent')}
+            >
+              <span>Kiralık</span>
+              <span className="text-xs text-gray-500">(183)</span>
+            </div>
+            
+            <div 
+              className={`border rounded px-2 py-1 cursor-pointer text-sm flex justify-between items-center ${filters.listingType === 'daily' ? 'border-[#3498DB] bg-[#EBF5FB]' : 'border-[#E5E5E5]'}`}
+              onClick={() => handleInputChange('listingType', filters.listingType === 'daily' ? '' : 'daily')}
+            >
+              <span>Günlük Kiralık</span>
+              <span className="text-xs text-gray-500">(48)</span>
+            </div>
+          </div>
+        </div>
         
         {/* Location */}
         <Accordion type="single" collapsible defaultValue="location">
