@@ -107,7 +107,7 @@ const Listings = () => {
             <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex justify-between items-center">
               <div>
                 <p className="text-[#7F8C8D]">
-                  <span className="font-medium">{totalItems}</span> ilan bulundu
+                  <span className="font-medium">{allListings ? allListings.length : 0}</span> ilan bulundu
                   {activeFilterCount > 0 && ` (${activeFilterCount} filtre aktif)`}
                 </p>
               </div>
