@@ -34,7 +34,8 @@ import {
   Briefcase,
   CircleDollarSign,
   DoorOpen,
-  Laptop
+  Laptop,
+  UserRound
 } from "lucide-react";
 import { type Listing, type City, type PropertyType } from "@shared/schema";
 import ContactForm from "@/components/ContactForm";
@@ -184,6 +185,16 @@ const ListingDetail = () => {
     queryKey: [`/api/property-types/${listing?.propertyTypeId}`],
     enabled: !!listing,
   });
+  
+  // Fetch agent details if listing has an agentId
+  const { data: agentResponse } = useQuery<{success: boolean, agents: any[]}>({
+    queryKey: ["/api/agents"],
+    enabled: !!listing,
+  });
+  
+  // Find agent information if present
+  const agents = agentResponse?.agents || [];
+  const agent = agents.find((a: any) => a.id === listing?.agentId);
 
   // Fetch similar listings
   const { data: similarListings } = useQuery<Listing[]>({
@@ -550,6 +561,18 @@ const ListingDetail = () => {
                           listing.transactionStatus === 'available' ? 'Satılık/Kiralık' : 
                           listing.transactionStatus === 'sold' ? 'Satıldı' : 'Kiralandı'
                         }</span>
+                      </div>
+                    )}
+                    
+                    {/* Danışman Bilgisi */}
+                    {listing.agentId && agent && (
+                      <div className="flex items-center p-2 bg-blue-50 rounded-md border border-blue-100">
+                        <UserRound className="h-4 w-4 mr-2 text-blue-600" />
+                        <span>
+                          {listing.transactionStatus !== 'available' 
+                            ? `${listing.transactionStatus === 'sold' ? 'Satışı' : 'Kiracısı'} bulan danışman: ${agent.fullName}` 
+                            : `Sorumlu Danışman: ${agent.fullName}`}
+                        </span>
                       </div>
                     )}
                   </div>

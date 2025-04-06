@@ -238,9 +238,13 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
                   <span className="text-xs text-gray-800 font-medium truncate">
                     {agent?.fullName || "Emlak Danışmanı"}
                   </span>
-                  {transactionStatusBadge && (
+                  {listing.transactionStatus !== 'available' && agent ? (
                     <span className="text-[10px] text-gray-500">
-                      {transactionStatusBadge.text} • {formatDate(listing.postedAt)}
+                      {listing.transactionStatus === 'sold' ? 'Satışı' : 'Kiracısı'} buldu
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-gray-500">
+                      {formatDate(listing.postedAt)}
                     </span>
                   )}
                 </div>

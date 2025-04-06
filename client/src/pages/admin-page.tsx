@@ -1580,6 +1580,26 @@ export default function AdminPage() {
                   </select>
                 </div>
               </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="agentId">Danışman</Label>
+                <select
+                  id="agentId"
+                  value={selectedListing?.agentId || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {
+                    ...prev, 
+                    agentId: e.target.value ? Number(e.target.value) : null
+                  } : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Danışman Seçin</option>
+                  {agentsData?.agents?.map((agent) => (
+                    <option key={agent.id} value={agent.id}>
+                      {agent.fullName} ({agent.username})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
           
