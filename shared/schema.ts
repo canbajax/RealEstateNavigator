@@ -78,6 +78,12 @@ export const listings = pgTable("listings", {
   imageUrls: text("image_urls").array().notNull(),
   latitude: doublePrecision("latitude"),
   longitude: doublePrecision("longitude"),
+  referenceNo: text("reference_no"),
+  buildingAge: integer("building_age"),
+  heatingType: text("heating_type"),
+  isFurnished: boolean("is_furnished"),
+  facingDirection: text("facing_direction"),
+  floorNumber: integer("floor_number"),
 });
 
 export const insertListingSchema = createInsertSchema(listings).pick({
@@ -102,6 +108,12 @@ export const insertListingSchema = createInsertSchema(listings).pick({
   imageUrls: true,
   latitude: true,
   longitude: true,
+  referenceNo: true,
+  buildingAge: true,
+  heatingType: true,
+  isFurnished: true,
+  facingDirection: true,
+  floorNumber: true,
 });
 
 // Contact messages table

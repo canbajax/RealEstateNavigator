@@ -279,6 +279,12 @@ const ListingDetail = () => {
                       <Ruler className="h-4 w-4 mr-2 text-[#3498DB]" />
                       <span>Alan: {listing.squareMeters} m²</span>
                     </div>
+                    {listing.referenceNo && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <MapPin className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>İlan No: {listing.referenceNo}</span>
+                      </div>
+                    )}
                     {listing.roomCount && (
                       <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
                         <Bed className="h-4 w-4 mr-2 text-[#3498DB]" />
@@ -295,6 +301,36 @@ const ListingDetail = () => {
                       <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
                         <Car className="h-4 w-4 mr-2 text-[#3498DB]" />
                         <span>Otopark: {listing.parkingCount} Araçlık</span>
+                      </div>
+                    )}
+                    {listing.buildingAge !== null && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <Calendar className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>Bina Yaşı: {listing.buildingAge}</span>
+                      </div>
+                    )}
+                    {listing.heatingType && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>Isıtma: {listing.heatingType}</span>
+                      </div>
+                    )}
+                    {listing.isFurnished !== null && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>Eşyalı: {listing.isFurnished ? 'Evet' : 'Hayır'}</span>
+                      </div>
+                    )}
+                    {listing.facingDirection && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <MapPin className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>Cephe: {listing.facingDirection}</span>
+                      </div>
+                    )}
+                    {listing.floorNumber !== null && (
+                      <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">
+                        <Home className="h-4 w-4 mr-2 text-[#3498DB]" />
+                        <span>Kat: {listing.floorNumber}</span>
                       </div>
                     )}
                     <div className="flex items-center p-2 bg-[#ECF0F1] rounded-md">

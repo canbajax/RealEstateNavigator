@@ -24,6 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -1193,6 +1194,101 @@ export default function AdminPage() {
                   onChange={(e) => setSelectedListing(prev => prev ? {...prev, neighborhood: e.target.value} : null)}
                   placeholder="Mahalle adı"
                 />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="address">Tam Adres</Label>
+                <Textarea
+                  id="address"
+                  value={selectedListing?.address || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, address: e.target.value} : null)}
+                  placeholder="Tam adres"
+                  rows={3}
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="referenceNo">İlan No</Label>
+                <Input
+                  id="referenceNo"
+                  value={selectedListing?.referenceNo || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, referenceNo: e.target.value} : null)}
+                  placeholder="İlan Referans No"
+                />
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="buildingAge">Bina Yaşı</Label>
+                  <Input
+                    id="buildingAge"
+                    type="number"
+                    value={selectedListing?.buildingAge ?? ""}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, buildingAge: e.target.value ? Number(e.target.value) : null} : null)}
+                    placeholder="Bina Yaşı"
+                  />
+                </div>
+                
+                <div className="grid gap-2">
+                  <Label htmlFor="floorNumber">Bulunduğu Kat</Label>
+                  <Input
+                    id="floorNumber"
+                    type="number"
+                    value={selectedListing?.floorNumber ?? ""}
+                    onChange={(e) => setSelectedListing(prev => prev ? {...prev, floorNumber: e.target.value ? Number(e.target.value) : null} : null)}
+                    placeholder="Kat"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="heatingType">Isıtma Tipi</Label>
+                <select
+                  id="heatingType"
+                  value={selectedListing?.heatingType || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, heatingType: e.target.value} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Isıtma Tipi Seçin</option>
+                  <option value="Doğalgaz">Doğalgaz</option>
+                  <option value="Merkezi">Merkezi</option>
+                  <option value="Kombi">Kombi</option>
+                  <option value="Klima">Klima</option>
+                  <option value="Soba">Soba</option>
+                  <option value="Yerden Isıtma">Yerden Isıtma</option>
+                  <option value="Yok">Yok</option>
+                </select>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="facingDirection">Cephe</Label>
+                <select
+                  id="facingDirection"
+                  value={selectedListing?.facingDirection || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, facingDirection: e.target.value} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Cephe Seçin</option>
+                  <option value="Kuzey">Kuzey</option>
+                  <option value="Güney">Güney</option>
+                  <option value="Doğu">Doğu</option>
+                  <option value="Batı">Batı</option>
+                  <option value="Kuzeydoğu">Kuzeydoğu</option>
+                  <option value="Kuzeybatı">Kuzeybatı</option>
+                  <option value="Güneydoğu">Güneydoğu</option>
+                  <option value="Güneybatı">Güneybatı</option>
+                </select>
+              </div>
+              
+              <div className="grid gap-2">
+                <div className="flex items-center space-x-2">
+                  <Checkbox 
+                    id="isFurnished" 
+                    checked={selectedListing?.isFurnished || false}
+                    onCheckedChange={(checked) => setSelectedListing(prev => prev ? {...prev, isFurnished: checked === true} : null)}
+                  />
+                  <Label htmlFor="isFurnished">Eşyalı</Label>
+                </div>
               </div>
               
               <div className="grid gap-2">

@@ -310,7 +310,13 @@ export class MemStorage implements IStorage {
       transactionStatus: insertListing.transactionStatus ?? "available",
       neighborhood: insertListing.neighborhood ?? null,
       latitude: insertListing.latitude ?? null,
-      longitude: insertListing.longitude ?? null
+      longitude: insertListing.longitude ?? null,
+      referenceNo: insertListing.referenceNo ?? `REF${Math.floor(100000 + Math.random() * 900000)}`,
+      buildingAge: insertListing.buildingAge ?? null,
+      heatingType: insertListing.heatingType ?? null,
+      isFurnished: insertListing.isFurnished ?? false,
+      facingDirection: insertListing.facingDirection ?? null,
+      floorNumber: insertListing.floorNumber ?? null
     };
     
     const listing: Listing = { 
@@ -343,7 +349,13 @@ export class MemStorage implements IStorage {
       transactionStatus: updateData.transactionStatus !== undefined ? updateData.transactionStatus : listing.transactionStatus,
       neighborhood: updateData.neighborhood !== undefined ? updateData.neighborhood : listing.neighborhood,
       latitude: updateData.latitude !== undefined ? updateData.latitude : listing.latitude,
-      longitude: updateData.longitude !== undefined ? updateData.longitude : listing.longitude
+      longitude: updateData.longitude !== undefined ? updateData.longitude : listing.longitude,
+      referenceNo: updateData.referenceNo !== undefined ? updateData.referenceNo : listing.referenceNo,
+      buildingAge: updateData.buildingAge !== undefined ? updateData.buildingAge : listing.buildingAge,
+      heatingType: updateData.heatingType !== undefined ? updateData.heatingType : listing.heatingType,
+      isFurnished: updateData.isFurnished !== undefined ? updateData.isFurnished : listing.isFurnished,
+      facingDirection: updateData.facingDirection !== undefined ? updateData.facingDirection : listing.facingDirection,
+      floorNumber: updateData.floorNumber !== undefined ? updateData.floorNumber : listing.floorNumber
     };
     
     this.listings.set(id, updatedListing);
