@@ -32,6 +32,8 @@ export interface IStorage {
   getListingById(id: number): Promise<Listing | undefined>;
   getFeaturedListings(limit?: number): Promise<Listing[]>;
   createListing(listing: InsertListing): Promise<Listing>;
+  updateListing(id: number, listing: Partial<InsertListing>): Promise<Listing>;
+  deleteListing(id: number): Promise<boolean>;
   
   // Contact Message operations
   createContactMessage(message: InsertContactMessage): Promise<ContactMessage>;
@@ -283,6 +285,100 @@ export class MemStorage implements IStorage {
     
     this.listings.set(id, listing);
     return listing;
+  }
+  
+  async updateListing(id: number, updateData: Partial<InsertListing>): Promise<Listing> {
+    const listing = this.listings.get(id);
+    if (!listing) {
+      throw new Error(`Listing with ID ${id} not found`);
+    }
+    
+    // Update listing with new data
+    const updatedListing: Listing = {
+      ...listing,
+      ...updateData,
+      // Ensure optional fields have appropriate values
+      roomCount: updateData.roomCount !== undefined ? updateData.roomCount : listing.roomCount,
+      bathroomCount: updateData.bathroomCount !== undefined ? updateData.bathroomCount : listing.bathroomCount,
+      parkingCount: updateData.parkingCount !== undefined ? updateData.parkingCount : listing.parkingCount,
+      rentPeriod: updateData.rentPeriod !== undefined ? updateData.rentPeriod : listing.rentPeriod,
+      isFeatured: updateData.isFeatured !== undefined ? updateData.isFeatured : listing.isFeatured,
+      latitude: updateData.latitude !== undefined ? updateData.latitude : listing.latitude,
+      longitude: updateData.longitude !== undefined ? updateData.longitude : listing.longitude
+    };
+    
+    this.listings.set(id, updatedListing);
+    
+    // Update property type and city listing counts if needed
+    if (updateData.propertyTypeId !== undefined && updateData.propertyTypeId !== listing.propertyTypeId) {
+      // Increment count for new property type
+      const newPropertyType = this.propertyTypes.get(updateData.propertyTypeId);
+      if (newPropertyType) {
+        this.propertyTypes.set(updateData.propertyTypeId, {
+          ...newPropertyType,
+          listingCount: newPropertyType.listingCount + 1
+        });
+      }
+      
+      // Decrement count for old property type
+      const oldPropertyType = this.propertyTypes.get(listing.propertyTypeId);
+      if (oldPropertyType) {
+        this.propertyTypes.set(listing.propertyTypeId, {
+          ...oldPropertyType,
+          listingCount: Math.max(0, oldPropertyType.listingCount - 1)
+        });
+      }
+    }
+    
+    if (updateData.cityId !== undefined && updateData.cityId !== listing.cityId) {
+      // Increment count for new city
+      const newCity = this.cities.get(updateData.cityId);
+      if (newCity) {
+        this.cities.set(updateData.cityId, {
+          ...newCity,
+          listingCount: newCity.listingCount + 1
+        });
+      }
+      
+      // Decrement count for old city
+      const oldCity = this.cities.get(listing.cityId);
+      if (oldCity) {
+        this.cities.set(listing.cityId, {
+          ...oldCity,
+          listingCount: Math.max(0, oldCity.listingCount - 1)
+        });
+      }
+    }
+    
+    return updatedListing;
+  }
+  
+  async deleteListing(id: number): Promise<boolean> {
+    const listing = this.listings.get(id);
+    if (!listing) {
+      return false;
+    }
+    
+    // Decrement property type listing count
+    const propertyType = this.propertyTypes.get(listing.propertyTypeId);
+    if (propertyType) {
+      this.propertyTypes.set(listing.propertyTypeId, {
+        ...propertyType,
+        listingCount: Math.max(0, propertyType.listingCount - 1)
+      });
+    }
+    
+    // Decrement city listing count
+    const city = this.cities.get(listing.cityId);
+    if (city) {
+      this.cities.set(listing.cityId, {
+        ...city,
+        listingCount: Math.max(0, city.listingCount - 1)
+      });
+    }
+    
+    // Remove listing
+    return this.listings.delete(id);
   }
   
   // Contact Message operations

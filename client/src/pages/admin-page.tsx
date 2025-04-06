@@ -4,7 +4,8 @@ import { Redirect } from "wouter";
 import { 
   Loader2, Settings, User, Home, ListFilter, Plus, 
   Phone, Mail, MapPin, Clock, Facebook, Twitter, 
-  Instagram, Linkedin, Check, AlertCircle, Save, RefreshCw
+  Instagram, Linkedin, Check, AlertCircle, Save, RefreshCw,
+  Trash, Edit
 } from "lucide-react";
 import { 
   Tabs, 
@@ -17,13 +18,33 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Listing, User as UserType, ContactInfo, WorkingHours } from "@shared/schema";
+import { Listing, User as UserType, ContactInfo, WorkingHours, InsertUser, InsertListing } from "@shared/schema";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 // API yanıt tipleri
 interface AdminStats {
@@ -40,6 +61,38 @@ interface AdminStats {
 export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("overview");
+  const [selectedUser, setSelectedUser] = useState<Omit<UserType, "password"> | null>(null);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [showUserDialog, setShowUserDialog] = useState<boolean>(false);
+  const [showListingDialog, setShowListingDialog] = useState<boolean>(false);
+  const [showDeleteUserDialog, setShowDeleteUserDialog] = useState<boolean>(false);
+  const [showDeleteListingDialog, setShowDeleteListingDialog] = useState<boolean>(false);
+  const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
+  const [listingIdToDelete, setListingIdToDelete] = useState<number | null>(null);
+  
+  // Kullanıcı düzenleme işlevi
+  const handleEditUser = (user: Omit<UserType, "password">) => {
+    setSelectedUser(user);
+    setShowUserDialog(true);
+  };
+  
+  // Kullanıcı silme işlevi
+  const handleDeleteUser = (userId: number) => {
+    setUserIdToDelete(userId);
+    setShowDeleteUserDialog(true);
+  };
+  
+  // İlan düzenleme işlevi
+  const handleEditListing = (listing: Listing) => {
+    setSelectedListing(listing);
+    setShowListingDialog(true);
+  };
+  
+  // İlan silme işlevi
+  const handleDeleteListing = (listingId: number) => {
+    setListingIdToDelete(listingId);
+    setShowDeleteListingDialog(true);
+  };
 
   // Kullanıcı yükleniyorsa yükleme ekranı göster
   if (isLoading) {
@@ -54,6 +107,70 @@ export default function AdminPage() {
   if (!user || user.role !== "admin") {
     return <Redirect to="/" />;
   }
+
+  // Emlakçı Silme Mutasyonu
+  const deleteUserMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await apiRequest("DELETE", `/api/users/${id}`);
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      toast({
+        title: "Emlakçı silindi",
+        description: "Emlakçı başarıyla silindi.",
+        variant: "default",
+      });
+      setShowDeleteUserDialog(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hata",
+        description: "Emlakçı silinirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // İlan Silme Mutasyonu
+  const deleteListingMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const res = await apiRequest("DELETE", `/api/listings/${id}`);
+      return await res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      toast({
+        title: "İlan silindi",
+        description: "İlan başarıyla silindi.",
+        variant: "default",
+      });
+      setShowDeleteListingDialog(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hata",
+        description: "İlan silinirken bir hata oluştu.",
+        variant: "destructive",
+      });
+    }
+  });
+  
+  // Silme işlemlerini gerçekleştir
+  const confirmDeleteUser = () => {
+    if (userIdToDelete) {
+      deleteUserMutation.mutate(userIdToDelete);
+    }
+  };
+  
+  const confirmDeleteListing = () => {
+    if (listingIdToDelete) {
+      deleteListingMutation.mutate(listingIdToDelete);
+    }
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -184,6 +301,58 @@ export default function AdminPage() {
           </Tabs>
         </TabsContent>
       </Tabs>
+      
+      {/* Emlakçı Silme Dialog */}
+      <AlertDialog open={showDeleteUserDialog} onOpenChange={setShowDeleteUserDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Emlakçıyı Sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bu emlakçıyı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>İptal</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteUser}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {deleteUserMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Trash className="mr-2 h-4 w-4" />
+              )}
+              Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
+      {/* İlan Silme Dialog */}
+      <AlertDialog open={showDeleteListingDialog} onOpenChange={setShowDeleteListingDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>İlanı Sil</AlertDialogTitle>
+            <AlertDialogDescription>
+              Bu ilanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>İptal</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmDeleteListing}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              {deleteListingMutation.isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Trash className="mr-2 h-4 w-4" />
+              )}
+              Sil
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -316,9 +485,22 @@ function UsersTable() {
               <td className="py-3 px-2">{user.phone || "-"}</td>
               <td className="py-3 px-2 capitalize">{user.role}</td>
               <td className="py-3 px-2 text-right">
-                <Button variant="ghost" size="sm">Düzenle</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => handleEditUser(user)}
+                >
+                  Düzenle
+                </Button>
                 {user.role !== "admin" && (
-                  <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Sil</Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => handleDeleteUser(user.id)}
+                  >
+                    Sil
+                  </Button>
                 )}
               </td>
             </tr>
@@ -401,8 +583,21 @@ function ListingsTable() {
                 {new Date(listing.postedAt).toLocaleDateString("tr-TR")}
               </td>
               <td className="py-3 px-2 text-right">
-                <Button variant="ghost" size="sm">Düzenle</Button>
-                <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">Sil</Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleEditListing(listing)}
+                >
+                  Düzenle
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDeleteListing(listing.id)}
+                >
+                  Sil
+                </Button>
               </td>
             </tr>
           ))}

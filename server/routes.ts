@@ -7,7 +7,8 @@ import {
   insertListingSchema,
   insertUserSchema,
   contactInfoSchema,
-  workingHoursSchema
+  workingHoursSchema,
+  Listing
 } from "@shared/schema";
 import { setupAuth } from "./auth";
 
@@ -234,6 +235,221 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }).catch(err => {
       res.status(500).json({ message: "Failed to fetch statistics" });
     });
+  });
+  
+  // Update listing (admin only)
+  router.put("/listings/:id", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid listing ID" });
+    }
+    
+    try {
+      // Validate request body
+      const listing = await storage.getListingById(id);
+      
+      if (!listing) {
+        return res.status(404).json({ message: "Listing not found" });
+      }
+      
+      const updateData = insertListingSchema.partial().parse(req.body);
+      
+      // Update listing in storage
+      const updatedListing = await storage.updateListing(id, updateData);
+      
+      res.json({ 
+        success: true, 
+        message: "Listing updated successfully",
+        listing: updatedListing
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid listing data", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to update listing" });
+    }
+  });
+  
+  // Delete listing (admin only)
+  router.delete("/listings/:id", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid listing ID" });
+    }
+    
+    try {
+      const success = await storage.deleteListing(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Listing not found" });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: "Listing deleted successfully" 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete listing" });
+    }
+  });
+  
+  // Create new user (admin only)
+  router.post("/users", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    try {
+      const userData = insertUserSchema.parse(req.body);
+      
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(userData.username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+      
+      const newUser = await storage.createUser(userData);
+      
+      // Don't send password back
+      const { password, ...safeUser } = newUser;
+      
+      res.status(201).json({ 
+        success: true, 
+        message: "User created successfully",
+        user: safeUser 
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid user data", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+  
+  // Update user (admin only)
+  router.put("/users/:id", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    try {
+      // Validate request body
+      const user = await storage.getUser(id);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const updateData = insertUserSchema.partial().parse(req.body);
+      
+      // Update user in storage
+      const updatedUser = await storage.updateUser(id, updateData);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Don't send password back
+      const { password, ...safeUser } = updatedUser;
+      
+      res.json({ 
+        success: true, 
+        message: "User updated successfully",
+        user: safeUser
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ 
+          message: "Invalid user data", 
+          errors: error.errors 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+  
+  // Delete user (admin only)
+  router.delete("/users/:id", async (req: Request, res: Response) => {
+    // Check if user is authenticated and is admin
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    if (req.user?.role !== "admin") {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+    
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+    
+    // Don't allow deleting the admin user
+    const user = await storage.getUser(id);
+    if (user?.role === "admin") {
+      return res.status(403).json({ message: "Cannot delete admin user" });
+    }
+    
+    try {
+      const success = await storage.deleteUser(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: "User deleted successfully" 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete user" });
+    }
   });
   
   // Site settings API endpoints
