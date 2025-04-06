@@ -87,6 +87,18 @@ export default function AdminPage() {
     queryKey: ["/api/listings"],
     queryFn: getQueryFn({ on401: "throw" }),
   });
+  
+  // Şehirleri getir
+  const { data: citiesData } = useQuery<{ success: boolean; cities: any[] }>({
+    queryKey: ["/api/cities"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+  
+  // Emlak Tiplerini getir
+  const { data: propertyTypesData } = useQuery<{ success: boolean; propertyTypes: any[] }>({
+    queryKey: ["/api/property-types"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
 
   // Kullanıcı düzenleme işlevi
   const handleEditUser = (user: Omit<UserType, "password">) => {
@@ -481,41 +493,46 @@ export default function AdminPage() {
                         </td>
                       </tr>
                     ) : listingsData?.listings && listingsData.listings.length > 0 ? (
-                      listingsData.listings.map((listing) => (
-                        <tr key={listing.id} className="border-b hover:bg-muted/50">
-                          <td className="py-3 px-2">
-                            <div className="font-medium truncate max-w-[200px]">
-                              {listing.title}
-                            </div>
-                          </td>
-                          <td className="py-3 px-2">
-                            {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(listing.price)}
-                          </td>
-                          <td className="py-3 px-2">
-                            <span className={`px-2 py-1 rounded-full text-xs ${
-                              listing.listingType === "sale" ? "bg-orange-100 text-orange-700" : "bg-violet-100 text-violet-700"
-                            }`}>
-                              {listing.listingType === "sale" ? "Satılık" : "Kiralık"}
-                            </span>
-                          </td>
-                          <td className="py-3 px-2 truncate max-w-[150px]">
-                            {listing.cityName || "Belirtilmemiş"}
-                          </td>
-                          <td className="py-3 px-2 text-muted-foreground">
-                            {new Date(listing.createdAt).toLocaleDateString('tr-TR')}
-                          </td>
-                          <td className="py-3 px-2 text-right">
-                            <div className="flex justify-end space-x-2">
-                              <Button onClick={() => handleEditListing(listing)} variant="outline" size="icon">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button onClick={() => handleDeleteListing(listing.id)} variant="outline" size="icon" className="text-red-500">
-                                <Trash className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                      listingsData.listings.map((listing) => {
+                        // Şehir adını bul
+                        const city = citiesData?.cities?.find(c => c.id === listing.cityId);
+                        
+                        return (
+                          <tr key={listing.id} className="border-b hover:bg-muted/50">
+                            <td className="py-3 px-2">
+                              <div className="font-medium truncate max-w-[200px]">
+                                {listing.title}
+                              </div>
+                            </td>
+                            <td className="py-3 px-2">
+                              {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(listing.price)}
+                            </td>
+                            <td className="py-3 px-2">
+                              <span className={`px-2 py-1 rounded-full text-xs ${
+                                listing.listingType === "sale" ? "bg-orange-100 text-orange-700" : "bg-violet-100 text-violet-700"
+                              }`}>
+                                {listing.listingType === "sale" ? "Satılık" : "Kiralık"}
+                              </span>
+                            </td>
+                            <td className="py-3 px-2 truncate max-w-[150px]">
+                              {city?.name || "Belirtilmemiş"}
+                            </td>
+                            <td className="py-3 px-2 text-muted-foreground">
+                              {new Date(listing.postedAt).toLocaleDateString('tr-TR')}
+                            </td>
+                            <td className="py-3 px-2 text-right">
+                              <div className="flex justify-end space-x-2">
+                                <Button onClick={() => handleEditListing(listing)} variant="outline" size="icon">
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button onClick={() => handleDeleteListing(listing.id)} variant="outline" size="icon" className="text-red-500">
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     ) : (
                       <tr className="border-b hover:bg-muted/50">
                         <td className="py-8 px-2 text-center text-muted-foreground" colSpan={6}>
@@ -621,6 +638,276 @@ export default function AdminPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* Emlakçı Düzenleme Dialog */}
+      <Dialog open={showUserDialog} onOpenChange={setShowUserDialog}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>{selectedUser?.id ? "Emlakçı Düzenle" : "Yeni Emlakçı Ekle"}</DialogTitle>
+            <DialogDescription>
+              Emlakçı bilgilerini düzenleyin veya yeni emlakçı ekleyin.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="fullName">Adı Soyadı</Label>
+              <Input
+                id="fullName"
+                value={selectedUser?.fullName || ""}
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, fullName: e.target.value} : null)}
+                placeholder="Emlakçı adı ve soyadı"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="username">Kullanıcı Adı</Label>
+              <Input
+                id="username"
+                value={selectedUser?.username || ""}
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, username: e.target.value} : null)}
+                placeholder="Giriş için kullanıcı adı"
+                readOnly={selectedUser?.id ? true : false}
+              />
+              {selectedUser?.id && (
+                <p className="text-xs text-muted-foreground">Kullanıcı adı değiştirilemez</p>
+              )}
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="email">E-posta</Label>
+              <Input
+                id="email"
+                type="email"
+                value={selectedUser?.email || ""}
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, email: e.target.value} : null)}
+                placeholder="E-posta adresi"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="phone">Telefon</Label>
+              <Input
+                id="phone"
+                value={selectedUser?.phone || ""}
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, phone: e.target.value} : null)}
+                placeholder="Telefon numarası"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="avatarUrl">Profil Fotoğrafı</Label>
+              <Input
+                id="avatarUrl"
+                value={selectedUser?.avatarUrl || ""}
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, avatarUrl: e.target.value} : null)}
+                placeholder="Profil fotoğrafı URL'si"
+              />
+              {selectedUser?.avatarUrl && (
+                <div className="mt-2 p-2 border rounded-md">
+                  <div className="text-xs text-muted-foreground mb-2">Mevcut fotoğraf:</div>
+                  <div className="flex justify-center">
+                    <img 
+                      src={selectedUser.avatarUrl} 
+                      alt={selectedUser.fullName || "Profil"} 
+                      className="h-24 w-24 object-cover rounded-full"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="password">Şifre</Label>
+              <Input
+                id="password"
+                type="password"
+                onChange={(e) => setSelectedUser(prev => prev ? {...prev, password: e.target.value} : null)}
+                placeholder={selectedUser?.id ? "Değiştirmek için yeni şifre girin" : "Yeni emlakçı şifresi"}
+              />
+              {selectedUser?.id && (
+                <p className="text-xs text-muted-foreground">Sadece şifreyi değiştirmek isterseniz doldurun</p>
+              )}
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowUserDialog(false)}>İptal</Button>
+            <Button 
+              type="submit" 
+              className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Kaydet
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* İlan Düzenleme Dialog */}
+      <Dialog open={showListingDialog} onOpenChange={setShowListingDialog}>
+        <DialogContent className="sm:max-w-[650px] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{selectedListing?.id ? "İlan Düzenle" : "Yeni İlan Ekle"}</DialogTitle>
+            <DialogDescription>
+              İlan detaylarını düzenleyin veya yeni ilan ekleyin.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">İlan Başlığı</Label>
+              <Input
+                id="title"
+                value={selectedListing?.title || ""}
+                onChange={(e) => setSelectedListing(prev => prev ? {...prev, title: e.target.value} : null)}
+                placeholder="İlan başlığı"
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="description">Açıklama</Label>
+              <Textarea
+                id="description"
+                value={selectedListing?.description || ""}
+                onChange={(e) => setSelectedListing(prev => prev ? {...prev, description: e.target.value} : null)}
+                placeholder="İlan açıklaması"
+                rows={4}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="price">Fiyat (₺)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={selectedListing?.price || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, price: Number(e.target.value)} : null)}
+                  placeholder="İlan fiyatı"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="listingType">İlan Türü</Label>
+                <select
+                  id="listingType"
+                  value={selectedListing?.listingType || "sale"}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, listingType: e.target.value} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="sale">Satılık</option>
+                  <option value="rent">Kiralık</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="squareMeters">Metrekare</Label>
+                <Input
+                  id="squareMeters"
+                  type="number"
+                  value={selectedListing?.squareMeters || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, squareMeters: Number(e.target.value)} : null)}
+                  placeholder="Metrekare"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="roomCount">Oda Sayısı</Label>
+                <Input
+                  id="roomCount"
+                  type="number"
+                  value={selectedListing?.roomCount || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, roomCount: Number(e.target.value)} : null)}
+                  placeholder="Oda sayısı"
+                />
+              </div>
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="address">Adres</Label>
+              <Textarea
+                id="address"
+                value={selectedListing?.address || ""}
+                onChange={(e) => setSelectedListing(prev => prev ? {...prev, address: e.target.value} : null)}
+                placeholder="İlan adresi"
+                rows={2}
+              />
+            </div>
+            
+            <div className="grid gap-2">
+              <Label htmlFor="imageUrls">Resim URL'si</Label>
+              <Input
+                id="imageUrls"
+                value={selectedListing?.imageUrls?.[0] || ""}
+                onChange={(e) => setSelectedListing(prev => 
+                  prev ? {...prev, imageUrls: [e.target.value]} : null
+                )}
+                placeholder="İlan resim URL'si"
+              />
+              <p className="text-xs text-muted-foreground">Ana görsel URL'si (diğer görseller ileride eklenebilecek)</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="cityId">Şehir</Label>
+                <select
+                  id="cityId"
+                  value={selectedListing?.cityId || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, cityId: Number(e.target.value)} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Şehir Seçin</option>
+                  {citiesData?.cities?.map((city) => (
+                    <option key={city.id} value={city.id}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="propertyTypeId">Emlak Tipi</Label>
+                <select
+                  id="propertyTypeId"
+                  value={selectedListing?.propertyTypeId || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, propertyTypeId: Number(e.target.value)} : null)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Emlak Tipi Seçin</option>
+                  {propertyTypesData?.propertyTypes?.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch 
+                id="isFeatured"
+                checked={selectedListing?.isFeatured || false}
+                onCheckedChange={(checked) => setSelectedListing(prev => prev ? {...prev, isFeatured: checked} : null)}
+              />
+              <Label htmlFor="isFeatured">Öne Çıkan İlan</Label>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowListingDialog(false)}>İptal</Button>
+            <Button 
+              type="submit" 
+              className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              Kaydet
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
