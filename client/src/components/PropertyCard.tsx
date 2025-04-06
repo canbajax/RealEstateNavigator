@@ -108,14 +108,17 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
   const transactionStatusBadge = getTransactionStatusBadge();
 
   return (
-    <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl border border-gray-200 group">
+    <Card className="overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-[-5px] border border-gray-200 group">
       <Link href={`/listings/${listing.id}`}>
         <a className="block">
-          <div className="relative">
+          <div className="relative overflow-hidden">
+            {/* Overlay shimmer effect on hover */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out z-10"></div>
+            
             <img 
               src={listing.imageUrls[0]} 
               alt={listing.title} 
-              className="w-full h-56 object-cover group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-56 object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             />
             
             {/* Status Badge */}
@@ -143,11 +146,18 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
               <Button 
                 variant="outline" 
                 size="icon" 
-                className="bg-white/90 rounded-full w-8 h-8 p-0 text-gray-500 hover:text-red-500 transition shadow-md"
+                className="bg-white/90 rounded-full w-8 h-8 p-0 text-gray-500 hover:text-red-500 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-110"
                 onClick={toggleFavorite}
               >
-                <Heart className={isFavorite ? "fill-red-500 text-red-500" : ""} size={16} />
+                <Heart className={`transform transition-transform duration-300 ${isFavorite ? "fill-red-500 text-red-500 scale-110" : "hover:scale-125 hover:rotate-[-10deg]"}`} size={16} />
               </Button>
+            </div>
+            
+            {/* Price tag with pulsing animation on hover */}
+            <div className="absolute bottom-0 left-0 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform group-hover:translate-y-[-8px] transition-transform duration-500">
+              <Badge className="bg-gradient-to-r from-[#3498DB] to-[#2980B9] text-white px-3 py-1.5 rounded-md text-sm font-bold animate-pulse group-hover:animate-none group-hover:scale-110 transition-transform duration-500">
+                {`₺${formatPrice(listing.price)}`}
+              </Badge>
             </div>
             
             {/* Image count if more than 1 */}
@@ -161,23 +171,23 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
           <CardContent className="p-4">
             {/* Price and Title */}
             <div className="flex flex-col gap-1">
-              <p className="font-bold text-lg text-[#E74C3C]">
+              <p className="font-bold text-lg text-[#E74C3C] group-hover:scale-105 transform transition-all duration-300 group-hover:translate-x-0.5">
                 {`₺${formatPrice(listing.price)}`}
                 {listing.listingType !== 'sell' && (
-                  <span className="text-sm font-medium text-gray-600">
+                  <span className="text-sm font-medium text-gray-600 group-hover:text-[#E74C3C] transition-colors duration-300">
                     /{listing.listingType === 'daily' ? 'gün' : 'ay'}
                   </span>
                 )}
               </p>
-              <h3 className="font-semibold text-[#2C3E50] line-clamp-1 text-lg">
+              <h3 className="font-semibold text-[#2C3E50] line-clamp-1 text-lg group-hover:text-[#3498DB] transition-colors duration-300 group-hover:translate-x-0.5 transform transition-transform">
                 {listing.title}
               </h3>
             </div>
             
             {/* Location */}
-            <p className="text-gray-600 text-sm mt-2 flex items-center">
-              <MapPin className="text-[#3498DB] mr-1 flex-shrink-0" size={16} />
-              <span className="truncate">
+            <p className="text-gray-600 text-sm mt-2 flex items-center group-hover:text-[#3498DB] transition-all duration-300">
+              <MapPin className="text-[#3498DB] mr-1 flex-shrink-0 group-hover:scale-125 transition-transform duration-300" size={16} />
+              <span className="truncate group-hover:font-medium transition-all duration-300">
                 {listing.neighborhood && `${listing.neighborhood}, `}
                 {listing.district}, {cityName}
               </span>
@@ -185,43 +195,43 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
             
             {/* Features */}
             <div className="grid grid-cols-3 gap-x-2 gap-y-1 mt-3 text-sm text-gray-600">
-              <div className="flex items-center">
-                <Ruler className="mr-1 text-[#3498DB]" size={14} />
-                <span>{listing.squareMeters}m²</span>
+              <div className="flex items-center group/feature transition-all duration-300">
+                <Ruler className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.squareMeters}m²</span>
               </div>
               
               {listing.roomCount && (
-                <div className="flex items-center">
-                  <Bed className="mr-1 text-[#3498DB]" size={14} />
-                  <span>{listing.roomCount}</span>
+                <div className="flex items-center group/feature transition-all duration-300">
+                  <Bed className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                  <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.roomCount}</span>
                 </div>
               )}
               
               {listing.bathroomCount && (
-                <div className="flex items-center">
-                  <Bath className="mr-1 text-[#3498DB]" size={14} />
-                  <span>{listing.bathroomCount}</span>
+                <div className="flex items-center group/feature transition-all duration-300">
+                  <Bath className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                  <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.bathroomCount}</span>
                 </div>
               )}
               
               {listing.parkingCount && (
-                <div className="flex items-center">
-                  <Car className="mr-1 text-[#3498DB]" size={14} />
-                  <span>{listing.parkingCount}</span>
+                <div className="flex items-center group/feature transition-all duration-300">
+                  <Car className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                  <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.parkingCount}</span>
                 </div>
               )}
               
               {listing.buildingAge && (
-                <div className="flex items-center">
-                  <Building className="mr-1 text-[#3498DB]" size={14} />
-                  <span>{listing.buildingAge} yaş</span>
+                <div className="flex items-center group/feature transition-all duration-300">
+                  <Building className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                  <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.buildingAge} yaş</span>
                 </div>
               )}
               
               {listing.floorNumber && (
-                <div className="flex items-center">
-                  <Home className="mr-1 text-[#3498DB]" size={14} />
-                  <span>{listing.floorNumber}. kat</span>
+                <div className="flex items-center group/feature transition-all duration-300">
+                  <Home className="mr-1 text-[#3498DB] group-hover/feature:text-[#2980B9] transition-all duration-300 group-hover/feature:scale-125 transform" size={14} />
+                  <span className="group-hover/feature:font-semibold group-hover/feature:text-[#3498DB] transition-all duration-300">{listing.floorNumber}. kat</span>
                 </div>
               )}
             </div>
@@ -232,25 +242,25 @@ const PropertyCard = ({ listing }: PropertyCardProps) => {
                 <img 
                   src={agent?.avatarUrl || `https://ui-avatars.com/api/?name=Co+Worker&background=3498DB&color=fff&size=128`} 
                   alt={agent?.fullName || "Emlak Danışmanı"} 
-                  className="w-7 h-7 rounded-full mr-2 border border-gray-200"
+                  className="w-7 h-7 rounded-full mr-2 border border-gray-200 group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-800 font-medium truncate w-24">
+                  <span className="text-xs text-gray-800 font-medium truncate w-24 group-hover:text-[#3498DB] transition-colors duration-300">
                     {agent?.fullName || "Emlak Danışmanı"}
                   </span>
                   {listing.transactionStatus !== 'available' && agent ? (
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-gray-500 group-hover:text-[#E74C3C] transition-colors duration-300">
                       {listing.transactionStatus === 'sold' ? 'Satışı' : 'Kiracısı'} buldu
                     </span>
                   ) : (
-                    <span className="text-[10px] text-gray-500">
+                    <span className="text-[10px] text-gray-500 group-hover:text-[#3498DB] transition-colors duration-300">
                       {formatDate(listing.postedAt)}
                     </span>
                   )}
                 </div>
               </div>
-              <span className="text-xs flex items-center text-gray-500">
-                <Calendar className="mr-1" size={12} />
+              <span className="text-xs flex items-center text-gray-500 group-hover:text-[#3498DB] transition-colors duration-300">
+                <Calendar className="mr-1 group-hover:scale-125 transition-transform duration-300" size={12} />
                 {formatDate(listing.postedAt)}
               </span>
             </div>
