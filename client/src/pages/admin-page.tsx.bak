@@ -57,6 +57,8 @@ interface AdminStats {
   };
 }
 
+
+
 // Admin sayfası
 export default function AdminPage() {
   const { user, isLoading } = useAuth();
@@ -70,12 +72,6 @@ export default function AdminPage() {
   const [userIdToDelete, setUserIdToDelete] = useState<number | null>(null);
   const [listingIdToDelete, setListingIdToDelete] = useState<number | null>(null);
   
-  // API İstatistikleri
-  const { data: statsData } = useQuery<AdminStats>({
-    queryKey: ["/api/admin/stats"],
-    queryFn: getQueryFn({ on401: "throw" }),
-  });
-
   // Kullanıcı düzenleme işlevi
   const handleEditUser = (user: Omit<UserType, "password">) => {
     console.log("Admin: Edit user", user.id);
@@ -182,6 +178,20 @@ export default function AdminPage() {
     }
   };
 
+  // Context provider değerlerini oluştur
+  const contextValue = {
+    handleEditUser,
+    handleDeleteUser,
+    handleEditListing,
+    handleDeleteListing
+  };
+
+  // API İstatistikleri
+  const { data: statsData } = useQuery<AdminStats>({
+    queryKey: ["/api/admin/stats"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+
   // Gösterge Kartı Bileşeni
   function DashboardCard({ 
     title, 
@@ -206,7 +216,7 @@ export default function AdminPage() {
       </Card>
     );
   }
-
+  
   return (
     <div className="container mx-auto py-8 px-4">
       <h1 className="text-3xl font-bold mb-8">Yönetim Paneli</h1>
@@ -233,96 +243,62 @@ export default function AdminPage() {
         
         <TabsContent value="overview" className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {statsData?.stats ? (
-              <>
-                <DashboardCard
-                  title="Toplam İlanlar"
-                  value={statsData.stats.totalListings.toString()}
-                  icon={<div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
+            {/* Dashboard cards */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Toplam İlanlar</p>
+                    <p className="text-2xl font-bold">-</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
                     <ListFilter className="h-6 w-6 text-blue-500" />
-                  </div>}
-                />
-                <DashboardCard
-                  title="Toplam Emlakçılar"
-                  value={statsData.stats.totalUsers.toString()}
-                  icon={<div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Toplam Emlakçılar</p>
+                    <p className="text-2xl font-bold">-</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
                     <User className="h-6 w-6 text-green-500" />
-                  </div>}
-                />
-                <DashboardCard
-                  title="Satılık İlanlar"
-                  value={statsData.stats.sellListings.toString()}
-                  icon={<div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Satılık İlanlar</p>
+                    <p className="text-2xl font-bold">-</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
                     <Home className="h-6 w-6 text-orange-500" />
-                  </div>}
-                />
-                <DashboardCard
-                  title="Kiralık İlanlar"
-                  value={statsData.stats.rentListings.toString()}
-                  icon={<div className="h-12 w-12 rounded-full bg-violet-100 flex items-center justify-center">
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Kiralık İlanlar</p>
+                    <p className="text-2xl font-bold">-</p>
+                  </div>
+                  <div className="h-12 w-12 rounded-full bg-violet-100 flex items-center justify-center">
                     <Home className="h-6 w-6 text-violet-500" />
-                  </div>}
-                />
-              </>
-            ) : (
-              <>
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Toplam İlanlar</p>
-                        <p className="text-2xl font-bold">-</p>
-                      </div>
-                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center">
-                        <ListFilter className="h-6 w-6 text-blue-500" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Toplam Emlakçılar</p>
-                        <p className="text-2xl font-bold">-</p>
-                      </div>
-                      <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center">
-                        <User className="h-6 w-6 text-green-500" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Satılık İlanlar</p>
-                        <p className="text-2xl font-bold">-</p>
-                      </div>
-                      <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center">
-                        <Home className="h-6 w-6 text-orange-500" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardContent className="p-6">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium text-muted-foreground">Kiralık İlanlar</p>
-                        <p className="text-2xl font-bold">-</p>
-                      </div>
-                      <div className="h-12 w-12 rounded-full bg-violet-100 flex items-center justify-center">
-                        <Home className="h-6 w-6 text-violet-500" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
           <div className="grid gap-4 md:grid-cols-2">
@@ -451,7 +427,9 @@ export default function AdminPage() {
                   <CardDescription>Firma iletişim bilgileri ve sosyal medya adreslerini düzenleyin</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <ContactInfoSettings />
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-border" />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -463,7 +441,9 @@ export default function AdminPage() {
                   <CardDescription>Firmanızın haftalık çalışma saatlerini ayarlayın</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <WorkingHoursSettings />
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-border" />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -939,5 +919,30 @@ function WorkingHoursSettings() {
         </Button>
       </div>
     </form>
+  );
+}
+
+// Gösterge Kartı Bileşeni
+function DashboardCard({ 
+  title, 
+  value, 
+  icon 
+}: { 
+  title: string, 
+  value: string, 
+  icon: React.ReactNode 
+}) {
+  return (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">{title}</p>
+            <p className="text-2xl font-bold">{value}</p>
+          </div>
+          {icon}
+        </div>
+      </CardContent>
+    </Card>
   );
 }
