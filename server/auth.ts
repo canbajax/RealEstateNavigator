@@ -6,7 +6,6 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { MemStorage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-import memorystore from "memorystore";
 
 declare global {
   namespace Express {
@@ -40,15 +39,11 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express, storage: MemStorage) {
-  const MemoryStore = memorystore(session);
-  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "emlak_compass_secret_key",
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStore({
-      checkPeriod: 86400000 // Temizleme periyodu: 24 saat
-    }),
+    store: storage.sessionStore,
     cookie: {
       maxAge: 86400000, // 24 saat
       secure: process.env.NODE_ENV === "production"

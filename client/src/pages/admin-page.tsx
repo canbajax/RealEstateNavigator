@@ -553,10 +553,19 @@ function ContactInfoSettings() {
       return await res.json();
     },
     onSuccess: () => {
+      // Tüm site verilerini yenileme
       queryClient.invalidateQueries({ queryKey: ["/api/site-settings/contact-info"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/site-settings/working-hours"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/property-types"] });
+      
       toast({
         title: "İletişim bilgileri güncellendi",
-        description: "İletişim bilgileri başarıyla kaydedildi.",
+        description: "İletişim bilgileri başarıyla kaydedildi. Tüm site verileri yenilendi.",
         variant: "default",
       });
     },
@@ -770,10 +779,19 @@ function WorkingHoursSettings() {
       return await res.json();
     },
     onSuccess: () => {
+      // Tüm site verilerini yenileme
+      queryClient.invalidateQueries({ queryKey: ["/api/site-settings/contact-info"] });
       queryClient.invalidateQueries({ queryKey: ["/api/site-settings/working-hours"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/property-types"] });
+      
       toast({
         title: "Çalışma saatleri güncellendi",
-        description: "Çalışma saatleri başarıyla kaydedildi.",
+        description: "Çalışma saatleri başarıyla kaydedildi. Tüm site verileri yenilendi.",
         variant: "default",
       });
     },

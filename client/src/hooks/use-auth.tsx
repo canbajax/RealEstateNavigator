@@ -44,6 +44,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (data) => {
       queryClient.setQueryData(["/api/user"], data);
+      // Sitedeki tüm veri sorgularını yenile
+      queryClient.invalidateQueries({ queryKey: ["/api/site-settings/contact-info"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/site-settings/working-hours"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cities"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/property-types"] });
       toast({
         title: "Giriş başarılı",
         description: "Hesabınıza başarıyla giriş yaptınız.",

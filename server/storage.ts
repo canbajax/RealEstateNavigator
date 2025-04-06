@@ -7,6 +7,12 @@ import {
   siteSettings, type SiteSetting, type InsertSiteSetting,
   type ContactInfo, type WorkingHours
 } from "@shared/schema";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+
+const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
   // User operations
@@ -46,6 +52,9 @@ export interface IStorage {
   updateContactInfo(contactInfo: ContactInfo): Promise<SiteSetting>;
   getWorkingHours(): Promise<WorkingHours | undefined>;
   updateWorkingHours(workingHours: WorkingHours): Promise<SiteSetting>;
+  
+  // Session store
+  sessionStore: session.Store;
 }
 
 export interface ListingFilters {
@@ -76,6 +85,9 @@ export class MemStorage implements IStorage {
   private contactMessageCurrentId: number;
   private siteSettingCurrentId: number;
 
+  // Session store
+  sessionStore: session.Store;
+
   constructor() {
     this.users = new Map();
     this.cities = new Map();
@@ -90,6 +102,11 @@ export class MemStorage implements IStorage {
     this.listingCurrentId = 1;
     this.contactMessageCurrentId = 1;
     this.siteSettingCurrentId = 1;
+    
+    // Session store
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // 24 saatte bir hatalı oturumları temizle
+    });
     
     // Initialize with sample data
     this.initializeData();
