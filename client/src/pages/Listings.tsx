@@ -17,13 +17,19 @@ const Listings = () => {
 
   // Parse query parameters
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.split('?')[1]);
+    const queryString = location.split('?')[1];
+    if (!queryString) return;
+    
+    const searchParams = new URLSearchParams(queryString);
     const currentFilters: Record<string, string> = {};
     
     // URLSearchParams.entries() uyumluluğu için alternatif yaklaşım
     searchParams.forEach((value, key) => {
       currentFilters[key] = value;
     });
+    
+    console.log("URL parametreleri:", queryString);
+    console.log("Parsed filters:", currentFilters);
     
     setFilters(currentFilters);
   }, [location]);
@@ -37,6 +43,9 @@ const Listings = () => {
       queryParams.append(key, value);
     }
   });
+
+  // Debug için parametreleri yazdır
+  console.log("Listings sayfası arama parametreleri:", queryParams.toString());
 
   // Fetch listings based on current filters
   const { data: allListings, isLoading, error } = useQuery<Listing[]>({

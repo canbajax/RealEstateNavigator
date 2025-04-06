@@ -23,6 +23,7 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
     maxPrice: "",
     priceRange: [0, 100],
     search: "",
+    roomCount: "",
     listingType: "all" // Varsayılan olarak tüm ilanları göster
   });
 
@@ -80,15 +81,19 @@ const SearchBox = ({ vertical = false, className = "" }: SearchBoxProps) => {
       params.append("search", searchParams.search);
     }
     
-    if (searchParams.listingType !== "all") {
+    if (searchParams.listingType && searchParams.listingType !== "all") {
       params.append("listingType", searchParams.listingType);
     }
     
-    // Diğer parametreleri de ekle
-    const queryString = params.toString();
-    console.log("Arama parametreleri:", queryString);
+    if (searchParams.roomCount) {
+      params.append("roomCount", searchParams.roomCount);
+    }
     
-    setLocation(`/listings?${queryString}`);
+    const queryString = params.toString();
+    console.log("Arama kutusu parametreleri:", queryString);
+    
+    // Arama sayfasına yönlendir - wouter yerine window.location kullan
+    window.location.href = `/listings?${queryString}`;
   };
 
   return (

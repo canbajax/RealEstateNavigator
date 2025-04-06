@@ -96,6 +96,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   router.get("/listings", async (req: Request, res: Response) => {
     const filters: ListingFilters = {};
     
+    // Debug için arama parametrelerini göster
+    console.log("Arama parametreleri:", req.query);
+    
     // Parse filters from query params
     if (req.query.cityId) {
       filters.cityId = parseInt(req.query.cityId as string);
@@ -136,6 +139,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (req.query.search) {
       filters.search = req.query.search as string;
     }
+    
+    // Debug için oluşturulan filtreleri göster
+    console.log("Filtreleme için kullanılacak değerler:", filters);
     
     const listings = await storage.getListings(filters);
     res.json(listings);

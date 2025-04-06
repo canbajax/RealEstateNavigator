@@ -54,9 +54,14 @@ const Hero = () => {
       params.append("maxPrice", searchParams.maxPrice);
     }
     
+    // Listeleme türünü ekle (satılık/kiralık/günlük)
     params.append("listingType", listingType);
     
-    setLocation(`/listings?${params.toString()}`);
+    // Debug bilgisi
+    console.log("Ana sayfa arama parametreleri:", params.toString());
+    
+    // Arama sayfasına yönlendir - wouter yerine window.location kullan
+    window.location.href = `/listings?${params.toString()}`;
   };
 
   return (
