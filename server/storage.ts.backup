@@ -88,13 +88,7 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userCurrentId++;
-    // Ensure phone and avatarUrl are not undefined
-    const userWithDefaults = {
-      ...insertUser,
-      phone: insertUser.phone || null,
-      avatarUrl: insertUser.avatarUrl || null
-    };
-    const user: User = { ...userWithDefaults, id };
+    const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
   }
@@ -110,12 +104,7 @@ export class MemStorage implements IStorage {
   
   async createCity(insertCity: InsertCity): Promise<City> {
     const id = this.cityCurrentId++;
-    // Ensure listingCount is not undefined
-    const cityWithDefaults = {
-      ...insertCity,
-      listingCount: insertCity.listingCount ?? 0
-    };
-    const city: City = { ...cityWithDefaults, id };
+    const city: City = { ...insertCity, id };
     this.cities.set(id, city);
     return city;
   }
@@ -131,12 +120,7 @@ export class MemStorage implements IStorage {
   
   async createPropertyType(insertPropertyType: InsertPropertyType): Promise<PropertyType> {
     const id = this.propertyTypeCurrentId++;
-    // Ensure listingCount is not undefined
-    const propertyTypeWithDefaults = {
-      ...insertPropertyType,
-      listingCount: insertPropertyType.listingCount ?? 0
-    };
-    const propertyType: PropertyType = { ...propertyTypeWithDefaults, id };
+    const propertyType: PropertyType = { ...insertPropertyType, id };
     this.propertyTypes.set(id, propertyType);
     return propertyType;
   }
@@ -214,25 +198,11 @@ export class MemStorage implements IStorage {
   async createListing(insertListing: InsertListing): Promise<Listing> {
     const id = this.listingCurrentId++;
     const now = new Date();
-    
-    // Ensure optional fields have appropriate default values
-    const listingWithDefaults = {
-      ...insertListing,
-      roomCount: insertListing.roomCount ?? null,
-      bathroomCount: insertListing.bathroomCount ?? null,
-      parkingCount: insertListing.parkingCount ?? null,
-      rentPeriod: insertListing.rentPeriod ?? null,
-      isFeatured: insertListing.isFeatured ?? false,
-      latitude: insertListing.latitude ?? null,
-      longitude: insertListing.longitude ?? null
-    };
-    
     const listing: Listing = { 
-      ...listingWithDefaults, 
+      ...insertListing, 
       id, 
       postedAt: now 
     };
-    
     this.listings.set(id, listing);
     return listing;
   }
@@ -305,101 +275,10 @@ export class MemStorage implements IStorage {
         listingCount: 5
       }
     ];
-
-    // Create property types
-    const propertyTypesData: InsertPropertyType[] = [
-      { name: "Daire", icon: "home", listingCount: 0 },
-      { name: "Villa", icon: "building", listingCount: 0 },
-      { name: "İş Yeri", icon: "briefcase", listingCount: 0 },
-      { name: "Arsa", icon: "map", listingCount: 0 },
-      { name: "Yazlık", icon: "sun", listingCount: 0 },
-      { name: "Depo", icon: "box", listingCount: 0 },
-    ];
-
-    // Create cities
-    citiesData.forEach(city => this.createCity(city));
-    
-    // Create property types
+    // Create the property types
     propertyTypesData.forEach(propertyType => this.createPropertyType(propertyType));
-
-    // Create 20 real estate agents (users)
-    const maleFirstNames = ["Ahmet", "Mehmet", "Mustafa", "Ali", "Hüseyin", "İbrahim", "Hasan", "Osman", "Ömer", "Serkan", "Murat", "Cengiz", "Serdar", "Fatih", "Emre"];
-    const femaleFirstNames = ["Ayşe", "Fatma", "Zeynep", "Elif", "Emine", "Hatice", "Merve", "Özge", "Gül", "Sevgi", "Sevim", "Canan", "Ece", "Deniz", "Selin"];
-    const lastNames = ["Yılmaz", "Kaya", "Demir", "Çelik", "Şahin", "Yıldız", "Çetin", "Aydın", "Özdemir", "Arslan", "Doğan", "Kılıç", "Aslan", "Çevik", "Koç", "Kurt", "Korkmaz", "Öztürk", "Acar", "Yücel"];
     
-    const maleAvatars = [
-      "https://randomuser.me/api/portraits/men/1.jpg",
-      "https://randomuser.me/api/portraits/men/2.jpg",
-      "https://randomuser.me/api/portraits/men/3.jpg",
-      "https://randomuser.me/api/portraits/men/4.jpg",
-      "https://randomuser.me/api/portraits/men/5.jpg",
-      "https://randomuser.me/api/portraits/men/6.jpg",
-      "https://randomuser.me/api/portraits/men/7.jpg",
-      "https://randomuser.me/api/portraits/men/8.jpg",
-      "https://randomuser.me/api/portraits/men/9.jpg",
-      "https://randomuser.me/api/portraits/men/10.jpg"
-    ];
-    
-    const femaleAvatars = [
-      "https://randomuser.me/api/portraits/women/1.jpg",
-      "https://randomuser.me/api/portraits/women/2.jpg",
-      "https://randomuser.me/api/portraits/women/3.jpg",
-      "https://randomuser.me/api/portraits/women/4.jpg",
-      "https://randomuser.me/api/portraits/women/5.jpg",
-      "https://randomuser.me/api/portraits/women/6.jpg",
-      "https://randomuser.me/api/portraits/women/7.jpg",
-      "https://randomuser.me/api/portraits/women/8.jpg",
-      "https://randomuser.me/api/portraits/women/9.jpg",
-      "https://randomuser.me/api/portraits/women/10.jpg"
-    ];
-
-    // Generate 20 real estate agents
-    const usersData: InsertUser[] = [];
-    
-    // Add 12 male agents
-    for (let i = 0; i < 12; i++) {
-      const firstName = maleFirstNames[i % maleFirstNames.length];
-      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-      const fullName = `${firstName} ${lastName}`;
-      const username = `${firstName.toLowerCase()}${lastName.toLowerCase()}${Math.floor(Math.random() * 100)}`;
-      const email = `${username}@emlakcompass.com`;
-      const phone = `+90${Math.floor(5000000000 + Math.random() * 9000000000)}`;
-      const avatarUrl = maleAvatars[i % maleAvatars.length];
-      
-      usersData.push({
-        username,
-        password: "emlak123", // Demo password, would be hashed in production
-        fullName,
-        email,
-        phone,
-        avatarUrl
-      });
-    }
-    
-    // Add 8 female agents
-    for (let i = 0; i < 8; i++) {
-      const firstName = femaleFirstNames[i % femaleFirstNames.length];
-      const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-      const fullName = `${firstName} ${lastName}`;
-      const username = `${firstName.toLowerCase()}${lastName.toLowerCase()}${Math.floor(Math.random() * 100)}`;
-      const email = `${username}@emlakcompass.com`;
-      const phone = `+90${Math.floor(5000000000 + Math.random() * 9000000000)}`;
-      const avatarUrl = femaleAvatars[i % femaleAvatars.length];
-      
-      usersData.push({
-        username,
-        password: "emlak123", // Demo password, would be hashed in production
-        fullName,
-        email,
-        phone,
-        avatarUrl
-      });
-    }
-    
-    // Create users
-    usersData.forEach(user => this.createUser(user));
-
-    // Helper functions for generating property data
+    // Helper function to generate random dates in the past (for postedAt)
     const getRandomPastDate = (daysMax = 90) => {
       const today = new Date();
       const daysAgo = Math.floor(Math.random() * daysMax) + 1;
@@ -408,14 +287,19 @@ export class MemStorage implements IStorage {
       return pastDate;
     };
     
+    // Helper function to generate random float in range
     const randomFloat = (min: number, max: number) => {
       return Math.random() * (max - min) + min;
     };
     
+    // Helper function to generate random integer in range (inclusive)
     const randomInt = (min: number, max: number) => {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     };
-
+    
+    // Generate 200 sample listings
+    const listingsData: InsertListing[] = [];
+    
     // Base coordinates for cities (approximate centers)
     const cityCoordinates = {
       1: { lat: 41.0082, lng: 28.9784 }, // İstanbul
@@ -427,12 +311,9 @@ export class MemStorage implements IStorage {
       7: { lat: 39.7667, lng: 30.5256 }, // Eskişehir
       8: { lat: 37.8560, lng: 27.8416 }, // Aydın
       9: { lat: 41.0053, lng: 39.7167 }, // Trabzon
-      10: { lat: 37.8715, lng: 32.4846 }  // Konya
-    };
-
     // Helper function to create property descriptions
     const getPropertyDescription = (propertyTypeId: number, listingType: string, rooms?: number) => {
-      const descriptions: Record<number, string[]> = {
+      const descriptions = {
         1: [ // Daire
           `Modern mimarisi ile dikkat çeken ${rooms} odalı daire. Ferah ve aydınlık iç mekanlar, kaliteli malzemeler ve akıllı ev sistemleri ile donatılmıştır. Ankastre mutfak, yerden ısıtma ve geniş balkon mevcuttur. Site içerisinde havuz, fitness salonu ve çocuk oyun alanı bulunmaktadır.`,
           `Şehir merkezinde, ulaşım imkanlarına yakın konumda ${rooms} odalı daire. Yeni binada, yüksek tavanlı, güney cepheli ve ışık alan daire. Ankastre mutfak, ısı yalıtımı ve deprem yönetmeliğine uygun inşa edilmiştir.`,
@@ -441,8 +322,8 @@ export class MemStorage implements IStorage {
           `Deniz manzaralı, ${rooms} odalı daire. Yenilenmiş mutfak ve banyosu ile kullanıma hazır. Kapı ve pencereler ısı yalıtımlı olup, ses izolasyonu yapılmıştır. Ayrıca binanın dış cephesi mantolama ile kaplıdır.`
         ],
         2: [ // Villa
-          `Özel havuzlu, bahçeli lüks villa. ${rooms} oda, ${Math.ceil(rooms ? rooms/2 : 1)} banyo, geniş salon ve mutfak ile konforlu bir yaşam sunmaktadır. Bahçesinde barbekü alanı, kamelyalar ve otomatik sulama sistemi mevcuttur.`,
-          `Deniz manzaralı, müstakil bahçeli villa. ${rooms} yatak odası, ${Math.ceil(rooms ? rooms/2 : 1)} banyo, çift salon ve amerikan mutfak ile ferah bir yaşam alanı. Akıllı ev sistemleri, yerden ısıtma ve güneş enerjisi sistemleri bulunmaktadır.`,
+          `Özel havuzlu, bahçeli lüks villa. ${rooms} oda, ${Math.ceil(rooms/2)} banyo, geniş salon ve mutfak ile konforlu bir yaşam sunmaktadır. Bahçesinde barbekü alanı, kamelyalar ve otomatik sulama sistemi mevcuttur.`,
+          `Deniz manzaralı, müstakil bahçeli villa. ${rooms} yatak odası, ${Math.ceil(rooms/2)} banyo, çift salon ve amerikan mutfak ile ferah bir yaşam alanı. Akıllı ev sistemleri, yerden ısıtma ve güneş enerjisi sistemleri bulunmaktadır.`,
           `Modern mimarisi ile dikkat çeken ${rooms} odalı villa. Açık havuz, jakuzi ve sauna ile lüks bir yaşam vaat ediyor. Geniş bahçesi içerisinde otopark ve güvenlik sistemi mevcuttur.`,
           `Göl manzaralı, doğa ile iç içe ${rooms} odalı villa. Şömineli salon, geniş teras ve özel bahçesi ile huzurlu bir yaşam sunmaktadır. Güneş enerjisi, jeneratör ve su deposu ile tam donanımlıdır.`,
           `Lüks site içerisinde ${rooms} odalı villa. Özel yüzme havuzu, bahçe ve terasları ile konforlu bir yaşam alanı. Site içerisinde tenis kortu, basketbol sahası ve yürüyüş parkuru bulunmaktadır.`
@@ -463,7 +344,7 @@ export class MemStorage implements IStorage {
         ],
         5: [ // Yazlık
           `Denize sıfır konumda, site içerisinde ${rooms} odalı yazlık. Özel plajı, havuzu ve sosyal tesisleri ile yaz tatiliniz için ideal. Eşyalı olarak teslim edilecektir.`,
-          `Deniz manzaralı, müstakil bahçeli yazlık. ${rooms} oda, ${Math.ceil(rooms ? rooms/2 : 1)} banyo ve geniş terası ile konforlu bir tatil imkanı sunmaktadır. Bahçesinde barbekü ve oturma grupları mevcuttur.`,
+          `Deniz manzaralı, müstakil bahçeli yazlık. ${rooms} oda, ${Math.ceil(rooms/2)} banyo ve geniş terası ile konforlu bir tatil imkanı sunmaktadır. Bahçesinde barbekü ve oturma grupları mevcuttur.`,
           `Site içerisinde ${rooms} odalı yazlık. Ortak havuz, tenis kortu ve çocuk oyun alanı kullanımı. Denize yürüme mesafesinde olup, merkeze yakın konumdadır.`,
           `Göl kenarında, doğa ile iç içe ${rooms} odalı yazlık. Özel iskelesi, bahçesi ve manzarası ile huzurlu bir tatil imkanı. Tam donanımlı mutfak ve klimalar mevcuttur.`,
           `Dağ manzaralı, ${rooms} oda banyolu yazlık. Bahçesi, havuzu ve barbekü alanı ile ailenizle keyifli vakit geçirebileceğiniz bir tatil evi. Doğa yürüyüşleri için ideal bir konumda yer almaktadır.`
@@ -478,7 +359,7 @@ export class MemStorage implements IStorage {
       };
       
       // Get random description based on property type
-      const typeDescriptions = descriptions[propertyTypeId];
+      const typeDescriptions = descriptions[propertyTypeId as keyof typeof descriptions];
       const baseDescription = typeDescriptions[Math.floor(Math.random() * typeDescriptions.length)];
       
       // Add listing type specific details
@@ -494,9 +375,43 @@ export class MemStorage implements IStorage {
       
       return baseDescription + additionalDetails;
     };
-
+      10: { lat: 37.8715, lng: 32.4846 }  // Konya
+    };
+        fullName: "Deniz Aydın", 
+        email: "deniz@emlakcompass.com", 
+        phone: "+90 (531) 456 78 90", 
+        avatarUrl: "https://randomuser.me/api/portraits/men/91.jpg" 
+      },
+      { 
+        username: "baristuncer", 
+        password: "password123", 
+        fullName: "Barış Tuncer", 
+        email: "baris@emlakcompass.com", 
+        phone: "+90 (532) 678 90 12", 
+        avatarUrl: "https://randomuser.me/api/portraits/men/95.jpg" 
+      },
+      { 
+        username: "aysenur", 
+        password: "password123", 
+        fullName: "Ayşe Nur Kara", 
+        email: "ayse@emlakcompass.com", 
+        phone: "+90 (559) 789 01 23", 
+        avatarUrl: "https://randomuser.me/api/portraits/women/90.jpg" 
+      },
+      { 
+        username: "serhandogan", 
+        password: "password123", 
+        fullName: "Serhan Doğan", 
+        email: "serhan@emlakcompass.com", 
+        phone: "+90 (533) 890 12 34", 
+        avatarUrl: "https://randomuser.me/api/portraits/men/99.jpg" 
+      },
+      { 
+        username: "iremgunes", 
+        password: "password123", 
+        fullName: "İrem Güneş", 
     // Common image URLs for property types
-    const propertyImages: Record<number, string[]> = {
+    const propertyImages = {
       1: [ // Daire
         "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
         "https://images.unsplash.com/photo-1630699144867-37acfcb89f25?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
@@ -538,7 +453,7 @@ export class MemStorage implements IStorage {
     };
     
     // Property title prefixes based on property type and listing type
-    const propertyTitles: Record<string, Record<number, string[]>> = {
+    const propertyTitles = {
       sell: {
         1: ["Satılık Lüks Daire", "Satılık Modern Daire", "Satılık Yeni Daire", "Satılık Ferah Daire", "Satılık Aydınlık Daire", "Satılık Deniz Manzaralı Daire"],
         2: ["Satılık Lüks Villa", "Satılık Modern Villa", "Satılık Havuzlu Villa", "Satılık Bahçeli Villa", "Satılık Deniz Manzaralı Villa", "Satılık Müstakil Villa"],
@@ -564,9 +479,25 @@ export class MemStorage implements IStorage {
         6: ["Günlük Kiralık Depo", "Günlük Kiralık Stok Alanı", "Günlük Kiralık Depolama Alanı", "Günlük Kiralık Eşya Deposu", "Günlük Kiralık Geçici Depo", "Günlük Kiralık Soğuk Hava Deposu"]
       }
     };
-
+        email: "irem@emlakcompass.com", 
+        phone: "+90 (551) 901 23 45", 
+        avatarUrl: "https://randomuser.me/api/portraits/women/99.jpg" 
+      }
+      { 
+        username: "cansu", 
+        password: "password123", 
+        fullName: "Cansu Yılmaz", 
+        email: "cansu@emlakcompass.com", 
+        phone: "+90 (558) 567 89 01", 
+        avatarUrl: "https://randomuser.me/api/portraits/women/81.jpg" 
+      },
+      { 
+        username: "selinen", 
+        password: "password123", 
+        fullName: "Selin Eren", 
+        email: "selin@emlakcompass.com", 
     // District names for each city
-    const cityDistricts: Record<number, string[]> = {
+    const cityDistricts = {
       1: ["Kadıköy", "Beşiktaş", "Şişli", "Üsküdar", "Beyoğlu", "Bakırköy", "Ataşehir", "Maltepe", "Sarıyer", "Bahçelievler"],
       2: ["Çankaya", "Keçiören", "Mamak", "Etimesgut", "Yenimahalle", "Altındağ", "Gölbaşı", "Polatlı", "Sincan", "Beypazarı"],
       3: ["Konak", "Karşıyaka", "Bornova", "Bayraklı", "Buca", "Çeşme", "Urla", "Güzelbahçe", "Menderes", "Karabağlar"],
@@ -592,14 +523,11 @@ export class MemStorage implements IStorage {
     ];
     
     // Generate 200 listings
-    const listingsData: InsertListing[] = [];
-    
     for (let i = 1; i <= 200; i++) {
       // Determine property details
       const cityId = randomInt(1, 10);
       const propertyTypeId = randomInt(1, 6);
       const listingType = ["sell", "rent", "daily"][randomInt(0, 2)];
-      const userId = randomInt(1, usersData.length);
       
       // Some property types need room counts
       let roomCount = null;
@@ -734,7 +662,7 @@ export class MemStorage implements IStorage {
       const longitude = baseLng + lngOffset;
       
       // Select random district for the city
-      const district = cityDistricts[cityId][randomInt(0, cityDistricts[cityId].length - 1)];
+      const district = cityDistricts[cityId as keyof typeof cityDistricts][randomInt(0, cityDistricts[cityId as keyof typeof cityDistricts].length - 1)];
       
       // Generate address
       const streetName = streetNames[randomInt(0, streetNames.length - 1)];
@@ -753,58 +681,424 @@ export class MemStorage implements IStorage {
       const isFeatured = Math.random() < 0.1;
       
       // Select property title
-      const titleOptions = propertyTitles[listingType][propertyTypeId];
+      const titleOptions = propertyTitles[listingType as keyof typeof propertyTitles][propertyTypeId as keyof typeof propertyTitles.sell];
       const baseTitle = titleOptions[randomInt(0, titleOptions.length - 1)];
       const title = `${baseTitle} - ${district}`;
       
-      // Get description
-      const description = getPropertyDescription(propertyTypeId, listingType, roomCount || 0);
+    // Create the listings
+    // Create sample cities
+    const citiesData: InsertCity[] = [
+      { name: "İstanbul", imageUrl: "https://images.unsplash.com/photo-1610116306796-6fea9f4fae38", listingCount: 3245 },
+      { name: "Ankara", imageUrl: "https://images.unsplash.com/photo-1589497836818-9ad2fa1df1f4", listingCount: 1876 },
+      { name: "İzmir", imageUrl: "https://images.unsplash.com/photo-1619360142632-031d811d1f50", listingCount: 1325 },
+      { name: "Antalya", imageUrl: "https://images.unsplash.com/photo-1661416134766-cd0386c4b650", listingCount: 953 },
+      { name: "Bursa", imageUrl: "https://images.unsplash.com/photo-1621164918541-56fac1c2a814", listingCount: 716 },
+      { name: "Adana", imageUrl: "https://images.unsplash.com/photo-1588974423785-bd276bae2267", listingCount: 526 },
+      { name: "Muğla", imageUrl: "https://images.unsplash.com/photo-1533599088300-7a3045c8be83", listingCount: 854 },
+      { name: "Trabzon", imageUrl: "https://images.unsplash.com/photo-1578912996078-4a22f9cef86e", listingCount: 425 },
+      { name: "Eskişehir", imageUrl: "https://images.unsplash.com/photo-1583337547397-7e08d29fdd0e", listingCount: 512 },
+      { name: "Kayseri", imageUrl: "https://images.unsplash.com/photo-1583337547397-7e08d29fdd0e", listingCount: 398 }
+    ];
+    
+    citiesData.forEach(city => this.createCity(city));
+    
+    // Create sample property types
+    const propertyTypesData: InsertPropertyType[] = [
+      { name: "Daire", icon: "building", listingCount: 1240 },
+      { name: "Villa", icon: "home", listingCount: 485 },
+      { name: "İş Yeri", icon: "store", listingCount: 320 },
+      { name: "Arsa", icon: "map", listingCount: 218 },
+      { name: "Yazlık", icon: "hotel", listingCount: 176 },
+      { name: "Depo", icon: "warehouse", listingCount: 92 }
+    ];
+    
+    propertyTypesData.forEach(type => this.createPropertyType(type));
+    
+    // İlçeler
+    const districts = {
+      1: ["Beşiktaş", "Kadıköy", "Üsküdar", "Şişli", "Bakırköy", "Ataşehir", "Maltepe", "Beylikdüzü", "Eyüp", "Sarıyer", "Beykoz", "Büyükçekmece"],
+      2: ["Çankaya", "Keçiören", "Mamak", "Etimesgut", "Sincan", "Yenimahalle", "Altındağ", "Gölbaşı", "Polatlı"],
+      3: ["Konak", "Bornova", "Karşıyaka", "Çiğli", "Buca", "Gaziemir", "Seferihisar", "Çeşme", "Urla"],
+      4: ["Muratpaşa", "Konyaaltı", "Kepez", "Alanya", "Manavgat", "Serik", "Kaş", "Kemer", "Side"],
+      5: ["Osmangazi", "Nilüfer", "Yıldırım", "Mudanya", "Gemlik", "İnegöl", "Orhangazi"],
+      6: ["Seyhan", "Çukurova", "Sarıçam", "Ceyhan", "Kozan", "Yüreğir"],
+      7: ["Bodrum", "Fethiye", "Marmaris", "Datça", "Köyceğiz", "Ortaca", "Dalaman"],
+      8: ["Ortahisar", "Akçaabat", "Yomra", "Araklı", "Of", "Sürmene"],
+      9: ["Tepebaşı", "Odunpazarı", "Sivrihisar", "İnönü", "Çifteler"],
+      10: ["Melikgazi", "Kocasinan", "Talas", "Develi", "Yahyalı", "İncesu"]
+    };
+    
+    // Listing tipleri ve fiyat aralıkları
+    const listingTypes = ["sell", "rent", "daily"];
+    const rentPeriods = { "sell": null, "rent": "monthly", "daily": "daily" };
+    
+    // Fiyat aralıkları
+    const priceRanges = {
+      "sell": {
+        "Daire": [600000, 9500000],
+        "Villa": [3500000, 25000000],
+        "İş Yeri": [1500000, 15000000],
+        "Arsa": [450000, 12000000],
+        "Yazlık": [1200000, 8500000],
+        "Depo": [800000, 5000000]
+      },
+      "rent": {
+        "Daire": [5000, 35000],
+        "Villa": [18000, 75000],
+        "İş Yeri": [12000, 65000],
+        "Arsa": [3000, 15000],
+        "Yazlık": [12000, 55000],
+        "Depo": [8000, 30000]
+      },
+      "daily": {
+        "Daire": [500, 2500],
+        "Villa": [1500, 8000],
+        "İş Yeri": [1000, 4000],
+        "Yazlık": [800, 3500],
+        "Depo": [300, 1500]
+      }
+    };
+    
+    // Alan aralıkları
+    const squareMeterRanges = {
+      "Daire": [65, 300],
+      "Villa": [150, 800],
+      "İş Yeri": [80, 1000],
+      "Arsa": [250, 10000],
+      "Yazlık": [85, 350],
+      "Depo": [100, 2000]
+    };
+    
+    // Oda sayıları
+    const roomCountRanges = {
+      "Daire": [1, 6],
+      "Villa": [3, 10],
+      "İş Yeri": [1, 10],
+      "Yazlık": [1, 5]
+    };
+    
+    // Banyo sayıları
+    const bathroomCountRanges = {
+      "Daire": [1, 4],
+      "Villa": [2, 6],
+      "İş Yeri": [1, 6],
+      "Yazlık": [1, 3]
+    };
+    
+    // Otopark sayıları
+    const parkingCountRanges = {
+      "Daire": [0, 2],
+      "Villa": [1, 4],
+      "İş Yeri": [1, 20],
+      "Yazlık": [0, 2]
+    };
+    
+    // Konum resim URL'leri
+    const imageUrls = [
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c",
+      "https://images.unsplash.com/photo-1600566753376-12c8ab8e546f",
+      "https://images.unsplash.com/photo-1600573472550-8090733a73c5",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea",
+      "https://images.unsplash.com/photo-1600585154526-990dced4db3d",
+      "https://images.unsplash.com/photo-1600585152220-90363fe7e115",
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d",
+      "https://images.unsplash.com/photo-1574362848149-11496d93a7c7",
+      "https://images.unsplash.com/photo-1600563440091-6abb814a2132",
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea",
+      "https://images.unsplash.com/photo-1613977257592-4a9a32f9141b",
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227",
+      "https://images.unsplash.com/photo-1554995207-c18c203602cb",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2",
+      "https://images.unsplash.com/photo-1593696140826-c58b021acf8b",
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0",
+      "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde",
+      "https://images.unsplash.com/photo-1600566752584-3d16b14snabb7",
+      "https://images.unsplash.com/photo-1602343168117-bb8ffe3e2e9f",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267",
+      "https://images.unsplash.com/photo-1560448075-cbc16bb4af8e",
+      "https://images.unsplash.com/photo-1600047508788-26df7b3d6119",
+      "https://images.unsplash.com/photo-1560440021-33f9b867899d"
+    ];
+    
+    // İlan başlıkları
+    const titlePrefixes = [
+      "Modern", "Lüks", "Ferah", "Geniş", "Konforlu", "Yeni", "Yenilenmiş", "Bakımlı", "Şık", "Prestijli", 
+      "Merkezi", "Keyifli", "Aydınlık", "Güvenlikli", "Muhteşem", "Gösterişli", "Elit", "Kaliteli", "Uygun", "Nezih"
+    ];
+    
+    const titleSuffixes = {
+      "Daire": ["Daire", "Apartman Dairesi", "Rezidans", "Kat", "Dubleks", "Daire", "Penthouse", "Stüdyo Daire"],
+      "Villa": ["Villa", "Müstakil Ev", "Köşk", "Malikane", "Bahçeli Ev", "Yazlık Villa", "Dubleks Villa"],
+      "İş Yeri": ["Ofis", "Mağaza", "Dükkan", "İş Yeri", "Ticari Alan", "Plaza Katı", "Showroom", "Atölye"],
+      "Arsa": ["Arsa", "Tarla", "Bahçe", "Zeytinlik", "Bağ", "İmarlı Arsa", "Yatırımlık Arsa"],
+      "Yazlık": ["Yazlık", "Tatil Evi", "Köy Evi", "Bungalov", "Sahil Evi", "Yaz Evi"],
+      "Depo": ["Depo", "Antrepo", "Lojistik Depo", "Soğuk Hava Deposu", "Endüstriyel Depo"]
+    };
+    
+    // Adres bileşenleri
+    const streetNames = ["Atatürk", "Cumhuriyet", "İstiklal", "Fatih", "Barış", "Gül", "Çiçek", "Menekşe", "Lale", "Zambak", "Orkide", "Palmiye", "Akasya", "Çınar", "Ihlamur"];
+    const streetTypes = ["Caddesi", "Sokak", "Bulvarı", "Yolu", "Meydanı"];
+    
+    // İlan açıklamaları için metinler
+    const descriptionIntros = [
+      "Muhteşem konumuyla",
+      "Şehrin en prestijli bölgesinde yer alan",
+      "Ferah ve aydınlık",
+      "Yenilenen mimarisiyle",
+      "Geniş ve konforlu",
+      "Modern tasarımıyla dikkat çeken",
+      "Lüks detaylarla donatılmış",
+      "Bakımlı ve temiz",
+      "Şık ve zarif",
+      "Yeşillikler içinde"
+    ];
+    
+    const descriptionMiddles = {
+      "Daire": [
+        "bu daire sizleri bekliyor. Site içerisinde",
+        "bu apartman dairesi huzurlu bir yaşam sunuyor. Bina içerisinde",
+        "bu rezidans dairesi yüksek yaşam standardı sunuyor. Kompleks içerisinde",
+        "bu ferah daire aile yaşamına uygun. Çevresinde",
+        "bu konforlu daire tüm beklentilerinizi karşılıyor. Site içerisinde"
+      ],
+      "Villa": [
+        "bu villa lüks detaylarıyla sizi büyüleyecek. Bahçesinde",
+        "bu müstakil ev geniş yaşam alanlarıyla dikkat çekiyor. Çevresinde",
+        "bu köşk benzersiz mimarisiyle göz dolduruyor. Geniş arazisi içerisinde",
+        "bu malikane özel peyzaj düzenlemesiyle etkileyici. Arazisinde",
+        "bu villa özel tasarımıyla ayrıcalıklı bir yaşam sunuyor. Bahçesinde"
+      ],
+      "İş Yeri": [
+        "bu ofis yatırımcılarını bekliyor. Bina içerisinde",
+        "bu ticari alan işinize değer katacak. Çevresinde",
+        "bu iş yeri stratejik konumuyla işinize avantaj sağlayacak. Binada",
+        "bu mağaza yüksek cirolar için ideal. Kompleks içerisinde",
+        "bu plaza katı prestijli konumuyla işinizi öne çıkaracak. Çevresinde"
+      ],
+      "Arsa": [
+        "bu arsa yatırımcılarını bekliyor. Çevresinde",
+        "bu imarlı arsa geleceğin yatırımını bugünden yapma fırsatı sunuyor. Bölgede",
+        "bu tarla verimli toprağıyla dikkat çekiyor. Etrafında",
+        "bu arsa gelişmekte olan bölgede yüksek değer artışı vadediyor. Çevrede",
+        "bu zeytinlik hem yatırım hem de yaşam alanı olarak değerlendirilebilir. Bölgede"
+      ],
+      "Yazlık": [
+        "bu yazlık tatil keyfinizi üst seviyeye çıkaracak. Site içerisinde",
+        "bu tatil evi yaz aylarını keyifle geçirmenizi sağlayacak. Çevresinde",
+        "bu sahil evi denize yakın konumuyla dikkat çekiyor. Bölgede",
+        "bu yazlık villa tüm yıl yaşam için uygun. Site içerisinde",
+        "bu tatil evi huzurlu bir ortam sunuyor. Çevrede"
+      ],
+      "Depo": [
+        "bu depo lojistik faaliyetleriniz için ideal. Çevresinde",
+        "bu endüstriyel depo üretim ve depolama için uygun. Bölgede",
+        "bu antrepo geniş kullanım alanıyla işlerinizi kolaylaştıracak. Çevrede",
+        "bu depo modern altyapısıyla işinize değer katacak. Bölgede",
+        "bu lojistik depo stratejik konumuyla operasyonlarınızı hızlandıracak. Çevrede"
+      ]
+    };
+    
+    const amenities = {
+      "Daire": ["havuz", "spor salonu", "güvenlik", "otopark", "çocuk oyun alanı", "yürüyüş parkuru", "sauna", "market", "kuaför"],
+      "Villa": ["özel havuz", "bahçe", "teras", "barbekü alanı", "güvenlik", "jakuzi", "şömine", "akıllı ev sistemi", "oyun odası", "sinema odası"],
+      "İş Yeri": ["asansör", "güvenlik", "otopark", "toplantı salonu", "ortak kafeterya", "resepsiyon", "jeneratör", "fiber internet", "konferans salonu"],
+      "Arsa": ["elektrik", "su", "doğalgaz", "kanalizasyon", "yol", "toplu taşıma", "okul", "hastane", "market"],
+      "Yazlık": ["havuz", "plaj", "restoran", "bar", "güvenlik", "otopark", "tenis kortu", "basketbol sahası", "mini golf", "aquapark"],
+      "Depo": ["yükleme rampası", "24 saat güvenlik", "otopark", "ofis alanı", "yüksek tavan", "forklift", "tır park alanı", "jeneratör", "yangın söndürme sistemi"]
+    };
+    
+    const descriptionOutros = [
+      "bulunuyor. Bu fırsatı kaçırmayın!",
+      "mevcut. Detaylı bilgi için lütfen arayın.",
+      "yer alıyor. Hemen görmelisiniz!",
+      "sunuluyor. Bu fırsat için acele edin!",
+      "bulunmakta. Sizin için ideal bir seçim olabilir.",
+      "sağlanıyor. Hemen iletişime geçin!",
+      "bulunuyor. Mutlaka görmelisiniz!"
+    ];
+    
+    const coordinates = {
+      1: { lat: 41.0082, lng: 28.9784 }, // İstanbul
+      2: { lat: 39.9334, lng: 32.8597 }, // Ankara
+      3: { lat: 38.4192, lng: 27.1287 }, // İzmir
+      4: { lat: 36.8969, lng: 30.7133 }, // Antalya
+      5: { lat: 40.1885, lng: 29.0610 }, // Bursa
+      6: { lat: 37.0000, lng: 35.3213 }, // Adana
+      7: { lat: 37.2153, lng: 28.3636 }, // Muğla
+      8: { lat: 41.0027, lng: 39.7168 }, // Trabzon
+      9: { lat: 39.7667, lng: 30.5256 }, // Eskişehir
+      10: { lat: 38.7205, lng: 35.4826 }  // Kayseri
+    };
+    
+    // Rasgele sayı üretici
+    const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const randomFloat = (min: number, max: number) => Math.random() * (max - min) + min;
+    const randomChoice = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+    const randomDate = (start: Date, end: Date) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+    
+    // Rasgele fiyat üret
+    const randomPrice = (min: number, max: number) => {
+      const price = Math.floor(randomInt(min, max) / 1000) * 1000; // 1000'in katları
+      return price;
+    };
+    
+    // 200 adet emlak ilanı oluştur
+    const listingsData: InsertListing[] = [];
+    
+    for (let i = 0; i < 200; i++) {
+      // Rasgele bir şehir seç
+      const cityId = randomInt(1, citiesData.length);
+      // Rasgele bir ilçe seç
+      const district = randomChoice(districts[cityId as keyof typeof districts]);
+      // Rasgele bir mülk tipi seç
+      const propertyTypeIndex = randomInt(0, propertyTypesData.length - 1);
+      const propertyTypeId = propertyTypeIndex + 1;
+      const propertyTypeName = propertyTypesData[propertyTypeIndex].name;
       
-      // Select random images
-      const imageSet = propertyImages[propertyTypeId];
-      const imageCount = randomInt(2, Math.min(4, imageSet.length));
-      const shuffledImages = [...imageSet].sort(() => 0.5 - Math.random());
-      const selectedImages = shuffledImages.slice(0, imageCount);
+      // Rasgele bir ilan tipi seç
+      const listingType = randomChoice(listingTypes);
+      // Uygun kira periyodu seç
+      const rentPeriod = rentPeriods[listingType as keyof typeof rentPeriods];
       
-      // Create listing
-      listingsData.push({
+      // Rasgele bir başlık oluştur
+      const titlePrefix = randomChoice(titlePrefixes);
+      const titleSuffix = randomChoice(titleSuffixes[propertyTypeName as keyof typeof titleSuffixes]);
+      const title = `${titlePrefix} ${titleSuffix}`;
+      
+      // Fiyat belirleme
+      let price;
+      if (listingType === "sell") {
+        price = randomPrice(
+          priceRanges.sell[propertyTypeName as keyof typeof priceRanges.sell][0],
+          priceRanges.sell[propertyTypeName as keyof typeof priceRanges.sell][1]
+        );
+      } else if (listingType === "rent") {
+        price = randomPrice(
+          priceRanges.rent[propertyTypeName as keyof typeof priceRanges.rent][0],
+          priceRanges.rent[propertyTypeName as keyof typeof priceRanges.rent][1]
+        );
+      } else {
+        // Eğer 'daily'
+        price = randomPrice(
+          priceRanges.daily[propertyTypeName as keyof typeof priceRanges.daily]?.[0] || 500,
+          priceRanges.daily[propertyTypeName as keyof typeof priceRanges.daily]?.[1] || 3000
+        );
+      }
+      
+      // Metrekare belirleme
+      const squareMeters = randomInt(
+        squareMeterRanges[propertyTypeName as keyof typeof squareMeterRanges][0],
+        squareMeterRanges[propertyTypeName as keyof typeof squareMeterRanges][1]
+      );
+      
+      // Oda, banyo ve otopark sayılarını belirleme
+      let roomCount = null;
+      let bathroomCount = null;
+      let parkingCount = null;
+      
+      if (roomCountRanges[propertyTypeName as keyof typeof roomCountRanges]) {
+        roomCount = randomInt(
+          roomCountRanges[propertyTypeName as keyof typeof roomCountRanges][0],
+          roomCountRanges[propertyTypeName as keyof typeof roomCountRanges][1]
+        );
+      }
+      
+      if (bathroomCountRanges[propertyTypeName as keyof typeof bathroomCountRanges]) {
+        bathroomCount = randomInt(
+          bathroomCountRanges[propertyTypeName as keyof typeof bathroomCountRanges][0],
+          bathroomCountRanges[propertyTypeName as keyof typeof bathroomCountRanges][1]
+        );
+      }
+      
+      if (parkingCountRanges[propertyTypeName as keyof typeof parkingCountRanges]) {
+        parkingCount = randomInt(
+          parkingCountRanges[propertyTypeName as keyof typeof parkingCountRanges][0],
+          parkingCountRanges[propertyTypeName as keyof typeof parkingCountRanges][1]
+        );
+      }
+      
+      // Rasgele bir adres oluştur
+      const streetName = randomChoice(streetNames);
+      const streetType = randomChoice(streetTypes);
+      const buildingNo = randomInt(1, 150);
+      const address = `${district} Mah. ${streetName} ${streetType} No:${buildingNo}`;
+      
+      // Rasgele bir açıklama oluştur
+      const descIntro = randomChoice(descriptionIntros);
+      const descMiddle = randomChoice(descriptionMiddles[propertyTypeName as keyof typeof descriptionMiddles]);
+      
+      // Rasgele özellikler seç
+      const propertyAmenities = amenities[propertyTypeName as keyof typeof amenities];
+      const selectedAmenities = [];
+      const amenityCount = randomInt(2, 4);
+      
+      for (let j = 0; j < amenityCount; j++) {
+        if (propertyAmenities && propertyAmenities.length > 0) {
+          const amenity = randomChoice(propertyAmenities);
+          selectedAmenities.push(amenity);
+          // Seçilen özelliği listeden çıkar
+          propertyAmenities.splice(propertyAmenities.indexOf(amenity), 1);
+        }
+      }
+      
+      const amenitiesText = selectedAmenities.join(", ");
+      const descOutro = randomChoice(descriptionOutros);
+      
+      const description = `${descIntro} ${descMiddle} ${amenitiesText} ${descOutro}`;
+      
+      // Rasgele koordinatlar üret
+      const baseLat = coordinates[cityId as keyof typeof coordinates].lat;
+      const baseLng = coordinates[cityId as keyof typeof coordinates].lng;
+      const latOffset = randomFloat(-0.05, 0.05);
+      const lngOffset = randomFloat(-0.05, 0.05);
+      const latitude = baseLat + latOffset;
+      const longitude = baseLng + lngOffset;
+      
+      // Rasgele resimler seç
+      const shuffledImages = [...imageUrls].sort(() => 0.5 - Math.random());
+      const selectedImages = shuffledImages.slice(0, randomInt(3, 6));
+      
+      // Rasgele bir kullanıcı seç
+      const userId = randomInt(1, usersData.length);
+      
+      // Öne çıkan ilan olma durumunu belirle
+      const isFeatured = Math.random() < 0.1; // %10 olasılıkla öne çıkan ilan
+      
+      // İlan oluşturma tarihini belirle (son 6 ay içinde)
+      const sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      const postedAt = randomDate(sixMonthsAgo, new Date());
+      
+      // İlanı oluştur
+      const listing: InsertListing = {
         title,
         description,
         price,
-        squareMeters,
-        address,
-        district,
-        cityId,
-        propertyTypeId,
         listingType,
-        bathroomCount,
-        roomCount,
-        parkingCount,
         rentPeriod,
-        imageUrls: selectedImages,
-        // Add user ID - assign a random real estate agent
+        propertyTypeId,
+        cityId,
+        district,
+        address,
+        squareMeters,
+        roomCount,
+        bathroomCount,
+        parkingCount,
+        isFeatured,
         userId,
-        // We will use random coordinates for demonstrations
+        imageUrls: selectedImages,
         latitude,
-        longitude,
-        isFeatured: Math.random() < 0.2 // 20% chance of being featured
-      });
-    }
-    
-    // Add some featured properties
-    // Make sure we have at least 10 featured properties
-    const featuredCount = listingsData.filter(l => l.isFeatured).length;
-    if (featuredCount < 10) {
-      const nonFeatured = listingsData.filter(l => !l.isFeatured);
-      const toFeature = randomInt(10 - featuredCount, 20 - featuredCount);
+        longitude
+      };
       
-      for (let i = 0; i < Math.min(toFeature, nonFeatured.length); i++) {
-        const randomIndex = randomInt(0, nonFeatured.length - 1);
-        nonFeatured[randomIndex].isFeatured = true;
-      }
+      listingsData.push(listing);
     }
     
-    // Create the listings
+    // İlanları oluştur
     listingsData.forEach(listing => this.createListing(listing));
   }
 }
+
+export const storage = new MemStorage();

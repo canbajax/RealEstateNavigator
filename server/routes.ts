@@ -1,11 +1,14 @@
 import express, { type Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage, type ListingFilters } from "./storage";
+import { MemStorage, type ListingFilters } from "./storage";
 import { z } from "zod";
 import { 
   insertContactMessageSchema,
   insertListingSchema
 } from "@shared/schema";
+
+// Create storage instance
+const storage = new MemStorage();
 
 const router = express.Router();
 
