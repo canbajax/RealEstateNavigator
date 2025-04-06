@@ -31,7 +31,7 @@ const Home = () => {
             <h2 className="text-3xl md:text-5xl font-bold text-[#2C3E50] mb-6">Co Worker ile Emlak Dünyasında <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#3498DB] to-[#5DADE2]">Profesyonel Çözümler</span></h2>
             <p className="text-[#7F8C8D] max-w-3xl mx-auto text-lg">
-              700+ kurumsal iş ortağımız ve 15.000+ sektör profesyonelimiz ile emlak sektörünün tüm ihtiyaçlarına yönelik kusursuz hizmetler sunuyoruz.
+              Güçlü kurumsal iş ortaklıklarımız ve geniş uzman danışman ağımız ile emlak sektörünün tüm ihtiyaçlarına yönelik kusursuz hizmetler sunuyoruz.
             </p>
           </div>
           
@@ -96,7 +96,7 @@ const Home = () => {
                   <div className="mr-3 bg-[#EBF5FB] p-1 rounded">
                     <svg className="w-5 h-5 text-[#3498DB]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                   </div>
-                  <span className="text-[#7F8C8D]">%99 Doğruluk Oranı</span>
+                  <span className="text-[#7F8C8D]">Yüksek Doğruluk Oranı</span>
                 </li>
                 <li className="flex items-center">
                   <div className="mr-3 bg-[#EBF5FB] p-1 rounded">
