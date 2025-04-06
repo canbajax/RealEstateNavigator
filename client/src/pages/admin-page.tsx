@@ -1593,7 +1593,8 @@ export default function AdminPage() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   <option value="">Danışman Seçin</option>
-                  {agentsData?.agents?.map((agent) => (
+                  {/* Mevcut danışmanları listele */}
+                  {userRoles?.agents?.map((agent: any) => (
                     <option key={agent.id} value={agent.id}>
                       {agent.fullName} ({agent.username})
                     </option>
