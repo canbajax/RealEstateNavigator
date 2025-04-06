@@ -308,6 +308,7 @@ export class MemStorage implements IStorage {
       isFeatured: insertListing.isFeatured ?? false,
       status: insertListing.status ?? "active",
       transactionStatus: insertListing.transactionStatus ?? "available",
+      neighborhood: insertListing.neighborhood ?? null,
       latitude: insertListing.latitude ?? null,
       longitude: insertListing.longitude ?? null
     };
@@ -340,6 +341,7 @@ export class MemStorage implements IStorage {
       isFeatured: updateData.isFeatured !== undefined ? updateData.isFeatured : listing.isFeatured,
       status: updateData.status !== undefined ? updateData.status : listing.status,
       transactionStatus: updateData.transactionStatus !== undefined ? updateData.transactionStatus : listing.transactionStatus,
+      neighborhood: updateData.neighborhood !== undefined ? updateData.neighborhood : listing.neighborhood,
       latitude: updateData.latitude !== undefined ? updateData.latitude : listing.latitude,
       longitude: updateData.longitude !== undefined ? updateData.longitude : listing.longitude
     };

@@ -59,11 +59,12 @@ export const listings = pgTable("listings", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   price: integer("price").notNull(),
-  listingType: text("listing_type").notNull(), // "sell" or "rent"
+  listingType: text("listing_type").notNull(), // "sale" or "rent"
   rentPeriod: text("rent_period"), // "monthly", "daily", null for sale
   propertyTypeId: integer("property_type_id").notNull(),
   cityId: integer("city_id").notNull(),
   district: text("district").notNull(),
+  neighborhood: text("neighborhood"),
   address: text("address").notNull(),
   squareMeters: integer("square_meters").notNull(),
   roomCount: integer("room_count"),
@@ -88,6 +89,7 @@ export const insertListingSchema = createInsertSchema(listings).pick({
   propertyTypeId: true,
   cityId: true,
   district: true,
+  neighborhood: true,
   address: true,
   squareMeters: true,
   roomCount: true,

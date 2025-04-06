@@ -691,6 +691,7 @@ export default function AdminPage() {
                     propertyTypeId: 1,
                     cityId: 1,
                     district: "",
+                    neighborhood: "",
                     address: "",
                     squareMeters: 0,
                     roomCount: 1,
@@ -1173,14 +1174,24 @@ export default function AdminPage() {
               ) : null}
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="district">İlçe/Semt</Label>
+                <Label htmlFor="district">İlçe</Label>
                 <Input
                   id="district"
                   value={selectedListing?.district || ""}
                   onChange={(e) => setSelectedListing(prev => prev ? {...prev, district: e.target.value} : null)}
-                  placeholder="İlçe veya semt adı"
+                  placeholder="İlçe adı"
+                />
+              </div>
+              
+              <div className="grid gap-2">
+                <Label htmlFor="neighborhood">Mahalle</Label>
+                <Input
+                  id="neighborhood"
+                  value={selectedListing?.neighborhood || ""}
+                  onChange={(e) => setSelectedListing(prev => prev ? {...prev, neighborhood: e.target.value} : null)}
+                  placeholder="Mahalle adı"
                 />
               </div>
               
