@@ -65,6 +65,14 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [selectedUser, setSelectedUser] = useState<Omit<UserType, "password"> | null>(null);
   
+  // Danışmanları çek
+  const { data: agentResponse } = useQuery<{success: boolean, agents: any[]}>({
+    queryKey: ["/api/agents"],
+  });
+  
+  // Danışman listesi
+  const agents = agentResponse?.agents || [];
+  
   // Kullanıcı ekleme/güncelleme mutasyonu
   const createOrUpdateUserMutation = useMutation({
     mutationFn: async (userData: Omit<UserType, "password"> & { password?: string, avatarFile?: File }) => {
@@ -1594,7 +1602,7 @@ export default function AdminPage() {
                 >
                   <option value="">Danışman Seçin</option>
                   {/* Mevcut danışmanları listele */}
-                  {userRoles?.agents?.map((agent: any) => (
+                  {agents?.filter(agent => agent.role === "agent").map((agent: any) => (
                     <option key={agent.id} value={agent.id}>
                       {agent.fullName} ({agent.username})
                     </option>
