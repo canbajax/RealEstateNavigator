@@ -4,8 +4,20 @@ import LocationSearch from "@/components/LocationSearch";
 import PropertyTypes from "@/components/PropertyTypes";
 import ContactForm from "@/components/ContactForm";
 import { MapPin, PhoneCall, Mail, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { ContactInfo } from "@shared/schema";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Home = () => {
+  // İletişim bilgilerini çekme
+  const { data, isLoading, error } = useQuery<{ success: boolean; contactInfo: ContactInfo }>({
+    queryKey: ["/api/site-settings/contact-info"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  const contactInfo = data?.contactInfo;
+
   return (
     <>
       <Hero />
@@ -34,7 +46,11 @@ const Home = () => {
                   </div>
                   <div>
                     <h3 className="font-medium">Adres</h3>
-                    <p className="text-[#ECF0F1]">Bağdat Caddesi No:123, Kadıköy, İstanbul</p>
+                    {isLoading ? (
+                      <Skeleton className="h-4 w-48 bg-gray-400 mt-1" />
+                    ) : (
+                      <p className="text-[#ECF0F1]">{contactInfo?.address || "Adres bilgisi bulunamadı"}</p>
+                    )}
                   </div>
                 </div>
                 
@@ -44,7 +60,11 @@ const Home = () => {
                   </div>
                   <div>
                     <h3 className="font-medium">Telefon</h3>
-                    <p className="text-[#ECF0F1]">+90 (212) 123 45 67</p>
+                    {isLoading ? (
+                      <Skeleton className="h-4 w-32 bg-gray-400 mt-1" />
+                    ) : (
+                      <p className="text-[#ECF0F1]">{contactInfo?.phone || "Telefon bilgisi bulunamadı"}</p>
+                    )}
                   </div>
                 </div>
                 
@@ -54,7 +74,11 @@ const Home = () => {
                   </div>
                   <div>
                     <h3 className="font-medium">E-posta</h3>
-                    <p className="text-[#ECF0F1]">info@emlakcompass.com</p>
+                    {isLoading ? (
+                      <Skeleton className="h-4 w-40 bg-gray-400 mt-1" />
+                    ) : (
+                      <p className="text-[#ECF0F1]">{contactInfo?.email || "E-posta bilgisi bulunamadı"}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -62,34 +86,74 @@ const Home = () => {
               <div className="mt-8">
                 <h3 className="font-medium mb-4">Bizi Takip Edin</h3>
                 <div className="flex space-x-4">
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Facebook"
-                  >
-                    <Facebook size={16} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Twitter"
-                  >
-                    <Twitter size={16} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Instagram"
-                  >
-                    <Instagram size={16} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin size={16} />
-                  </a>
+                  {contactInfo?.facebook && (
+                    <a 
+                      href={contactInfo.facebook} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Facebook"
+                    >
+                      <Facebook size={16} />
+                    </a>
+                  )}
+                  {contactInfo?.twitter && (
+                    <a 
+                      href={contactInfo.twitter} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Twitter"
+                    >
+                      <Twitter size={16} />
+                    </a>
+                  )}
+                  {contactInfo?.instagram && (
+                    <a 
+                      href={contactInfo.instagram} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Instagram"
+                    >
+                      <Instagram size={16} />
+                    </a>
+                  )}
+                  {contactInfo?.linkedin && (
+                    <a 
+                      href={contactInfo.linkedin} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin size={16} />
+                    </a>
+                  )}
+                  {!contactInfo?.facebook && !contactInfo?.twitter && !contactInfo?.instagram && !contactInfo?.linkedin && (
+                    <>
+                      <a 
+                        href="#" 
+                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                        aria-label="Facebook"
+                      >
+                        <Facebook size={16} />
+                      </a>
+                      <a 
+                        href="#" 
+                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                        aria-label="Twitter"
+                      >
+                        <Twitter size={16} />
+                      </a>
+                      <a 
+                        href="#" 
+                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                        aria-label="Instagram"
+                      >
+                        <Instagram size={16} />
+                      </a>
+                      <a 
+                        href="#" 
+                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin size={16} />
+                      </a>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

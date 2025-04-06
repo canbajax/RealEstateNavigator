@@ -1,7 +1,26 @@
 import { MapPin, PhoneCall, Mail, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import ContactForm from "@/components/ContactForm";
+import { useQuery } from "@tanstack/react-query";
+import { getQueryFn } from "@/lib/queryClient";
+import { ContactInfo, WorkingHours } from "@shared/schema";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Contact = () => {
+  // İletişim bilgilerini çekme
+  const { data: contactData, isLoading: isContactLoading } = useQuery<{ success: boolean; contactInfo: ContactInfo }>({
+    queryKey: ["/api/site-settings/contact-info"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+  
+  // Çalışma saatlerini çekme
+  const { data: hoursData, isLoading: isHoursLoading } = useQuery<{ success: boolean; workingHours: WorkingHours }>({
+    queryKey: ["/api/site-settings/working-hours"],
+    queryFn: getQueryFn({ on401: "returnNull" }),
+  });
+
+  const contactInfo = contactData?.contactInfo;
+  const workingHours = hoursData?.workingHours;
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Page Header */}
@@ -28,7 +47,11 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-lg">Adres</h3>
-                      <p className="text-[#7F8C8D] mt-1">Bağdat Caddesi No:123, Kadıköy, İstanbul</p>
+                      {isContactLoading ? (
+                        <Skeleton className="h-4 w-48 mt-1" />
+                      ) : (
+                        <p className="text-[#7F8C8D] mt-1">{contactInfo?.address || "Adres bilgisi bulunamadı"}</p>
+                      )}
                     </div>
                   </div>
                   
@@ -38,8 +61,17 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-lg">Telefon</h3>
-                      <p className="text-[#7F8C8D] mt-1">+90 (212) 123 45 67</p>
-                      <p className="text-[#7F8C8D]">+90 (212) 456 78 90</p>
+                      {isContactLoading ? (
+                        <>
+                          <Skeleton className="h-4 w-40 mt-1 mb-1" />
+                          <Skeleton className="h-4 w-40" />
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-[#7F8C8D] mt-1">{contactInfo?.phone || "Telefon bilgisi bulunamadı"}</p>
+                          {contactInfo?.whatsapp && <p className="text-[#7F8C8D]">{contactInfo.whatsapp}</p>}
+                        </>
+                      )}
                     </div>
                   </div>
                   
@@ -49,8 +81,17 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-medium text-lg">E-posta</h3>
-                      <p className="text-[#7F8C8D] mt-1">info@emlakcompass.com</p>
-                      <p className="text-[#7F8C8D]">satis@emlakcompass.com</p>
+                      {isContactLoading ? (
+                        <>
+                          <Skeleton className="h-4 w-48 mt-1 mb-1" />
+                          <Skeleton className="h-4 w-48" />
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-[#7F8C8D] mt-1">{contactInfo?.email || "E-posta bilgisi bulunamadı"}</p>
+                          {contactInfo?.email && <p className="text-[#7F8C8D]">satis@emlakcompass.com</p>}
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -61,18 +102,53 @@ const Contact = () => {
                 <h2 className="font-bold text-xl text-[#2C3E50] mb-4">Çalışma Saatleri</h2>
                 
                 <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <p className="text-[#7F8C8D]">Pazartesi - Cuma</p>
-                    <p className="font-medium">09:00 - 18:00</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-[#7F8C8D]">Cumartesi</p>
-                    <p className="font-medium">10:00 - 14:00</p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p className="text-[#7F8C8D]">Pazar</p>
-                    <p className="font-medium">Kapalı</p>
-                  </div>
+                  {isHoursLoading ? (
+                    <>
+                      <div className="flex justify-between">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <div className="flex justify-between">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <div className="flex justify-between">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between">
+                        <p className="text-[#7F8C8D]">Pazartesi - Cuma</p>
+                        <p className="font-medium">
+                          {workingHours ? 
+                            `${workingHours.monday.open} - ${workingHours.monday.close}` : 
+                            "09:00 - 18:00"}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-[#7F8C8D]">Cumartesi</p>
+                        <p className="font-medium">
+                          {workingHours ? 
+                            (workingHours.saturday.isOpen ? 
+                              `${workingHours.saturday.open} - ${workingHours.saturday.close}` : 
+                              "Kapalı") : 
+                            "10:00 - 14:00"}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p className="text-[#7F8C8D]">Pazar</p>
+                        <p className="font-medium">
+                          {workingHours ? 
+                            (workingHours.sunday.isOpen ? 
+                              `${workingHours.sunday.open} - ${workingHours.sunday.close}` : 
+                              "Kapalı") : 
+                            "Kapalı"}
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
               
@@ -81,34 +157,85 @@ const Contact = () => {
                 <h2 className="font-bold text-xl text-[#2C3E50] mb-4">Sosyal Medya</h2>
                 
                 <div className="flex space-x-4">
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Facebook"
-                  >
-                    <Facebook size={20} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Twitter"
-                  >
-                    <Twitter size={20} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="Instagram"
-                  >
-                    <Instagram size={20} />
-                  </a>
-                  <a 
-                    href="#" 
-                    className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin size={20} />
-                  </a>
+                  {contactInfo?.facebook ? (
+                    <a 
+                      href={contactInfo.facebook} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Facebook"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Facebook size={20} />
+                    </a>
+                  ) : (
+                    <a 
+                      href="#" 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Facebook"
+                    >
+                      <Facebook size={20} />
+                    </a>
+                  )}
+                  
+                  {contactInfo?.twitter ? (
+                    <a 
+                      href={contactInfo.twitter} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Twitter"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Twitter size={20} />
+                    </a>
+                  ) : (
+                    <a 
+                      href="#" 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Twitter"
+                    >
+                      <Twitter size={20} />
+                    </a>
+                  )}
+                  
+                  {contactInfo?.instagram ? (
+                    <a 
+                      href={contactInfo.instagram} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Instagram"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Instagram size={20} />
+                    </a>
+                  ) : (
+                    <a 
+                      href="#" 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="Instagram"
+                    >
+                      <Instagram size={20} />
+                    </a>
+                  )}
+                  
+                  {contactInfo?.linkedin ? (
+                    <a 
+                      href={contactInfo.linkedin} 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="LinkedIn"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Linkedin size={20} />
+                    </a>
+                  ) : (
+                    <a 
+                      href="#" 
+                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin size={20} />
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
