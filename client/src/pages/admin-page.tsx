@@ -62,7 +62,206 @@ export default function AdminPage() {
   const { user, isLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<string>("overview");
   const [selectedUser, setSelectedUser] = useState<Omit<UserType, "password"> | null>(null);
+  
+  // Kullanıcı ekleme/güncelleme mutasyonu
+  const createOrUpdateUserMutation = useMutation({
+    mutationFn: async (userData: Omit<UserType, "password"> & { password?: string, avatarFile?: File }) => {
+      let url = "/api/users";
+      let method = "POST";
+      
+      if (userData.id) {
+        url = `/api/users/${userData.id}`;
+        method = "PUT";
+      }
+      
+      // Dosya yükleme işlemi varsa
+      if ('avatarFile' in userData && userData.avatarFile) {
+        // Dosya yükleme işlemini burada simüle ediyoruz
+        // Gerçek API'da dosya yüklemek için FormData kullanılabilir
+        console.log("Avatar dosyası yükleniyor:", userData.avatarFile);
+        // Burada sadece avatarUrl'i koruyoruz, gerçek uygulamada dosya sunucuya yüklenip URL alınır
+      }
+      
+      // Formdan gönderilmeyen alanları API'dan kaldır
+      const userDataToSend = {...userData};
+      delete userDataToSend.avatarFile;
+      if (!userDataToSend.password) {
+        delete userDataToSend.password;
+      }
+      
+      const res = await apiRequest(method, url, userDataToSend);
+      return await res.json();
+    },
+    onSuccess: () => {
+      // Cache'i temizle ve dialog'u kapat
+      queryClient.invalidateQueries({ queryKey: ["/api/users"] });
+      setShowUserDialog(false);
+      setSelectedUser(null);
+      
+      toast({
+        title: "Emlakçı kaydedildi",
+        description: "Emlakçı bilgileri başarıyla güncellendi.",
+        variant: "default",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hata",
+        description: `Emlakçı kaydedilirken bir hata oluştu: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // Kullanıcı kaydetme fonksiyonu
+  const handleSaveUser = () => {
+    if (!selectedUser) return;
+    
+    // Validasyon kontrolleri
+    if (!selectedUser.fullName) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen emlakçı adı ve soyadını girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedUser.username) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen kullanıcı adı girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedUser.email) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen e-posta adresini girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Yeni kullanıcı ekliyorsak şifre zorunlu
+    if (!selectedUser.id && !('password' in selectedUser)) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen şifre girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Kullanıcıyı kaydet
+    createOrUpdateUserMutation.mutate(selectedUser as any);
+  };
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  
+  // İlan ekleme/güncelleme mutasyonu
+  const createOrUpdateListingMutation = useMutation({
+    mutationFn: async (listingData: Listing & { imageFile?: File }) => {
+      let url = "/api/listings";
+      let method = "POST";
+      
+      if (listingData.id) {
+        url = `/api/listings/${listingData.id}`;
+        method = "PUT";
+      }
+      
+      // Dosya yükleme işlemi varsa
+      if ('imageFile' in listingData && listingData.imageFile) {
+        // Dosya yükleme işlemini burada simüle ediyoruz
+        // Gerçek API'da dosya yüklemek için FormData kullanılabilir
+        console.log("İlan resmi yükleniyor:", listingData.imageFile);
+        // Burada sadece imageUrls'i koruyoruz, gerçek uygulamada dosya sunucuya yüklenip URL alınır
+      }
+      
+      // Formdan gönderilmeyen alanları API'dan kaldır
+      const listingDataToSend = {...listingData};
+      delete listingDataToSend.imageFile;
+      
+      const res = await apiRequest(method, url, listingDataToSend);
+      return await res.json();
+    },
+    onSuccess: () => {
+      // Cache'i temizle ve dialog'u kapat
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      setShowListingDialog(false);
+      setSelectedListing(null);
+      
+      toast({
+        title: "İlan kaydedildi",
+        description: "İlan bilgileri başarıyla güncellendi.",
+        variant: "default",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Hata",
+        description: `İlan kaydedilirken bir hata oluştu: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+  
+  // İlan kaydetme fonksiyonu
+  const handleSaveListing = () => {
+    if (!selectedListing) return;
+    
+    // Validasyon kontrolleri
+    if (!selectedListing.title) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen ilan başlığını girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedListing.description) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen ilan açıklamasını girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedListing.price || selectedListing.price <= 0) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen geçerli bir fiyat girin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedListing.propertyTypeId) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen emlak tipini seçin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedListing.cityId) {
+      toast({
+        title: "Doğrulama hatası", 
+        description: "Lütfen şehir seçin",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // İlanı kaydet
+    createOrUpdateListingMutation.mutate(selectedListing as any);
+  };
   const [showUserDialog, setShowUserDialog] = useState<boolean>(false);
   const [showListingDialog, setShowListingDialog] = useState<boolean>(false);
   const [showDeleteUserDialog, setShowDeleteUserDialog] = useState<boolean>(false);
@@ -383,7 +582,22 @@ export default function AdminPage() {
                 <CardTitle>Emlak Danışmanları</CardTitle>
                 <CardDescription>Sistemdeki tüm emlak danışmanlarını yönetin</CardDescription>
               </div>
-              <Button className="bg-[#3498DB] text-white hover:bg-[#5DADE2]">
+              <Button 
+                onClick={() => {
+                  setSelectedUser({
+                    id: 0,
+                    username: "",
+                    fullName: "",
+                    email: "",
+                    phone: "",
+                    role: "agent",
+                    avatarUrl: "",
+                    createdAt: new Date()
+                  });
+                  setShowUserDialog(true);
+                }}
+                className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Yeni Danışman Ekle
               </Button>
@@ -465,7 +679,34 @@ export default function AdminPage() {
                 <CardTitle>Emlak İlanları</CardTitle>
                 <CardDescription>Tüm emlak ilanlarını yönetin</CardDescription>
               </div>
-              <Button className="bg-[#3498DB] text-white hover:bg-[#5DADE2]">
+              <Button 
+                onClick={() => {
+                  setSelectedListing({
+                    id: 0,
+                    title: "",
+                    description: "",
+                    price: 0,
+                    listingType: "sale",
+                    rentPeriod: null,
+                    propertyTypeId: 1,
+                    cityId: 1,
+                    district: "",
+                    address: "",
+                    squareMeters: 0,
+                    roomCount: 1,
+                    bathroomCount: 1,
+                    parkingCount: 0,
+                    imageUrls: [""],
+                    userId: user?.id || 1,
+                    isFeatured: false,
+                    postedAt: new Date(),
+                    latitude: null,
+                    longitude: null
+                  });
+                  setShowListingDialog(true);
+                }}
+                className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Yeni İlan Ekle
               </Button>
@@ -697,15 +938,39 @@ export default function AdminPage() {
             
             <div className="grid gap-2">
               <Label htmlFor="avatarUrl">Profil Fotoğrafı</Label>
-              <Input
-                id="avatarUrl"
-                value={selectedUser?.avatarUrl || ""}
-                onChange={(e) => setSelectedUser(prev => prev ? {...prev, avatarUrl: e.target.value} : null)}
-                placeholder="Profil fotoğrafı URL'si"
-              />
+              <div className="grid gap-2">
+                <div className="flex items-center gap-4">
+                  <Input
+                    id="avatarUrl"
+                    value={selectedUser?.avatarUrl || ""}
+                    onChange={(e) => setSelectedUser(prev => prev ? {...prev, avatarUrl: e.target.value} : null)}
+                    placeholder="Profil fotoğrafı URL'si"
+                  />
+                  <span className="text-xs text-muted-foreground">veya</span>
+                  <div>
+                    <Label htmlFor="avatarFile" className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                      Dosya Seç
+                    </Label>
+                    <input 
+                      type="file" 
+                      id="avatarFile" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // Dosya URL'si oluştur
+                          const fileUrl = URL.createObjectURL(file);
+                          setSelectedUser(prev => prev ? {...prev, avatarUrl: fileUrl, avatarFile: file} : null);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
               {selectedUser?.avatarUrl && (
                 <div className="mt-2 p-2 border rounded-md">
-                  <div className="text-xs text-muted-foreground mb-2">Mevcut fotoğraf:</div>
+                  <div className="text-xs text-muted-foreground mb-2">Profil fotoğrafı:</div>
                   <div className="flex justify-center">
                     <img 
                       src={selectedUser.avatarUrl} 
@@ -734,11 +999,22 @@ export default function AdminPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowUserDialog(false)}>İptal</Button>
             <Button 
-              type="submit" 
+              type="button"
+              onClick={handleSaveUser}
               className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+              disabled={createOrUpdateUserMutation.isPending}
             >
-              <Save className="mr-2 h-4 w-4" />
-              Kaydet
+              {createOrUpdateUserMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Kaydet
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -838,16 +1114,52 @@ export default function AdminPage() {
             </div>
             
             <div className="grid gap-2">
-              <Label htmlFor="imageUrls">Resim URL'si</Label>
-              <Input
-                id="imageUrls"
-                value={selectedListing?.imageUrls?.[0] || ""}
-                onChange={(e) => setSelectedListing(prev => 
-                  prev ? {...prev, imageUrls: [e.target.value]} : null
-                )}
-                placeholder="İlan resim URL'si"
-              />
-              <p className="text-xs text-muted-foreground">Ana görsel URL'si (diğer görseller ileride eklenebilecek)</p>
+              <Label htmlFor="imageUrls">İlan Görseli</Label>
+              <div className="grid gap-2">
+                <div className="flex items-center gap-4">
+                  <Input
+                    id="imageUrls"
+                    value={selectedListing?.imageUrls?.[0] || ""}
+                    onChange={(e) => setSelectedListing(prev => 
+                      prev ? {...prev, imageUrls: [e.target.value]} : null
+                    )}
+                    placeholder="İlan resim URL'si"
+                  />
+                  <span className="text-xs text-muted-foreground">veya</span>
+                  <div>
+                    <Label htmlFor="imageFile" className="cursor-pointer inline-flex h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50">
+                      Görsel Seç
+                    </Label>
+                    <input 
+                      type="file" 
+                      id="imageFile" 
+                      className="hidden" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          // Dosya URL'si oluştur
+                          const fileUrl = URL.createObjectURL(file);
+                          setSelectedListing(prev => prev ? {...prev, imageUrls: [fileUrl], imageFile: file} : null);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              {selectedListing?.imageUrls?.[0] && (
+                <div className="mt-2 p-2 border rounded-md">
+                  <div className="text-xs text-muted-foreground mb-2">İlan görseli:</div>
+                  <div className="flex justify-center">
+                    <img 
+                      src={selectedListing.imageUrls[0]} 
+                      alt={selectedListing.title || "İlan görseli"} 
+                      className="h-40 object-cover rounded-md"
+                    />
+                  </div>
+                </div>
+              )}
+              <p className="text-xs text-muted-foreground">Ana görsel (diğer görseller ileride eklenebilecek)</p>
             </div>
             
             <div className="grid grid-cols-2 gap-4">
@@ -899,11 +1211,22 @@ export default function AdminPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowListingDialog(false)}>İptal</Button>
             <Button 
-              type="submit" 
+              type="button"
+              onClick={handleSaveListing}
               className="bg-[#3498DB] text-white hover:bg-[#5DADE2]"
+              disabled={createOrUpdateListingMutation.isPending}
             >
-              <Save className="mr-2 h-4 w-4" />
-              Kaydet
+              {createOrUpdateListingMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Kaydediliyor...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Kaydet
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
