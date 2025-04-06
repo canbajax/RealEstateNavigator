@@ -4,6 +4,7 @@ import PropertyTypes from "@/components/PropertyTypes";
 import OurAgents from "@/components/OurAgents";
 import ContactForm from "@/components/ContactForm";
 import { MapPin, PhoneCall, Mail, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { getQueryFn } from "@/lib/queryClient";
 import { ContactInfo } from "@shared/schema";
@@ -264,7 +265,9 @@ const Home = () => {
                 </div>
                 
                 <div>
-                  <a href="#" className="inline-block bg-white text-[#3498DB] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">Hemen Başvurun</a>
+                  <Link href="/contact">
+                    <a className="inline-block bg-white text-[#3498DB] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">Hemen Başvurun</a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -298,7 +301,9 @@ const Home = () => {
                 </div>
                 
                 <div>
-                  <a href="#" className="inline-block bg-white text-[#2C3E50] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">İletişime Geçin</a>
+                  <Link href="/contact">
+                    <a className="inline-block bg-white text-[#2C3E50] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">İletişime Geçin</a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -313,9 +318,11 @@ const Home = () => {
                   <p className="mb-4 md:mb-0 opacity-90">Gayrimenkulünüzün güncel piyasa değerini öğrenmek için hemen başvurun. Uzman ekibimiz en kısa sürede size ulaşsın.</p>
                 </div>
                 <div className="md:col-span-2 flex justify-center md:justify-end">
-                  <a href="#" className="inline-block bg-white text-[#3498DB] hover:text-[#5DADE2] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">
-                    Ücretsiz Değerleme Alın
-                  </a>
+                  <Link href="/contact">
+                    <a className="inline-block bg-white text-[#3498DB] hover:text-[#5DADE2] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">
+                      Ücretsiz Değerleme Alın
+                    </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -408,16 +415,16 @@ const Home = () => {
                 )}
                 
                 <div className="flex space-x-4">
-                  <a href={contactInfo?.socialMedia?.facebook || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                  <a href={contactInfo?.facebook || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
                     <Facebook className="h-5 w-5 text-[#3498DB]" />
                   </a>
-                  <a href={contactInfo?.socialMedia?.twitter || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                  <a href={contactInfo?.twitter || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
                     <Twitter className="h-5 w-5 text-[#3498DB]" />
                   </a>
-                  <a href={contactInfo?.socialMedia?.instagram || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                  <a href={contactInfo?.instagram || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
                     <Instagram className="h-5 w-5 text-[#3498DB]" />
                   </a>
-                  <a href={contactInfo?.socialMedia?.linkedin || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                  <a href={contactInfo?.linkedin || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
                     <Linkedin className="h-5 w-5 text-[#3498DB]" />
                   </a>
                 </div>
