@@ -16,9 +16,9 @@ const AboutPage = () => {
   const contactInfo = data?.contactInfo;
 
   return (
-    <div className="bg-gradient-to-b from-[#fafbfc] to-white">
+    <div className="bg-gradient-to-b from-[#f2f9ff] to-white">
       {/* Hero Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-gradient-to-b from-[#e6f7ff] to-white">
         <div className="container mx-auto px-4">
           <motion.div 
             initial={{ opacity: 0, y: 50 }}
@@ -26,10 +26,10 @@ const AboutPage = () => {
             transition={{ duration: 0.5 }}
             className="text-center max-w-4xl mx-auto mb-16"
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-[#2980B9] to-[#3498DB] text-transparent bg-clip-text">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-[#1a5f89] to-[#2980B9] text-transparent bg-clip-text leading-tight">
               Hakkımızda
             </h1>
-            <p className="text-lg text-[#7F8C8D] mb-8">
+            <p className="text-lg md:text-xl text-[#5a6a6e] mb-8 leading-relaxed">
               2005 yılından bu yana gayrimenkul sektöründe güvenilir çözümler sunuyoruz. Profesyonel ekibimizle Türkiye'nin dört bir yanında hizmet veriyoruz.
             </p>
           </motion.div>
