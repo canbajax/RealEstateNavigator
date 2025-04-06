@@ -162,7 +162,7 @@ export default function AdminPage() {
   
   // İlan ekleme/güncelleme mutasyonu
   const createOrUpdateListingMutation = useMutation({
-    mutationFn: async (listingData: Listing & { imageFile?: File }) => {
+    mutationFn: async (listingData: Listing & { imageFiles?: File[] }) => {
       let url = "/api/listings";
       let method = "POST";
       
@@ -172,16 +172,16 @@ export default function AdminPage() {
       }
       
       // Dosya yükleme işlemi varsa
-      if ('imageFile' in listingData && listingData.imageFile) {
+      if ('imageFiles' in listingData && listingData.imageFiles && listingData.imageFiles.length > 0) {
         // Dosya yükleme işlemini burada simüle ediyoruz
         // Gerçek API'da dosya yüklemek için FormData kullanılabilir
-        console.log("İlan resmi yükleniyor:", listingData.imageFile);
+        console.log("İlan resimleri yükleniyor:", listingData.imageFiles);
         // Burada sadece imageUrls'i koruyoruz, gerçek uygulamada dosya sunucuya yüklenip URL alınır
       }
       
       // Formdan gönderilmeyen alanları API'dan kaldır
       const listingDataToSend = {...listingData};
-      delete listingDataToSend.imageFile;
+      delete listingDataToSend.imageFiles;
       
       const res = await apiRequest(method, url, listingDataToSend);
       return await res.json();
@@ -1346,7 +1346,13 @@ export default function AdminPage() {
               <Switch 
                 id="isFeatured"
                 checked={selectedListing?.isFeatured || false}
-                onCheckedChange={(checked) => setSelectedListing(prev => prev ? {...prev, isFeatured: checked} : null)}
+                onCheckedChange={(checked) => {
+                  setSelectedListing(prev => prev ? {...prev, isFeatured: checked} : null);
+                  // İlan öne çıkan olarak işaretlendiğinde anasayfadaki featured-listings sorgusu da yenilensin
+                  if (checked) {
+                    queryClient.invalidateQueries({ queryKey: ["/api/featured-listings"] });
+                  }
+                }}
               />
               <Label htmlFor="isFeatured">Öne Çıkan İlan</Label>
             </div>
