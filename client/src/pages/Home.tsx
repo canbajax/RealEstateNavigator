@@ -111,19 +111,14 @@ const Home = () => {
           </div>
           
           {/* Özel Hizmetler */}
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Ücretsiz Değerleme */}
-            <div className="bg-gradient-to-br from-[#3498DB] to-[#2980B9] text-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold mb-4">Ücretsiz Değerleme</h3>
-              <p className="mb-6">Ev satmak veya kiralamak mı istiyorsunuz? Profesyonel ekibimizle gayrimenkulünüzün piyasa değerini ücretsiz öğrenin.</p>
-              <a href="#" className="inline-block bg-white text-[#3498DB] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">Hemen Başvurun</a>
-            </div>
-            
-            {/* Ücretsiz Danışmanlık */}
-            <div className="bg-gradient-to-br from-[#2C3E50] to-[#34495E] text-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold mb-4">Ücretsiz Danışmanlık</h3>
-              <p className="mb-6">Gayrimenkul almak, satmak veya kiralamak ile ilgili tüm sorularınız için ücretsiz danışmanlık hizmetimizden faydalanın.</p>
-              <a href="#" className="inline-block bg-white text-[#2C3E50] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">Randevu Alın</a>
+          <div className="flex justify-center">
+            {/* Ücretsiz Değerleme ve Danışmanlık */}
+            <div className="bg-gradient-to-br from-[#3498DB] to-[#2980B9] text-white rounded-xl p-8 shadow-lg max-w-3xl">
+              <h3 className="text-2xl font-bold mb-4 text-center">Ücretsiz Değerleme ve Danışmanlık</h3>
+              <p className="mb-6 text-center">Gayrimenkulünüzün değerini öğrenmek veya emlak alım-satım süreçleriyle ilgili sorularınız mı var? Profesyonel ekibimizle ücretsiz değerleme ve danışmanlık hizmetimizden faydalanın.</p>
+              <div className="flex justify-center">
+                <a href="#" className="inline-block bg-white text-[#3498DB] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">Hemen Başvurun</a>
+              </div>
             </div>
           </div>
         </div>
