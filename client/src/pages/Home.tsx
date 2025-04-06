@@ -112,11 +112,8 @@ const Home = () => {
                 </li>
               </ul>
               <div className="text-center">
-                <a href="#" className="inline-flex items-center text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Detaylı Bilgi</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
+                  <span>Bilgi</span>
                 </a>
               </div>
             </div>
@@ -155,11 +152,8 @@ const Home = () => {
                 </li>
               </ul>
               <div className="text-center">
-                <a href="#" className="inline-flex items-center text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Detaylı Bilgi</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
+                  <span>Bilgi</span>
                 </a>
               </div>
             </div>
@@ -198,11 +192,8 @@ const Home = () => {
                 </li>
               </ul>
               <div className="text-center">
-                <a href="#" className="inline-flex items-center text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
-                  <span>Detaylı Bilgi</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                <a href="#" className="text-[#3498DB] font-medium hover:text-[#5DADE2] transition-colors">
+                  <span>Bilgi</span>
                 </a>
               </div>
             </div>
@@ -295,67 +286,25 @@ const Home = () => {
                       <div className="mr-3 bg-white/20 p-1 rounded">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                       </div>
-                      <span className="opacity-90">Proje Pazarlama Desteği</span>
+                      <span className="opacity-90">Toplu Satış ve Kiralama</span>
                     </li>
                     <li className="flex items-center">
                       <div className="mr-3 bg-white/20 p-1 rounded">
                         <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
                       </div>
-                      <span className="opacity-90">Portföy Yönetimi</span>
+                      <span className="opacity-90">Proje Tanıtım ve Pazarlama</span>
                     </li>
                   </ul>
                 </div>
                 
                 <div>
-                  <a href="#" className="inline-block bg-[#3498DB] text-white font-semibold py-3 px-6 rounded-lg shadow hover:bg-[#5DADE2] transition-colors">Kurumsal Paketler</a>
+                  <a href="#" className="inline-block bg-white text-[#2C3E50] font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition-shadow">İletişime Geçin</a>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Neden Biz Hizmet Özelliklerimiz */}
-          <div className="bg-white rounded-xl shadow-xl p-8 mb-16">
-            <div className="text-center mb-10">
-              <h3 className="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-4">Neden Co Worker?</h3>
-              <p className="text-[#7F8C8D] max-w-2xl mx-auto">Türkiye'nin en güvenilir ve kapsamlı emlak platformu olarak müşterilerimize sunduğumuz avantajlar.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-[#EBF5FB] flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]"><path d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1M8 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M8 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m0 0h2a2 2 0 0 1 2 2v3m2 4H10m0 0 3-3m-3 3 3 3"></path></svg>
-                </div>
-                <h4 className="text-lg font-semibold text-[#2C3E50] mb-2">Şeffaf Süreçler</h4>
-                <p className="text-center text-[#7F8C8D]">Her aşamada bilgilendirme ve şeffaf iletişim ile güven sağlıyoruz.</p>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-[#EBF5FB] flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
-                </div>
-                <h4 className="text-lg font-semibold text-[#2C3E50] mb-2">Uzman Kadro</h4>
-                <p className="text-center text-[#7F8C8D]">Sektörün en deneyimli profesyonelleri ile hizmet veriyoruz.</p>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-[#EBF5FB] flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                </div>
-                <h4 className="text-lg font-semibold text-[#2C3E50] mb-2">Güvenilir Hizmet</h4>
-                <p className="text-center text-[#7F8C8D]">%98 müşteri memnuniyeti ile sektörün en güvenilir markasıyız.</p>
-              </div>
-              
-              <div className="flex flex-col items-center">
-                <div className="w-16 h-16 rounded-full bg-[#EBF5FB] flex items-center justify-center mb-4">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#3498DB]"><path d="M12 16a4 4 0 0 0 0-8"></path><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M20 12h2"></path><path d="M2 12h2"></path><path d="M19.07 5 17.66 6.39"></path><path d="M6.34 17.66 4.93 19.07"></path></svg>
-                </div>
-                <h4 className="text-lg font-semibold text-[#2C3E50] mb-2">Teknoloji Odaklı</h4>
-                <p className="text-center text-[#7F8C8D]">En yenilikçi teknolojileri kullanarak hizmet kalitemizi sürekli geliştiriyoruz.</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Ücretsiz Değerleme CTA */}
+          {/* CTA Section */}
           <div className="flex justify-center">
             <div className="bg-gradient-to-br from-[#3498DB] to-[#2980B9] text-white rounded-xl p-8 shadow-xl max-w-4xl w-full">
               <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
@@ -378,141 +327,101 @@ const Home = () => {
       
       <PropertyTypes />
       
-      {/* Agents Section */}
       <OurAgents />
       
-      {/* Contact Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#2C3E50] text-white">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div>
-              <h2 className="font-bold text-2xl md:text-3xl mb-6">Bize Ulaşın</h2>
-              <p className="mb-8">
-                Emlak danışmanlarımız size yardımcı olmak için hazır. Sorularınız için bize 
-                ulaşabilir veya ücretsiz danışmanlık hizmeti alabilirsiniz.
-              </p>
-              
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="text-[#3498DB] mt-1 mr-4">
-                    <MapPin size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Adres</h3>
-                    {isLoading ? (
-                      <Skeleton className="h-4 w-48 bg-gray-400 mt-1" />
-                    ) : (
-                      <p className="text-[#ECF0F1]">{contactInfo?.address || "Adres bilgisi bulunamadı"}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="text-[#3498DB] mt-1 mr-4">
-                    <PhoneCall size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Telefon</h3>
-                    {isLoading ? (
-                      <Skeleton className="h-4 w-32 bg-gray-400 mt-1" />
-                    ) : (
-                      <p className="text-[#ECF0F1]">{contactInfo?.phone || "Telefon bilgisi bulunamadı"}</p>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="text-[#3498DB] mt-1 mr-4">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <h3 className="font-medium">E-posta</h3>
-                    {isLoading ? (
-                      <Skeleton className="h-4 w-40 bg-gray-400 mt-1" />
-                    ) : (
-                      <p className="text-[#ECF0F1]">{contactInfo?.email || "E-posta bilgisi bulunamadı"}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <h3 className="font-medium mb-4">Bizi Takip Edin</h3>
-                <div className="flex space-x-4">
-                  {contactInfo?.facebook && (
-                    <a 
-                      href={contactInfo.facebook} 
-                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                      aria-label="Facebook"
-                    >
-                      <Facebook size={16} />
-                    </a>
-                  )}
-                  {contactInfo?.twitter && (
-                    <a 
-                      href={contactInfo.twitter} 
-                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                      aria-label="Twitter"
-                    >
-                      <Twitter size={16} />
-                    </a>
-                  )}
-                  {contactInfo?.instagram && (
-                    <a 
-                      href={contactInfo.instagram} 
-                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                      aria-label="Instagram"
-                    >
-                      <Instagram size={16} />
-                    </a>
-                  )}
-                  {contactInfo?.linkedin && (
-                    <a 
-                      href={contactInfo.linkedin} 
-                      className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                      aria-label="LinkedIn"
-                    >
-                      <Linkedin size={16} />
-                    </a>
-                  )}
-                  {!contactInfo?.facebook && !contactInfo?.twitter && !contactInfo?.instagram && !contactInfo?.linkedin && (
-                    <>
-                      <a 
-                        href="#" 
-                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                        aria-label="Facebook"
-                      >
-                        <Facebook size={16} />
-                      </a>
-                      <a 
-                        href="#" 
-                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                        aria-label="Twitter"
-                      >
-                        <Twitter size={16} />
-                      </a>
-                      <a 
-                        href="#" 
-                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                        aria-label="Instagram"
-                      >
-                        <Instagram size={16} />
-                      </a>
-                      <a 
-                        href="#" 
-                        className="bg-[#3498DB] hover:bg-[#5DADE2] text-white p-3 rounded-full transition"
-                        aria-label="LinkedIn"
-                      >
-                        <Linkedin size={16} />
-                      </a>
-                    </>
-                  )}
-                </div>
-              </div>
+      {/* İletişim Bölümü */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="container px-4 mx-auto">
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="lg:w-1/2">
+              <ContactForm />
             </div>
             
-            <div>
-              <ContactForm />
+            <div className="lg:w-1/2">
+              <div className="bg-white p-8 rounded-xl shadow-lg h-full">
+                <h2 className="text-3xl font-bold text-[#2C3E50] mb-6">İletişim Bilgilerimiz</h2>
+                <p className="text-[#7F8C8D] mb-8">Gayrimenkul ihtiyaçlarınız için bizimle iletişime geçin. Uzman ekibimiz size yardımcı olmak için hazır.</p>
+                
+                {isLoading ? (
+                  <>
+                    <div className="flex items-start mb-6">
+                      <div className="mr-4 mt-1">
+                        <MapPin className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <Skeleton className="h-4 w-32 mb-2" />
+                        <Skeleton className="h-4 w-64" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start mb-6">
+                      <div className="mr-4 mt-1">
+                        <PhoneCall className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <Skeleton className="h-4 w-40 mb-2" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start mb-8">
+                      <div className="mr-4 mt-1">
+                        <Mail className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <Skeleton className="h-4 w-48" />
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-start mb-6">
+                      <div className="mr-4 mt-1">
+                        <MapPin className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-[#2C3E50] mb-1">Adres</h4>
+                        <p className="text-[#7F8C8D]">{contactInfo?.address || "Adres bilgisi bulunamadı"}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start mb-6">
+                      <div className="mr-4 mt-1">
+                        <PhoneCall className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-[#2C3E50] mb-1">Telefon</h4>
+                        <p className="text-[#7F8C8D]">{contactInfo?.phone || "Telefon bilgisi bulunamadı"}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start mb-8">
+                      <div className="mr-4 mt-1">
+                        <Mail className="h-6 w-6 text-[#3498DB]" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-[#2C3E50] mb-1">E-posta</h4>
+                        <p className="text-[#7F8C8D]">{contactInfo?.email || "E-posta bilgisi bulunamadı"}</p>
+                      </div>
+                    </div>
+                  </>
+                )}
+                
+                <div className="flex space-x-4">
+                  <a href={contactInfo?.socialMedia?.facebook || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                    <Facebook className="h-5 w-5 text-[#3498DB]" />
+                  </a>
+                  <a href={contactInfo?.socialMedia?.twitter || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                    <Twitter className="h-5 w-5 text-[#3498DB]" />
+                  </a>
+                  <a href={contactInfo?.socialMedia?.instagram || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                    <Instagram className="h-5 w-5 text-[#3498DB]" />
+                  </a>
+                  <a href={contactInfo?.socialMedia?.linkedin || "#"} className="bg-[#EBF5FB] p-3 rounded-full hover:bg-[#D6EAF8] transition-colors">
+                    <Linkedin className="h-5 w-5 text-[#3498DB]" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
