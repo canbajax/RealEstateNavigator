@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const Header = () => {
   const [location, setLocation] = useLocation();
@@ -37,6 +38,8 @@ const Header = () => {
   // Komisyon hesaplama değişkenleri
   const [propertyValue, setPropertyValue] = useState(2000000);
   const [commissionRate, setCommissionRate] = useState(2);
+  const [commissionType, setCommissionType] = useState<'satilik' | 'kiralik'>('satilik');
+  const [vatRate, setVatRate] = useState(18);
   const { user, logoutMutation } = useAuth();
 
   const toggleMobileMenu = () => {
@@ -68,7 +71,14 @@ const Header = () => {
   
   // Komisyon hesaplama
   const calculateCommission = () => {
-    return propertyValue * (commissionRate / 100);
+    // Satılık için tüm değer üzerinden, kiralık için yıllık değer üzerinden
+    const baseValue = commissionType === 'satilik' ? propertyValue : propertyValue * 12;
+    return baseValue * (commissionRate / 100);
+  };
+  
+  // KDV dahil komisyon hesaplama
+  const calculateCommissionWithVAT = () => {
+    return calculateCommission() * (1 + vatRate / 100);
   };
   
   // Para birimi formatter
@@ -142,15 +152,23 @@ const Header = () => {
                     <div className="grid gap-4 py-2">
                       <div className="grid gap-2">
                         <Label htmlFor="amount">Kredi Tutarı: {formatCurrency(mortgageAmount)}</Label>
-                        <Slider
-                          id="amount"
-                          min={100000}
-                          max={10000000}
-                          step={50000}
-                          value={[mortgageAmount]}
-                          onValueChange={(value) => setMortgageAmount(value[0])}
-                          className="py-4"
-                        />
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="amount"
+                            min={100000}
+                            max={10000000}
+                            step={50000}
+                            value={[mortgageAmount]}
+                            onValueChange={(value) => setMortgageAmount(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={mortgageAmount}
+                            onChange={(e) => setMortgageAmount(Number(e.target.value))}
+                            className="w-24"
+                          />
+                        </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>100.000 ₺</span>
                           <span>10.000.000 ₺</span>
@@ -159,15 +177,23 @@ const Header = () => {
                       
                       <div className="grid gap-2">
                         <Label htmlFor="years">Vade (Yıl): {mortgageYears} yıl</Label>
-                        <Slider
-                          id="years"
-                          min={1}
-                          max={30}
-                          step={1}
-                          value={[mortgageYears]}
-                          onValueChange={(value) => setMortgageYears(value[0])}
-                          className="py-4"
-                        />
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="years"
+                            min={1}
+                            max={30}
+                            step={1}
+                            value={[mortgageYears]}
+                            onValueChange={(value) => setMortgageYears(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={mortgageYears}
+                            onChange={(e) => setMortgageYears(Number(e.target.value))}
+                            className="w-24"
+                          />
+                        </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>1 yıl</span>
                           <span>30 yıl</span>
@@ -176,15 +202,24 @@ const Header = () => {
                       
                       <div className="grid gap-2">
                         <Label htmlFor="interest">Faiz Oranı: %{interestRate}</Label>
-                        <Slider
-                          id="interest"
-                          min={0.1}
-                          max={5}
-                          step={0.01}
-                          value={[interestRate]}
-                          onValueChange={(value) => setInterestRate(value[0])}
-                          className="py-4"
-                        />
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="interest"
+                            min={0.1}
+                            max={5}
+                            step={0.01}
+                            value={[interestRate]}
+                            onValueChange={(value) => setInterestRate(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={interestRate}
+                            onChange={(e) => setInterestRate(Number(e.target.value))}
+                            className="w-24"
+                            step="0.01"
+                          />
+                        </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>%0.10</span>
                           <span>%5.00</span>
@@ -216,37 +251,100 @@ const Header = () => {
                   
                   <TabsContent value="komisyon" className="mt-4">
                     <div className="grid gap-4 py-2">
+                      <div className="grid grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroup 
+                            defaultValue="satilik" 
+                            value={commissionType}
+                            onValueChange={(value) => setCommissionType(value as 'satilik' | 'kiralik')}
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="satilik" id="satilik" />
+                              <Label htmlFor="satilik">Satılık</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="kiralik" id="kiralik" />
+                              <Label htmlFor="kiralik">Kiralık</Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      </div>
+
                       <div className="grid gap-2">
-                        <Label htmlFor="propertyValue">Gayrimenkul Değeri: {formatCurrency(propertyValue)}</Label>
-                        <Slider
-                          id="propertyValue"
-                          min={100000}
-                          max={20000000}
-                          step={100000}
-                          value={[propertyValue]}
-                          onValueChange={(value) => setPropertyValue(value[0])}
-                          className="py-4"
-                        />
+                        <Label htmlFor="propertyValue">
+                          {commissionType === 'satilik' ? 'Gayrimenkul Değeri' : 'Aylık Kira Bedeli'}: {formatCurrency(propertyValue)}
+                        </Label>
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="propertyValue"
+                            min={commissionType === 'satilik' ? 100000 : 1000}
+                            max={commissionType === 'satilik' ? 20000000 : 100000}
+                            step={commissionType === 'satilik' ? 100000 : 500}
+                            value={[propertyValue]}
+                            onValueChange={(value) => setPropertyValue(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={propertyValue}
+                            onChange={(e) => setPropertyValue(Number(e.target.value))}
+                            className="w-24"
+                          />
+                        </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
-                          <span>100.000 ₺</span>
-                          <span>20.000.000 ₺</span>
+                          <span>{commissionType === 'satilik' ? '100.000 ₺' : '1.000 ₺'}</span>
+                          <span>{commissionType === 'satilik' ? '20.000.000 ₺' : '100.000 ₺'}</span>
                         </div>
                       </div>
                       
                       <div className="grid gap-2">
                         <Label htmlFor="commissionRate">Komisyon Oranı: %{commissionRate}</Label>
-                        <Slider
-                          id="commissionRate"
-                          min={0.5}
-                          max={5}
-                          step={0.1}
-                          value={[commissionRate]}
-                          onValueChange={(value) => setCommissionRate(value[0])}
-                          className="py-4"
-                        />
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="commissionRate"
+                            min={0.5}
+                            max={5}
+                            step={0.1}
+                            value={[commissionRate]}
+                            onValueChange={(value) => setCommissionRate(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={commissionRate}
+                            onChange={(e) => setCommissionRate(Number(e.target.value))}
+                            className="w-24"
+                            step="0.1"
+                          />
+                        </div>
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>%0.5</span>
                           <span>%5.0</span>
+                        </div>
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="vatRate">KDV Oranı: %{vatRate}</Label>
+                        <div className="flex gap-2 items-center">
+                          <Slider
+                            id="vatRate"
+                            min={0}
+                            max={20}
+                            step={1}
+                            value={[vatRate]}
+                            onValueChange={(value) => setVatRate(value[0])}
+                            className="py-4 flex-1"
+                          />
+                          <Input
+                            type="number"
+                            value={vatRate}
+                            onChange={(e) => setVatRate(Number(e.target.value))}
+                            className="w-24"
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>%0</span>
+                          <span>%20</span>
                         </div>
                       </div>
                       
@@ -257,11 +355,13 @@ const Header = () => {
                             <p className="text-lg font-bold">{formatCurrency(calculateCommission())}</p>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-muted-foreground">KDV Dahil (%18)</p>
-                            <p className="text-lg font-bold">{formatCurrency(calculateCommission() * 1.18)}</p>
+                            <p className="text-sm font-medium text-muted-foreground">KDV Dahil (%{vatRate})</p>
+                            <p className="text-lg font-bold">{formatCurrency(calculateCommissionWithVAT())}</p>
                           </div>
                           <div>
-                            <p className="text-sm font-medium text-muted-foreground">Gayrimenkul Değeri</p>
+                            <p className="text-sm font-medium text-muted-foreground">
+                              {commissionType === 'satilik' ? 'Gayrimenkul Değeri' : 'Aylık Kira'}
+                            </p>
                             <p className="text-lg font-bold">{formatCurrency(propertyValue)}</p>
                           </div>
                           <div>
