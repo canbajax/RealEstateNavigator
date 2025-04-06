@@ -12,8 +12,25 @@ import { ChevronRight } from "lucide-react";
 const Listings = () => {
   const [location] = useLocation();
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string>>({}); 
   const itemsPerPage = 12;
+  
+  // URL parametrelerini bir kez başlangıçta kontrol et
+  useEffect(() => {
+    // URL'den parametreleri al
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.toString().length > 0) {
+      console.log("URL parametreleri algılandı:", urlParams.toString());
+      
+      const initialFilters: Record<string, string> = {};
+      urlParams.forEach((value, key) => {
+        initialFilters[key] = value;
+      });
+      
+      console.log("Başlangıç filtreleri ayarlandı:", initialFilters);
+      setFilters(initialFilters);
+    }
+  }, []);
 
   // Parse query parameters
   useEffect(() => {

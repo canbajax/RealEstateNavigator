@@ -334,7 +334,7 @@ const Hero = () => {
             <Button 
               variant="link" 
               className="text-[#3498DB] hover:text-[#5DADE2] font-medium inline-flex items-center"
-              onClick={() => setLocation("/listings")}
+              onClick={() => window.location.href = "/listings"}
             >
               <span>Detaylı Arama</span>
               <ChevronDown className="ml-1 h-4 w-4" />
