@@ -18,38 +18,43 @@ interface PropertyTypeCardProps {
 
 const PropertyTypeCard = ({ propertyType }: PropertyTypeCardProps) => {
   const getIcon = () => {
+    const iconClasses = "h-8 w-8 transform transition-transform duration-500 group-hover:scale-125 group-hover:rotate-[-10deg]";
+    
     switch (propertyType.icon) {
       case 'building':
-        return <Building className="h-8 w-8" />;
+        return <Building className={iconClasses} />;
       case 'home':
-        return <Home className="h-8 w-8" />;
+        return <Home className={iconClasses} />;
       case 'store':
-        return <Store className="h-8 w-8" />;
+        return <Store className={iconClasses} />;
       case 'map':
-        return <Map className="h-8 w-8" />;
+        return <Map className={iconClasses} />;
       case 'hotel':
-        return <Hotel className="h-8 w-8" />;
+        return <Hotel className={iconClasses} />;
       case 'warehouse':
-        return <Warehouse className="h-8 w-8" />;
+        return <Warehouse className={iconClasses} />;
       case 'briefcase':
-        return <Briefcase className="h-8 w-8" />;
+        return <Briefcase className={iconClasses} />;
       case 'box':
-        return <Box className="h-8 w-8" />;
+        return <Box className={iconClasses} />;
       case 'sun':
-        return <Sun className="h-8 w-8" />;
+        return <Sun className={iconClasses} />;
       default:
-        return <Building className="h-8 w-8" />;
+        return <Building className={iconClasses} />;
     }
   };
 
   return (
     <Link href={`/listings?propertyTypeId=${propertyType.id}`}>
       <a className="group">
-        <div className="bg-[#ECF0F1] rounded-lg p-6 text-center hover:bg-[#3498DB] hover:text-white transition duration-300">
-          <div className="text-3xl text-[#3498DB] group-hover:text-white mb-4">
+        <div className="relative bg-[#ECF0F1] rounded-lg p-6 text-center hover:bg-gradient-to-r hover:from-[#3498DB] hover:to-[#2980B9] hover:text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg overflow-hidden">
+          {/* Background shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+          
+          <div className="text-3xl text-[#3498DB] group-hover:text-white mb-4 relative z-10">
             {getIcon()}
           </div>
-          <h3 className="font-medium">{propertyType.name}</h3>
+          <h3 className="font-medium transform transition-all duration-300 group-hover:scale-110">{propertyType.name}</h3>
         </div>
       </a>
     </Link>

@@ -34,6 +34,7 @@ const Header = () => {
   const [interestRate, setInterestRate] = useState(1.29);
   const [showCalculator, setShowCalculator] = useState(false);
   const [calculatorTab, setCalculatorTab] = useState<'kredi' | 'komisyon'>('kredi');
+  const [isHovering, setIsHovering] = useState<string | null>(null);
   
   // Komisyon hesaplama değişkenleri
   const [propertyValue, setPropertyValue] = useState(2000000);
@@ -95,14 +96,17 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white shadow-lg sticky top-0 z-50 transition-all duration-300">
+      {/* Üst bardaki renkli çizgi */}
+      <div className="w-full h-1 bg-gradient-to-r from-[#3498DB] via-[#1ABC9C] to-[#9B59B6]"></div>
+      
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center">
-              <Compass className="text-[#3498DB] h-8 w-8 mr-2" />
-              <span className="font-bold text-xl sm:text-2xl text-[#2C3E50]">
-                Co <span className="text-[#3498DB]">Worker</span>
+            <Link href="/" className="flex items-center group">
+              <Compass className="text-[#3498DB] h-8 w-8 mr-2 transition-transform duration-500 group-hover:rotate-[360deg]" />
+              <span className="font-bold text-xl sm:text-2xl text-[#2C3E50] transition-all duration-300 group-hover:tracking-wide">
+                Co <span className="text-[#3498DB] bg-gradient-to-r from-[#3498DB] to-[#9B59B6] bg-clip-text group-hover:text-transparent transition-all duration-300">Worker</span>
               </span>
             </Link>
           </div>
@@ -110,35 +114,93 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             <Link href="/">
-              <a className={`font-medium ${isActive('/') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Anasayfa
+              <a 
+                className={`relative font-medium ${isActive('/') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300`}
+                onMouseEnter={() => setIsHovering('home')}
+                onMouseLeave={() => setIsHovering(null)}
+              >
+                <span className="relative z-10">Anasayfa</span>
+                {isHovering === 'home' && !isActive('/') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+                )}
+                {isActive('/') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+                )}
               </a>
             </Link>
             <Link href="/listings">
-              <a className={`font-medium ${location.includes('/listings') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                İlanlar
+              <a 
+                className={`relative font-medium ${location.includes('/listings') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300`}
+                onMouseEnter={() => setIsHovering('listings')}
+                onMouseLeave={() => setIsHovering(null)}
+              >
+                <span className="relative z-10">İlanlar</span>
+                {isHovering === 'listings' && !location.includes('/listings') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+                )}
+                {location.includes('/listings') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+                )}
               </a>
             </Link>
             <Link href="/about">
-              <a className={`font-medium ${isActive('/about') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Hakkımızda
+              <a 
+                className={`relative font-medium ${isActive('/about') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300`}
+                onMouseEnter={() => setIsHovering('about')}
+                onMouseLeave={() => setIsHovering(null)}
+              >
+                <span className="relative z-10">Hakkımızda</span>
+                {isHovering === 'about' && !isActive('/about') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+                )}
+                {isActive('/about') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+                )}
               </a>
             </Link>
             <Link href="/agents">
-              <a className={`font-medium ${isActive('/agents') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                Danışmanlarımız
+              <a 
+                className={`relative font-medium ${isActive('/agents') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300`}
+                onMouseEnter={() => setIsHovering('agents')}
+                onMouseLeave={() => setIsHovering(null)}
+              >
+                <span className="relative z-10">Danışmanlarımız</span>
+                {isHovering === 'agents' && !isActive('/agents') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+                )}
+                {isActive('/agents') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+                )}
               </a>
             </Link>
             <Link href="/contact">
-              <a className={`font-medium ${isActive('/contact') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition`}>
-                İletişim
+              <a 
+                className={`relative font-medium ${isActive('/contact') ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300`}
+                onMouseEnter={() => setIsHovering('contact')}
+                onMouseLeave={() => setIsHovering(null)}
+              >
+                <span className="relative z-10">İletişim</span>
+                {isHovering === 'contact' && !isActive('/contact') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+                )}
+                {isActive('/contact') && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+                )}
               </a>
             </Link>
             <a 
-              className={`font-medium ${showCalculator ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition cursor-pointer`}
+              className={`relative font-medium ${showCalculator ? 'text-[#3498DB]' : 'text-[#2C3E50] hover:text-[#3498DB]'} transition duration-300 cursor-pointer`}
               onClick={() => setShowCalculator(true)}
+              onMouseEnter={() => setIsHovering('calculator')}
+              onMouseLeave={() => setIsHovering(null)}
             >
-              Hesaplama
+              <span className="relative z-10">Hesaplama</span>
+              {isHovering === 'calculator' && !showCalculator && (
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB] animate-navUnderline"></span>
+              )}
+              {showCalculator && (
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#3498DB]"></span>
+              )}
             </a>
           </nav>
           
