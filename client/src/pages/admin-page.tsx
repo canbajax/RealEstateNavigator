@@ -75,6 +75,18 @@ export default function AdminPage() {
     queryKey: ["/api/admin/stats"],
     queryFn: getQueryFn({ on401: "throw" }),
   });
+  
+  // Kullanıcıları getir
+  const { data: usersData, isLoading: isUsersLoading } = useQuery<{ success: boolean; users: UserType[] }>({
+    queryKey: ["/api/users"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
+  
+  // İlanları getir
+  const { data: listingsData, isLoading: isListingsLoading } = useQuery<{ success: boolean; listings: Listing[] }>({
+    queryKey: ["/api/listings"],
+    queryFn: getQueryFn({ on401: "throw" }),
+  });
 
   // Kullanıcı düzenleme işlevi
   const handleEditUser = (user: Omit<UserType, "password">) => {
@@ -377,13 +389,56 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-2" colSpan={5}>
-                        <div className="flex justify-center py-8">
-                          <Loader2 className="h-8 w-8 animate-spin text-border" />
-                        </div>
-                      </td>
-                    </tr>
+                    {isUsersLoading ? (
+                      <tr className="border-b hover:bg-muted/50">
+                        <td className="py-3 px-2" colSpan={5}>
+                          <div className="flex justify-center py-8">
+                            <Loader2 className="h-8 w-8 animate-spin text-border" />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : usersData?.users && usersData.users.length > 0 ? (
+                      usersData.users.map((emlakci) => (
+                        <tr key={emlakci.id} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-2">
+                            <div className="flex items-center space-x-3">
+                              <Avatar>
+                                <AvatarFallback>{emlakci.fullName ? emlakci.fullName.substring(0, 2).toUpperCase() : 'XX'}</AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <p className="font-medium">{emlakci.fullName}</p>
+                                <p className="text-sm text-muted-foreground">@{emlakci.username}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 px-2">{emlakci.email}</td>
+                          <td className="py-3 px-2">{emlakci.phone || "-"}</td>
+                          <td className="py-3 px-2">
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              emlakci.role === "admin" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"
+                            }`}>
+                              {emlakci.role === "admin" ? "Admin" : "Emlakçı"}
+                            </span>
+                          </td>
+                          <td className="py-3 px-2 text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button onClick={() => handleEditUser(emlakci)} variant="outline" size="icon">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button onClick={() => handleDeleteUser(emlakci.id)} variant="outline" size="icon" className="text-red-500">
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr className="border-b hover:bg-muted/50">
+                        <td className="py-8 px-2 text-center text-muted-foreground" colSpan={5}>
+                          Henüz emlakçı bulunmamaktadır
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -417,13 +472,57 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b hover:bg-muted/50">
-                      <td className="py-3 px-2" colSpan={6}>
-                        <div className="flex justify-center py-8">
-                          <Loader2 className="h-8 w-8 animate-spin text-border" />
-                        </div>
-                      </td>
-                    </tr>
+                    {isListingsLoading ? (
+                      <tr className="border-b hover:bg-muted/50">
+                        <td className="py-3 px-2" colSpan={6}>
+                          <div className="flex justify-center py-8">
+                            <Loader2 className="h-8 w-8 animate-spin text-border" />
+                          </div>
+                        </td>
+                      </tr>
+                    ) : listingsData?.listings && listingsData.listings.length > 0 ? (
+                      listingsData.listings.map((listing) => (
+                        <tr key={listing.id} className="border-b hover:bg-muted/50">
+                          <td className="py-3 px-2">
+                            <div className="font-medium truncate max-w-[200px]">
+                              {listing.title}
+                            </div>
+                          </td>
+                          <td className="py-3 px-2">
+                            {new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(listing.price)}
+                          </td>
+                          <td className="py-3 px-2">
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              listing.listingType === "sale" ? "bg-orange-100 text-orange-700" : "bg-violet-100 text-violet-700"
+                            }`}>
+                              {listing.listingType === "sale" ? "Satılık" : "Kiralık"}
+                            </span>
+                          </td>
+                          <td className="py-3 px-2 truncate max-w-[150px]">
+                            {listing.cityName || "Belirtilmemiş"}
+                          </td>
+                          <td className="py-3 px-2 text-muted-foreground">
+                            {new Date(listing.createdAt).toLocaleDateString('tr-TR')}
+                          </td>
+                          <td className="py-3 px-2 text-right">
+                            <div className="flex justify-end space-x-2">
+                              <Button onClick={() => handleEditListing(listing)} variant="outline" size="icon">
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button onClick={() => handleDeleteListing(listing.id)} variant="outline" size="icon" className="text-red-500">
+                                <Trash className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr className="border-b hover:bg-muted/50">
+                        <td className="py-8 px-2 text-center text-muted-foreground" colSpan={6}>
+                          Henüz ilan bulunmamaktadır
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>
